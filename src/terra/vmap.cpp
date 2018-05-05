@@ -1952,7 +1952,7 @@ void vrtMap::scaling(int XSrcSize,int cx,int cy,int xc,int yc,int xside,int ysid
 
 	request(MIN(y0,y1) - MAX_RADIUS/2,MAX(y0,y1) + MAX_RADIUS/2,MIN(x0,x1) - 4,MAX(x0,x1) + 4);
 
-#if defined(_ROAD_) && defined(_DEBUG)
+#if defined(_ROAD_) && defined(VANGERS_DEBUG) // tractortractor's _DEBUG -> VANGERS_DEBUG
 	if(!TotalDrawFlag) return;
 #endif
 
@@ -1976,7 +1976,7 @@ void vrtMap::scaling(int XSrcSize,int cx,int cy,int xc,int yc,int xside,int ysid
 				vp += XADD;
 				}
 		else
-#if defined(_ROAD_) && defined(_DEBUG)
+#if defined(_ROAD_) && defined(VANGERS_DEBUG) // tractortractor's _DEBUG -> VANGERS_DEBUG
 		   if(debug_view){
 			static unsigned char old_pal[256*3];
 			static unsigned char new_pal[256*3];

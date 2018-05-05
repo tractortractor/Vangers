@@ -19,7 +19,7 @@ extern MemoryHeap load_heap;
 #define HEAP_END	    load_heap.end_alloc();
 
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 #define _FOUT_
 extern XStream fout;
 #endif

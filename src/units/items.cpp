@@ -495,7 +495,7 @@ void DebrisObject::Quant(void)
 		cycleTor(R_curr.x,R_curr.y);
 	}else{
 		if(Time > DEBRIS_LIFE_TIME)
-			Status |= SOBJ_DISCONNECT;			
+			Status |= SOBJ_DISCONNECT;
 	};
 };
 

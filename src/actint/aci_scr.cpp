@@ -17,8 +17,8 @@ extern int iMouseY;
 
 extern int NetworkON;
 
-extern char* aciSTR_ON;
-extern char* aciSTR_OFF;
+extern const char* aciSTR_ON; // tractortractor's const added
+extern const char* aciSTR_OFF; // tractortractor's const added
 
 extern int iRussian;
 

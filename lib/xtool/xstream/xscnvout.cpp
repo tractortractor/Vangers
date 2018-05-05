@@ -123,3 +123,18 @@ XStream& XStream::operator>= (long double& var)
 	seek(p - _ConvertBuffer + 1 - ret,XS_CUR);
 	return *this;
 }
+
+// tractortractor's added begin
+#if defined(_MSC_VER) && defined(_WIN64)
+XStream& XStream::operator>= (std::size_t& var)
+{
+	int ret = read(_ConvertBuffer,_CONV_BUFFER_LEN);
+	if(!ret) return *this;
+	char* p = _ConvertBuffer;
+	p[ret] = ' ';
+	std::sscanf(p, XSTREAM_SIZE_T_C_PRINTF_FORMAT, &var);
+	seek(p - _ConvertBuffer + 1 - ret,XS_CUR);
+	return *this;
+}
+#endif
+// tractortractor's added end

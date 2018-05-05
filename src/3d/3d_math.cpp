@@ -169,8 +169,12 @@ double DistPI(double s0,double s1)
 static unsigned long int next = 1;
 int _rand(void)
 {
+//	std::cout << __FILE__ << "; " << __LINE__ << "; custom" << std::endl; // tractortractor's test
 	next = next * 1103515245 + 12345;
 	return ((unsigned int) (next >> 16) & 0x7FFF);
+//	unsigned long int ret = ((unsigned int) (next >> 16) & 0x7FFF); // tractortractor's test
+//	std::cout << ret << '\n'; // tractortractor's test
+//	return ret; // tractortractor's test
 }
 void _srand(unsigned int seed)
 {

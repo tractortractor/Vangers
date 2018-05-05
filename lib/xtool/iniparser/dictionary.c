@@ -24,7 +24,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifndef _MSC_VER // tracrtortractor's added
 #include <unistd.h>
+#endif // tracrtortractor's added
 
 /** Maximum value size for integers and doubles. */
 #define MAXVALSZ	1024

@@ -5,7 +5,10 @@
 #include <math.h>
 #include <time.h>
 
-#ifdef _WINDOWS_
+
+
+//#ifdef _WINDOWS_ // tractortractor's commented
+#ifdef _WIN32 // tractortractor's added
 #define WIN32_EXTRA_LEAN
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>

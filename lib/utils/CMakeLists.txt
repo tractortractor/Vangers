@@ -2,7 +2,8 @@
 
 # FIND_PACKAGE(ZLIB REQUIRED)
 
-ADD_EXECUTABLE(zip_convert 
+#ADD_EXECUTABLE(zip_convert # tractortractor's commented
+ADD_LIBRARY(zip_convert STATIC # tractortractor's added
 	zip_convert.cpp 
 	xzip/inzip.cpp 
 	xzip/outzip.cpp 

@@ -213,6 +213,10 @@ enum Options
 
 	SD_NEW_TEXT,
 
+
+	EL_SET_JOYSTICK_AXIS_FLAG, // tractortractor's added
+
+
 	MAX_OPTION
 };
 
@@ -353,7 +357,11 @@ static const char* OptIDs[MAX_OPTION] = {
 
 	"default_scr",
 
-	"text_object"
+	"text_object",
+
+
+
+	"joystick_axis" // tractortractor's added
 };
 
 iStack* iStk;
@@ -499,6 +507,15 @@ void ParseScript(const char* fname,char* bname)
 					else
 						handle_error("Misplaced option",OptIDs[id]);
 					break;
+// tractortractor's added begin
+				case EL_SET_JOYSTICK_AXIS_FLAG:
+					if(iCurObjType == I_ELEMENT){
+						iElem -> flags |= EL_JOYSTICK_AXIS;
+					}
+					else
+						handle_error("Misplaced option",OptIDs[id]);
+					break;
+// tractortractor's added end
 				case SD_NEW_TEXT:
 					text_obj = new iTextData;
 					text_obj -> ID = script -> read_idata();

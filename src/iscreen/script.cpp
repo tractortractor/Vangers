@@ -7,7 +7,8 @@
 #include "iscript.h"
 
 #if defined(_BINARY_SCRIPT_) || defined(_SAVE_BINARY_SCRIPT_)
-#include "zip.h"
+//#include "zip.h" // tractortractor's commented
+#include "../../lib/utils/xzip/xzip.h" // tractortractor's added
 #endif
 
 /* ----------------------------- EXTERN SECTION ----------------------------- */

@@ -270,6 +270,12 @@ struct Object : BaseObject {
 	int active;
 	int rudder;
 	int traction;
+// tractortractor's added begin
+	int rudder_joystick_max;
+	int rudder_joystick_min;
+	int traction_joystick_max;
+	int traction_joystick_min;
+// tractortractor's added end
 	int wheel_analyze;
 	int brake;
 	int hand_brake;
@@ -282,7 +288,9 @@ struct Object : BaseObject {
 	int mole_on;
 	int k_track;
 	int draw_mode;
-	unsigned int device_switch_latency;
+//	unsigned int device_switch_latency; // tractortractor's commented
+	unsigned int device_switch_latency_max; // tractortractor's added
+	unsigned int device_switch_latency_current; // tractortractor's added
 	int prev_controls;
 	int current_controls;
 	unsigned int last_send_time;
@@ -375,6 +383,7 @@ struct Object : BaseObject {
 	void calc_bound();
 	void load_parameters(const char* name);
 	void save_parameters(char* name);
+	void save_mechous_prm(int i_entry, std::string filename); // tractortractor's added
 	void global_save_parameter(int i_entry);
 	void entries_control();
 

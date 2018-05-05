@@ -31,6 +31,15 @@
 #include "../actint/acsconst.h"
 #include "../actint/aci_evnt.h"
 #include "../actint/aci_scr.h"
+// tractortractor's added begin
+#include "../../lib/xtool/xrec.h"
+#ifdef _ACI_ESCAVE_DEBUG_
+#include "../actint/credits.h"
+#endif
+#ifdef DIAGEN_TEST
+#include "../uvs/diagen.h"
+#endif
+// tractortractor's added end
 
 #ifndef _WIN32
 #include <arpa/inet.h> // ntohl() FIXME: remove
@@ -91,6 +100,10 @@ extern unsigned char* actIntPal;
 extern actIntDispatcher* aScrDisp;
 
 extern int iScreenLastInput;
+// tractortractor's added begin
+extern int lastAxisPressed;
+extern int lastAxisInverted;
+// tractortractor's added end
 
 extern int iScreenChat;
 extern int iChatON;
@@ -187,7 +200,7 @@ void aciSwapMatrices(void);
 void aciCancelMatrix(void);
 void aciShowScMatrix(void);
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 void aciChangeMouseItem(void);
 void iMapShot(void);
 #endif
@@ -266,7 +279,7 @@ void aMS_RightPress(int, int, int);
 void aMS_RightUnpress(int, int, int);
 void aMS_Movement(int, int, int);
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 void aciResizeItem(double delta);
 #endif
 
@@ -330,7 +343,7 @@ int iEndGameFlag = 0;
 int iCurHall = 0;
 int iEscaveTimer = 0;
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 int iTimerLog = 1;
 int iBoundsLog = 0;
 
@@ -362,30 +375,30 @@ XBuffer* iResBuf;
 const char* iVideoPath = "resource/video/";
 const char* iVideoPathDefault = "resource/video/";
 
-const char* iSTR_WORLD_NONE_CHAR = iSTR_WORLD_NONE_CHAR1;
-const char* iSTR_WORLD_FOSTRAL_CHAR = iSTR_WORLD_FOSTRAL_CHAR1;
-const char* iSTR_WORLD_GLORX_CHAR = iSTR_WORLD_GLORX_CHAR1;
-const char* iSTR_WORLD_NECROSS_CHAR = iSTR_WORLD_NECROSS_CHAR1;
-const char* iSTR_WORLD_XPLO_CHAR = iSTR_WORLD_XPLO_CHAR1;
-const char* iSTR_WORLD_KHOX_CHAR = iSTR_WORLD_KHOX_CHAR1;
-const char* iSTR_WORLD_BOOZEENA_CHAR = iSTR_WORLD_BOOZEENA_CHAR1;
-const char* iSTR_WORLD_WEEXOW_CHAR = iSTR_WORLD_WEEXOW_CHAR1;
-const char* iSTR_WORLD_HMOK_CHAR = iSTR_WORLD_HMOK_CHAR1;
-const char* iSTR_WORLD_THREALL_CHAR = iSTR_WORLD_THREALL_CHAR1;
-const char* iSTR_WORLD_ARK_A_ZNOY_CHAR = iSTR_WORLD_ARK_A_ZNOY_CHAR1;
-const char* iSTR_COLOR_GREEN_CHAR = iSTR_COLOR_GREEN_CHAR1;
-const char* iSTR_COLOR_ORANGE_CHAR = iSTR_COLOR_ORANGE_CHAR1;
-const char* iSTR_COLOR_BLUE_CHAR = iSTR_COLOR_BLUE_CHAR1;
-const char* iSTR_COLOR_YELLOW_CHAR = iSTR_COLOR_YELLOW_CHAR1;
-const char* iSTR_MUTE_ALL = iSTR_MUTE_ALL1;
-const char* iSTR_CLEAR_LOG = iSTR_CLEAR_LOG1;
-const char* iSTR_BACKGROUND = iSTR_BACKGROUND1;
-const char* iSTR_LEAVE_CHAT = iSTR_LEAVE_CHAT1;
-const char* iSTR_All = iSTR_All1;
-const char* iSTR_Yellow = iSTR_Yellow1;
-const char* iSTR_Orange = iSTR_Orange1;
-const char* iSTR_Blue = iSTR_Blue1;
-const char* iSTR_Green = iSTR_Green1;
+char* iSTR_WORLD_NONE_CHAR = iSTR_WORLD_NONE_CHAR1; // tractortractor's deleted const
+char* iSTR_WORLD_FOSTRAL_CHAR = iSTR_WORLD_FOSTRAL_CHAR1; // tractortractor's deleted const
+char* iSTR_WORLD_GLORX_CHAR = iSTR_WORLD_GLORX_CHAR1; // tractortractor's deleted const
+char* iSTR_WORLD_NECROSS_CHAR = iSTR_WORLD_NECROSS_CHAR1; // tractortractor's deleted const
+char* iSTR_WORLD_XPLO_CHAR = iSTR_WORLD_XPLO_CHAR1; // tractortractor's deleted const
+char* iSTR_WORLD_KHOX_CHAR = iSTR_WORLD_KHOX_CHAR1; // tractortractor's deleted const
+char* iSTR_WORLD_BOOZEENA_CHAR = iSTR_WORLD_BOOZEENA_CHAR1; // tractortractor's deleted const
+char* iSTR_WORLD_WEEXOW_CHAR = iSTR_WORLD_WEEXOW_CHAR1; // tractortractor's deleted const
+char* iSTR_WORLD_HMOK_CHAR = iSTR_WORLD_HMOK_CHAR1; // tractortractor's deleted const
+char* iSTR_WORLD_THREALL_CHAR = iSTR_WORLD_THREALL_CHAR1; // tractortractor's deleted const
+char* iSTR_WORLD_ARK_A_ZNOY_CHAR = iSTR_WORLD_ARK_A_ZNOY_CHAR1; // tractortractor's deleted const
+char* iSTR_COLOR_GREEN_CHAR = iSTR_COLOR_GREEN_CHAR1; // tractortractor's deleted const
+char* iSTR_COLOR_ORANGE_CHAR = iSTR_COLOR_ORANGE_CHAR1; // tractortractor's deleted const
+char* iSTR_COLOR_BLUE_CHAR = iSTR_COLOR_BLUE_CHAR1; // tractortractor's deleted const
+char* iSTR_COLOR_YELLOW_CHAR = iSTR_COLOR_YELLOW_CHAR1; // tractortractor's deleted const
+char* iSTR_MUTE_ALL = iSTR_MUTE_ALL1; // tractortractor's deleted const
+char* iSTR_CLEAR_LOG = iSTR_CLEAR_LOG1; // tractortractor's deleted const
+char* iSTR_BACKGROUND = iSTR_BACKGROUND1; // tractortractor's deleted const
+char* iSTR_LEAVE_CHAT = iSTR_LEAVE_CHAT1; // tractortractor's deleted const
+char* iSTR_All = iSTR_All1; // tractortractor's deleted const
+char* iSTR_Yellow = iSTR_Yellow1; // tractortractor's deleted const
+char* iSTR_Orange = iSTR_Orange1; // tractortractor's deleted const
+char* iSTR_Blue = iSTR_Blue1; // tractortractor's deleted const
+char* iSTR_Green = iSTR_Green1; // tractortractor's deleted const
 const char* iSTR_CleanUp = iSTR_CleanUp1;
 const char* iSTR_SpaceInUse = iSTR_SpaceInUse1;
 const char* iSTR_MBytes = iSTR_MBytes1;
@@ -427,6 +440,8 @@ int iProxyUsage = 0;
 char* iProxyServer = NULL;
 int iProxyPort = 1080;
 int iServerPort = 2197;
+
+static bool options_loaded = false; // tractortractor's added
 
 void init_hfonts(void)
 {
@@ -656,7 +671,8 @@ void iQuantFirst(void)
 #endif
 
 	if(!actIntLog){
-		iLoadData();
+		if(!RecorderMode || !options_loaded)	// tractortractor's added
+			iLoadData();
 	}
 
 	iStartupLog = 1;
@@ -684,7 +700,8 @@ void iQuantPrepare(void)
 	}
 	else {
 #ifndef _ACI_SKIP_MAINMENU_
-		iLoadData();
+		if(!RecorderMode || !options_loaded)	// tractortractor's added
+			iLoadData();
 #endif
 	}
 
@@ -697,8 +714,8 @@ void iQuantPrepare(void)
 int iQuantSecond(void)
 {
 	int k;
-#ifdef _DEBUG
-	int cr;
+	int cr; // tractortractor's moved out of macro
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 	int count = 0;
 	XBuffer* XBufBMP,*XBufPAL;
 #endif
@@ -766,17 +783,28 @@ int iQuantSecond(void)
 						}
 					}
 
-					if(k == SDL_SCANCODE_LEFT) iMoveMouseObj(-1,0);
-					if(k == SDL_SCANCODE_UP) iMoveMouseObj(0,-1);
-					if(k == SDL_SCANCODE_RIGHT) iMoveMouseObj(1,0);
-					if(k == SDL_SCANCODE_DOWN) iMoveMouseObj(0,1);
+					if(k == SDL_SCANCODE_LEFTBRACKET) // tractortractor's added
+						iScrDisp -> move_screen(-800,20); // tractortractor's added
+
+					if(k == SDL_SCANCODE_RIGHTBRACKET) // tractortractor's added
+						iScrDisp -> move_screen(800,20); // tractortractor's added
+
+//					if(k == SDL_SCANCODE_LEFT) iMoveMouseObj(-1,0); // tractortractor's commented
+//					if(k == SDL_SCANCODE_UP) iMoveMouseObj(0,-1); // tractortractor's commented
+//					if(k == SDL_SCANCODE_RIGHT) iMoveMouseObj(1,0); // tractortractor's commented
+//					if(k == SDL_SCANCODE_DOWN) iMoveMouseObj(0,1); // tractortractor's commented
+					if(k == SDL_SCANCODE_KP_4) iMoveMouseObj(-1,0); // tractortractor's added
+					if(k == SDL_SCANCODE_KP_8) iMoveMouseObj(0,-1); // tractortractor's added
+					if(k == SDL_SCANCODE_KP_6) iMoveMouseObj(1,0); // tractortractor's added
+					if(k == SDL_SCANCODE_KP_2) iMoveMouseObj(0,1); // tractortractor's added
 
 					if(k == SDL_SCANCODE_HOME) iMoveMouseObj(-10,0);
 					if(k == SDL_SCANCODE_PAGEDOWN) iMoveMouseObj(0,10);
 					if(k == SDL_SCANCODE_END) iMoveMouseObj(10,0);
 					if(k == SDL_SCANCODE_PAGEUP) iMoveMouseObj(0,-10);
 
-					if(k == 'S')
+//					if(k == 'S') // tractortractor's commented
+					if(k == SDL_SCANCODE_S) // tractortractor's added
 						iWriteScreenSummary();
 #endif
 
@@ -785,7 +813,8 @@ int iQuantSecond(void)
 					if(k == SDL_SCANCODE_2) aci_dgMoodNext = 1;
 					if(k == SDL_SCANCODE_3) aci_dgMoodNext = 2;
 					if(k == SDL_SCANCODE_4) aci_dgMoodNext = 3;
-					if(k == VK_ADD){
+//					if(k == VK_ADD){ // tractortractor's commented
+					if(k == SDL_SCANCODE_KP_PLUS){ // tractortractor's added
 						cr = aciGetCurCredits();
 						cr += 10000;
 						aciUpdateCurCredits(cr);
@@ -795,16 +824,20 @@ int iQuantSecond(void)
 						shotFlush();
 					}
 
-#ifdef _DEBUG
+#ifdef _GENERATE_ITEM_DATA_ // tractortractor's added
+					if(!NetworkON && k == SDL_SCANCODE_I && actIntLog) aScrDisp -> save_items(); // tractortractor's added
+#endif // tractortractor's added
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 					if(!NetworkON){
 						// TODO(amdmi3): EQUALS/PLUS UNDERSCORE/MINUS stuff
 						if(k == SDL_SCANCODE_EQUALS) aciResizeItem(1.05);
 						if(k == SDL_SCANCODE_MINUS) aciResizeItem(0.95);
-						if(k == 'I' && actIntLog) aScrDisp -> save_items();
+//						if(k == 'I' && actIntLog) aScrDisp -> save_items(); // tractortractor's commented
 //						  if(k == SDL_SCANCODE_F11){
 //							  iMapShot();
 //						  }
-						if(k == 'B')
+//						if(k == 'B') // tractortractor's commented
+						if(k == SDL_SCANCODE_B) // tractortractor's added
 							iBoundsLog ^= 1;
 						if(k == SDL_SCANCODE_F9){
 							XBufBMP = new XBuffer;
@@ -851,15 +884,21 @@ int iQuantSecond(void)
 					if(actIntLog && k == SDL_SCANCODE_F6){
 						aciChangeMouseItem();
 					}
-					if(k == 'T') iTimerLog ^= 1;
+//					if(k == 'T') iTimerLog ^= 1; // tractortractor's commented
+					if(k == SDL_SCANCODE_T) iTimerLog ^= 1; // tractortractor's added
 #endif
+// tractortractor's added begin
+#ifdef DIAGEN_TEST
+					diagenKeyboardControl(k);
+#endif
+// tractortractor's added end
 					iKeyTrap(k);
 				}
-			} /*else {
+			} /* else {
 				k = JoystickWhatsPressedNow();
 				if(k)
 					KeyBuf -> put(k,CUR_KEY_PRESSED);
-			}*/
+			} */
 			if(iScrDisp -> flags & MS_LEFT_PRESS){
 				iScrDisp -> flags &= ~MS_LEFT_PRESS;
 				iKeyTrap(iMOUSE_LEFT_PRESS_CODE);
@@ -2154,13 +2193,28 @@ void iLoadData(void)
 {
 	XStream fh(0);
 
-	if(!RecorderMode){
+	options_loaded = true; // tractortractor's added
+//	if(!RecorderMode){ // tractortractor's commented
 		if(fh.open("options.dat",XS_IN)){
 			iScrDisp -> load_data(&fh);
-			fh > aciAutoRun;
+// tractortractor's added begin
+			if(RecorderMode == XRC_PLAY_MODE){
+				*XRec.hFile > aciAutoRun;
+				fh.seek(sizeof(int), XS_CUR);
+			}
+			else {
+// tractortractor's added end
+				fh > aciAutoRun;
+// tractortractor's added begin
+				if(RecorderMode == XRC_RECORD_MODE)
+				{
+					*XRec.hFile < aciAutoRun;
+				}
+			}
+// tractortractor's added end
 			fh.close();
 		}
-	}
+//	} // tractortractor's commented
 
 	iHandleExtEvent(iEXT_UPDATE_SOUND_MODE);
 	iHandleExtEvent(iEXT_UPDATE_MUSIC_MODE);
@@ -2175,6 +2229,11 @@ void iLoadData(void)
 	iHandleExtEvent(iEXT_INIT_JOYSTICK);
 	iHandleExtEvent(iEXT_INIT_PROXY);
 	iHandleExtEvent(iEXT_INIT_PORT);
+
+// tractortractor's added begin
+	iHandleExtEvent(iEXT_UPDATE_TRACTION_AXIS_SENSITIVITY);
+	iHandleExtEvent(iEXT_UPDATE_RUDDER_AXIS_SENSITIVITY);
+// tractortractor's added end
 }
 
 void iMS_Movement(int v, int x, int y)
@@ -2326,6 +2385,14 @@ void iHandleExtEvent(int code,int data)
 				}
 			}
 			break;
+// tractortractor's added begin
+		case iEXT_UPDATE_TRACTION_AXIS_SENSITIVITY:
+			XJoystickSetTractionAxisSensitivity(iGetOptionValue(iJOYSTICK_TRACTION_AXIS_SENSITIVITY_CUR)*256/iGetOptionValue(iJOYSTICK_TRACTION_AXIS_SENSITIVITY_MAX));
+			break;
+		case iEXT_UPDATE_RUDDER_AXIS_SENSITIVITY:
+			XJoystickSetRudderAxisSensitivity(iGetOptionValue(iJOYSTICK_RUDDER_AXIS_SENSITIVITY_CUR)*256/iGetOptionValue(iJOYSTICK_RUDDER_AXIS_SENSITIVITY_MAX));
+			break;
+// tractortractor's added end
 		case iEXT_PREPARE_SLOTS:
 			iPrepareSaveNames();
 			break;
@@ -2411,6 +2478,21 @@ void iHandleExtEvent(int code,int data)
 		case iEXT_RESET_CONTROLS:
 			iResetControls();
 			iInitControlObjects();
+			break;
+// tractortractor's added begin
+		case iEXT_UPDATE_AXIS:
+			if(lastAxisPressed > -1)
+			{
+				if(data == JOYSTICK_TRACTION_AXIS){
+					iSetControlCode(iKEY_TRACTION_AXIS,lastAxisPressed,0);
+					iSetOptionValue(iJOYSTICK_TRACTION_AXIS_INVERTED, lastAxisInverted);
+				}
+				if(data == JOYSTICK_RUDDER_AXIS){
+					iSetControlCode(iKEY_RUDDER_AXIS,lastAxisPressed,0);
+					iSetOptionValue(iJOYSTICK_RUDDER_AXIS_INVERTED, lastAxisInverted);
+				}
+				lastAxisPressed = -1;
+			}
 			break;
 		case iEXT_UPDATE_OPTION:
 			iUpdateOptionValue(data);
@@ -2665,7 +2747,7 @@ ServerFindChain* iGetCurServer(void)
 	return p;
 }
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 int iMapShotCount = 0;
 void iMapShot(void)
 {
@@ -2792,7 +2874,7 @@ void iInitKeepOptions(void)
 {
 	int sz;
 	iScreenObject* p;
-	if(iGetOptionValue(iKEEP_MODE)){
+	if(iGetOptionValue(iKEEP_MODE) && !RecorderMode){ // tractortractor's added "&& !RecorderMode"
 		sz = GetKeepSpace();
 		iResBuf -> init();
 		*iResBuf < iSTR_SpaceInUse < " " <= sz < " " < iSTR_MBytes;
@@ -3025,11 +3107,11 @@ void iWriteScreenSummary(void)
 	}
 
 	iScreenObject* p = (iScreenObject*)iScrDisp -> curScr -> objList -> last;
-	fh < "\r\n// ------------ Screen: \"" < iScrDisp -> curScr -> ID_ptr < "\" ------------\r\n\r\n";
+	fh < "\r\n// ------------ Screen: \"" < iScrDisp -> curScr -> ID_ptr.c_str() < "\" ------------\r\n\r\n"; // tractortractor's added c_str()
 
 	while(p){
 		iResBuf -> init();
-		*iResBuf < iScrDisp -> curScr -> ID_ptr < "_" < p -> ID_ptr;
+		*iResBuf < iScrDisp -> curScr -> ID_ptr.c_str() < "_" < p -> ID_ptr.c_str(); // tractortractor's added c_str()
 		ptr = iResBuf -> address();
 		sz = strlen(ptr);
 		for(i = 0; i < sz; i ++){

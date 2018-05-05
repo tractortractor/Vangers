@@ -81,7 +81,7 @@ extern int aciWorldIndex;
 
 extern int Pause;
 
-extern char* aciSTR_OFF;
+extern const char* aciSTR_OFF; // tractortractor's added const
 extern char* aciSTR_DAY;
 extern char* aciSTR_UNDEFINED_PRICE;
 extern char* aciSTR_PRICE;
@@ -262,7 +262,7 @@ void smooth_shape_quant(int sx,int sy,unsigned char* buf,int src,int dest,int cn
 void put_buf2col(int x,int y,int sx,int sy,unsigned char* buf,int null_lev,int n_mode);
 void put_map(int x,int y,int sx,int sy);
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 void aciResizeItem(double delta);
 #endif
 
@@ -397,7 +397,7 @@ int aciProtractorEvent = 0;
 int aciMechMessiahEvent = 0;
 int aciTeleportEvent = 0;
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 int aciShotCount = 0;
 int aciCurIND = 0;
 int aciIndMove = 0;
@@ -4724,7 +4724,7 @@ void actIntDispatcher::KeyQuant(void)
 
 	aciBitmapMenu* bm;
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 	int i;
 	invMatrix* temp;
 	invItem* temp_item;
@@ -7069,7 +7069,7 @@ void invMatrix::generate_shape(void)
 	for(i = SHAPE_DEPTH; i > 0; i --)
 		swap_buf_col(i + 83,SHAPE_DEPTH,ssx,ssy,buf);
 
-	fh.open(XBuf,XS_OUT);
+	fh.open(XBuf.GetBuf(),XS_OUT); // tractortractor's added ".GetBuf()"
 	fh < (short)ssx < (short)ssy;
 	fh.write(buf,ssz);
 	fh.close();
@@ -7082,7 +7082,7 @@ void invMatrix::generate_shape(void)
 	int scr_sx = (actintLowResFlag) ? 640 : 800;
 	int scr_sy = (actintLowResFlag) ? 480 : 600;
 
-	fh.open(XBuf,XS_OUT);
+	fh.open(XBuf.GetBuf(),XS_OUT); // tractortractor's added ".GetBuf()"
 	fh < "X0: " <= (512 - scr_sx/2 + ScreenX + ScreenSizeX/2) < "\r\n";
 	fh < "Y0: " <= (512 - scr_sy/2 + ScreenY + ScreenSizeY/2) < "\r\n\r\n";
 
@@ -7104,7 +7104,7 @@ void invMatrix::generate_shape(void)
 	if(internalID < 10) XBuf < "0";
 	XBuf <= internalID < ".pal";
 
-	fh.open(XBuf,XS_OUT);
+	fh.open(XBuf.GetBuf(),XS_OUT); // tractortractor's added ".GetBuf()"
 	fh.write(pal_buf,768);
 	fh.close();
 
@@ -7175,7 +7175,7 @@ void invMatrix::generate_floor(void)
 
 	delete[] p;
 
-	fh.open(XBuf,XS_OUT);
+	fh.open(XBuf.GetBuf(),XS_OUT); // tractortractor's added ".GetBuf()"
 	fh < (short)ssx < (short)ssy;
 	fh.write(buf,ssz);
 	fh.close();
@@ -7188,7 +7188,7 @@ void invMatrix::generate_floor(void)
 	int scr_sx = (actintLowResFlag) ? 640 : 800;
 	int scr_sy = (actintLowResFlag) ? 480 : 600;
 
-	fh.open(XBuf,XS_OUT);
+	fh.open(XBuf.GetBuf(),XS_OUT); // tractortractor's added ".GetBuf()"
 	fh < "X0: " <= (512 - scr_sx/2 + ScreenX + ScreenSizeX/2) < "\r\n";
 	fh < "Y0: " <= (512 - scr_sy/2 + ScreenY + ScreenSizeY/2) < "\r\n\r\n";
 
@@ -7210,7 +7210,7 @@ void invMatrix::generate_floor(void)
 	if(internalID < 10) XBuf < "0";
 	XBuf <= internalID < ".pal";
 
-	fh.open(XBuf,XS_OUT);
+	fh.open(XBuf.GetBuf(),XS_OUT); // tractortractor's added ".GetBuf()";
 	fh.write(pal_buf,768);
 	fh.close();
 
@@ -9621,7 +9621,8 @@ int aciScreenText::NextPage(void)
 	return 0;
 }
 
-#ifdef _DEBUG
+//#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG and commented
+#ifdef _GENERATE_ITEM_DATA_ // tractortractor's added
 void actIntDispatcher::save_items(void)
 {
 	int i;

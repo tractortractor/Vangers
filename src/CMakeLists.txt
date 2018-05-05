@@ -70,8 +70,19 @@ ADD_EXECUTABLE(vangers ${vangers_SRCS})
 IF(WIN32)
 	SET(WIN_LIB 
 		wsock32
-		-mwindows
+#		-mwindows # tractortractor's commented
 	)
+	IF(MSVC) # tractortractor's added
+#		SET(WIN_LIB  # tractortractor's added
+#			${WIN_LIB}  # tractortractor's added
+#			ws2_32 # tractortractor's added
+#		) # tractortractor's added
+	ELSE(MSVC) # tractortractor's added
+		SET(WIN_LIB  # tractortractor's added
+			${WIN_LIB}  # tractortractor's added
+			-mwindows # tractortractor's added
+		) # tractortractor's added
+	ENDIF(MSVC) # tractortractor's added
 ENDIF(WIN32)
 
 TARGET_LINK_LIBRARIES(vangers
@@ -85,7 +96,23 @@ TARGET_LINK_LIBRARIES(vangers
 	${ZLIB_LIBRARIES}
 	${OPENGL_LIBRARIES}
 	${WIN_LIB}
+#	zip_convert # tractortractor's added
 	xtool
 	xgraph
 	xsound
 )
+
+IF(ENTRIES_CONTROL OR VANGERS_DEBUG)
+	TARGET_LINK_LIBRARIES(vangers 
+		${Boost_LIBRARIES}
+	)
+ENDIF(ENTRIES_CONTROL OR VANGERS_DEBUG)
+
+# tractortractor's added begin
+IF(VANGERS_DEBUG)
+	ADD_LIBRARY(getRSS STATIC ${GET_RSS_C_FILE})
+	TARGET_LINK_LIBRARIES(vangers
+		getRSS
+	)
+ENDIF(VANGERS_DEBUG)
+# tractortractor's added end

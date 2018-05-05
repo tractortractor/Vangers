@@ -1,0 +1,1 @@
+devenv zlib.sln /build Release /projectconfig Release /Project install /out logfile.txt

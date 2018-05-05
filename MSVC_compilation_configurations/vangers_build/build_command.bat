@@ -1,0 +1,1 @@
+devenv vangers.sln /build Release /projectconfig Release /project ALL_BUILD /out logfile.txt

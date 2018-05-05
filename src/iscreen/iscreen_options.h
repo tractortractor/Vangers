@@ -1,6 +1,8 @@
 #ifndef __ISCREEN_OPTIONS_H__
 #define __ISCREEN_OPTIONS_H__
 
+#include <set> // tractortractor's added
+
 int iGetOptionValue(int id);
 void iSetOptionValue(int id,int val);
 char* iGetOptionValueCHR(int id);
@@ -74,8 +76,40 @@ enum iScreenOptionID
 	
 	iFULLSCREEN,			// 45
 	
+// tractortractor's added begin
+	iJOYSTICK_TRACTION_AXIS_NUM,	// 46
+	iJOYSTICK_TRACTION_AXIS_INVERTED,	// 47
+	iJOYSTICK_TRACTION_AXIS_SENSITIVITY_CUR,	// 48
+	iJOYSTICK_TRACTION_AXIS_SENSITIVITY_MAX,	// 49
+
+	iJOYSTICK_RUDDER_AXIS_NUM,	// 50
+	iJOYSTICK_RUDDER_AXIS_INVERTED,	// 51
+	iJOYSTICK_RUDDER_AXIS_SENSITIVITY_CUR,	// 52
+	iJOYSTICK_RUDDER_AXIS_SENSITIVITY_MAX,	// 53
+// tractortractor's added end
+	
 	iMAX_OPTION_ID
 };
+
+// tractortractor's added begin
+const std::set<int> iScreenOptionIDRec =
+{
+	27, // iDESTR_MODE
+
+	42, // iCAMERA_TURN
+	43, // iCAMERA_SLOPE
+	44, // iCAMERA_SCALE
+
+	32, // iJOYSTICK_TYPE
+	46, // iJOYSTICK_TRACTION_AXIS_NUM
+	47, // iJOYSTICK_TRACTION_AXIS_INVERTED
+	48, // iJOYSTICK_TRACTION_AXIS_SENSITIVITY_CUR
+
+	50, // iJOYSTICK_RUDDER_AXIS_NUM
+	51, // iJOYSTICK_RUDDER_AXIS_INVERTED
+	52 // iJOYSTICK_RUDDER_AXIS_SENSITIVITY_CUR
+};
+// tractortractor's added end
 
 enum iScreenOptionObjType
 {

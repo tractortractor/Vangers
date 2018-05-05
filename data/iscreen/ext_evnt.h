@@ -66,3 +66,10 @@
 #define iEXT_CHECK_END_FLAG		46
 
 #define iEXT_INIT_SOCKETS		47
+
+// tractortractor's added begin
+#define iEXT_UPDATE_AXIS		48
+
+#define iEXT_UPDATE_TRACTION_AXIS_SENSITIVITY		49
+#define iEXT_UPDATE_RUDDER_AXIS_SENSITIVITY		50
+// tractortractor's added end

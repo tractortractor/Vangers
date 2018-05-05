@@ -1,9 +1,23 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "xglobal.h"
+// tractortractor's added begin
+#include "../../../src/global.h"
+#include "../../../src/3d/3d_math.h"
+#include "../../../src/iscreen/controls.h"
+// tractortractor's added end
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
+
+// tractortractor's added begin
+extern int RecorderMode;
+extern unsigned int RNDVAL;
+extern RandomGenerator xm_random_generator;
+extern unsigned int effectRNDVAL;
+extern unsigned int BogusRNDVAL;
+// tractortractor's added end
+
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 
 int xtDispatchMessage(SDL_Event* msg);
@@ -71,9 +85,63 @@ void XRecorder::Open(char* fname,int mode)
 	else
 		XRecLog.open("xrec_pl.log",XS_OUT);
 #endif
+
+	// tractortractor's added begin
+	unsigned int rand_seed;
+	unsigned int _rand_seed;
+	unsigned int xm_random_generator_seed;
+	if(mode == XRC_RECORD_MODE)
+	{
+//		std::cout << "XRC_RECORD_MODE" << '\n';
+		// TODO implement better seeding.
+		RNDVAL = time(NULL);
+		rand_seed = time(NULL);
+		_rand_seed = time(NULL);
+		xm_random_generator_seed = time(NULL);
+		effectRNDVAL = time(NULL);
+		BogusRNDVAL = time(NULL);
+
+		*hFile < RNDVAL < rand_seed < _rand_seed < xm_random_generator_seed < effectRNDVAL < BogusRNDVAL;
+//		std::cout << "\nRNDVAL: " << RNDVAL << "\nrand_seed: " << rand_seed << "\n_rand_seed: " << _rand_seed << "\nxm_random_generator_seed: " << xm_random_generator_seed << "\neffectRNDVAL: " << effectRNDVAL << "\nBogusRNDVAL: " << BogusRNDVAL;
+	}
+	else if(mode == XRC_PLAY_MODE)
+	{
+//		std::cout << "XRC_PLAY_MODE" << '\n';
+		*hFile > RNDVAL > rand_seed > _rand_seed > xm_random_generator_seed > effectRNDVAL > BogusRNDVAL;
+//		std::cout << "\nRNDVAL: " << RNDVAL << "\nrand_seed: " << rand_seed << "\n_rand_seed: " << _rand_seed << "\nxm_random_generator_seed: " << xm_random_generator_seed << "\neffectRNDVAL: " << effectRNDVAL << "\nBogusRNDVAL: " << BogusRNDVAL;
+	}
+	srand(rand_seed);
+	_srand(_rand_seed);
+	xm_random_generator.set(xm_random_generator_seed);
+	// tractortractor's added end
+
 	frameCount = 0;
 	flags |= mode;
 }
+
+// tractortractor's added begin
+bool XRecorder::saveControls(iKeyControls *iControlsObj)
+{
+	*hFile < (int)iKEY_MAX_ID < (int)iKEY_OBJECT_SIZE;
+	hFile -> write(iControlsObj -> keyCodes,iKEY_OBJECT_SIZE * iKEY_MAX_ID * sizeof(int));
+	return true;
+}
+
+bool XRecorder::loadControls(iKeyControls *iControlsObj)
+{
+	int sz0,sz1;
+
+	*hFile > sz0 > sz1;
+	// If controls sizes do not match, moving file pointer to the end of controls.
+	if(sz0 != iKEY_MAX_ID || sz1 != iKEY_OBJECT_SIZE){
+		std::cerr << "XRec.loadControls: Controls' sizes do not match. Skipping controls loading.\n";
+		hFile -> seek(sz0*sz1*sizeof(int), XS_CUR);
+		return false;
+	}
+	hFile -> read(iControlsObj -> keyCodes,iKEY_OBJECT_SIZE * iKEY_MAX_ID * sizeof(int));
+	return true;
+}
+// tractortractor's added end
 
 void XRecorder::Close(void)
 {
@@ -83,6 +151,7 @@ void XRecorder::Close(void)
 #ifdef	_XRECORDER_LOG_
 		XRecLog.close();
 #endif
+		RecorderMode &= ~(XRC_RECORD_MODE | XRC_PLAY_MODE | XRC_MESSAGE_READ); // tractortractor's added
 	}
 }
 
@@ -120,7 +189,8 @@ void XRecorder::DispatchMessage(void)
 				break;
 		}
 #ifdef	_XRECORDER_LOG_
-		XRecLog < "\r\nEvent -> " <= nextMsg -> Type < "(" <= nextMsg -> data[0] < "), frame = " <= frameCount;
+//		XRecLog < "\r\nEvent -> " <= nextMsg -> Type < "(" <= nextMsg -> data[0] < "), frame = " <= frameCount; // tractortractor's commented
+		XRecLog < "\r\nEvent -> " <= nextMsg -> Type < "(" <= nextMsg -> data[0].type < "), frame = " <= frameCount; // tractortractor's added
 #endif
 	}
 }
@@ -128,7 +198,8 @@ void XRecorder::DispatchMessage(void)
 void XRecorder::Flush(void)
 {
 #ifdef	_XRECORDER_LOG_
-		XRecLog < "\r\nEvent -> " <= nextMsg -> Type < "(" <= nextMsg -> data[0] < "), frame = " <= frameCount;
+//		XRecLog < "\r\nEvent -> " <= nextMsg -> Type < "(" <= nextMsg -> data[0] < "), frame = " <= frameCount; // tractortractor's commented
+		XRecLog < "\r\nEvent -> " <= nextMsg -> Type < "(" <= nextMsg -> data[0].type < "), frame = " <= frameCount; // tractortractor's added
 #endif
 	*hFile < nextMsg -> Type < nextMsg -> Frame < nextMsg -> DataSize;
 	if(nextMsg -> DataSize){
@@ -138,7 +209,6 @@ void XRecorder::Flush(void)
 
 void XRecorder::Quant(void)
 {
-	
 	frameCount ++;
 
 	if(flags & XRC_PLAY_MODE){
@@ -162,6 +232,12 @@ void XRecorder::PutSysMessage(int id,SDL_Event *e)
 	nextMsg -> Type = id;
 	nextMsg -> Frame = frameCount;
 	nextMsg -> DataSize = sizeof(SDL_Event);
+
+	if(e->type == SDL_MOUSEMOTION)
+	{
+		std::cout << e->motion.x << '\n';
+		std::cout << e->motion.y << '\n';
+	}
 
 	memcpy(nextMsg -> data, e, sizeof(SDL_Event));
 

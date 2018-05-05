@@ -31,6 +31,8 @@ extern int ActiveTerrain[];
 
 extern actIntDispatcher* aScrDisp;
 
+extern int RecorderMode; // tractortractor's added
+
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 
 void aciNextPhrase(void);
@@ -1021,6 +1023,7 @@ void aciML_Data::rnd_event_quant(void)
 				ev -> cur_timer --;
 				if(ev -> cur_timer <= 0){
 					if(!rand()%ev -> rndValue){
+//						std::cout << __FILE__ << "; " << __LINE__ << "; rand and rndValue used" << std::endl; // tractortractor's test
 						code = ((iScanCode*)ev -> keys -> codes -> last) -> code;
 						aciML_KeyTrap(code,ev -> startupType);
 						if(ev -> flags & AML_ACTIVE_EVENT)
@@ -1394,7 +1397,8 @@ void aciML_DataSet::items_keytrap(int x,int y)
 {
 	aciML_ItemData* p = (aciML_ItemData*)items -> last;
 	while(p){
-		if(p -> flags & AML_ACTIVE_ITEM && p -> check_xy(x,y) && p -> check_double_level()){
+//		if(p -> flags & AML_ACTIVE_ITEM && p -> check_xy(x,y) && p -> check_double_level()){ // tractortractor's commented
+		if(p -> flags & AML_ACTIVE_ITEM && p -> check_xy(x,y) && (RecorderMode || p -> check_double_level())){ // tractortractor's added
 			p -> put_frame(AML_PUT_LOW_LEVEL);
 			aciStealItem(p -> ItemID);
 			return;

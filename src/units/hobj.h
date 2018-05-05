@@ -185,6 +185,7 @@ void setMapPixel(int px,int py,int col);
 void putMapPixel(int px,int py,int col);
 //int path_trace(const Vector& c1,const Vector& c2);
 //void line_trace(const Vector& c1,const Vector& c2);
+void line_trace(Vector& c1, Vector& c2); // tractortractor's added
 
 void G2L(int x,int y,int& xl,int& yl);
 int MapLineTrace(Vector& c1,Vector& c2);
@@ -454,9 +455,9 @@ void NetworkSetLocation(int id);
 struct aiRndType
 {
 	unsigned aiRndVal;
-	void aiInit(unsigned d) { aiRndVal=d; }
+	void aiInit(unsigned int d) { aiRndVal=d; } // tractortractor's added int
 	aiRndType() { aiRndVal=0; }
-	inline unsigned aiRnd(unsigned m){
+	inline unsigned int aiRnd(unsigned int m){ // tractortractor's added int
 		aiRndVal ^= aiRndVal >> 3;
 		aiRndVal ^= aiRndVal << 28;
 		aiRndVal &= 0x7FFFFFFF;

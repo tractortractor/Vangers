@@ -1,5 +1,34 @@
+#ifndef __CONTROLS_H // tractortractor's added
+#define __CONTROLS_H // tractortractor's added
 
 #define iKEY_OBJECT_SIZE	2
+
+// tractortractor's moved from "src/iscreen/controls.cpp" begin
+struct iKeyControls
+{
+	int* keyCodes;
+	int* defaultCodes;
+	int* flags;
+
+	void init(void);
+	void reset(void);
+
+	void setFlag(int id,int fl){ flags[id] |= fl; }
+	void dropFlag(int id,int fl){ flags[id] &= ~fl; }
+	void clearFlag(int id){ flags[id] = 0; }
+
+	void addCode(int id,int key,int num = 0);
+	void removeCode(int id,int num = 0);
+	void addDefaultCode(int id,int key,int num = 0);
+
+	int getCode(int id,int num);
+
+	int GetID(int key);
+	int CheckID(int id,int key);
+
+	iKeyControls(void);
+};
+// tractortractor's moved from "src/iscreen/controls.cpp" end
 
 enum iControlID {
 	iKEY_TURN_WHEELS_LEFT	= 1,
@@ -44,6 +73,11 @@ enum iControlID {
 
 	iKEY_EXIT,			// 36
 
+// tractortractor's added begin
+	iKEY_TRACTION_AXIS, // 37
+	iKEY_RUDDER_AXIS, // 38
+// tractortractor's added end
+
 	iKEY_MAX_ID
 };
 
@@ -61,3 +95,5 @@ int iGetControlCode(int id,int num = 0);
 
 char* iGetJoystickButtonName(int vkey);
 char* iGetMouseButtonName(int vkey);
+
+#endif /* __CONTROLS_H */ // tractortractor's added

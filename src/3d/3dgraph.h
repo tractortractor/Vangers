@@ -159,15 +159,15 @@ void register_color(unsigned int id,int first,int last);
 
 /*******************************************************************************
 			Vertex -> Polygon link
-	Vertex:    <ÄÄÄÄÄÄÄÄÄ¿	   ÚÄÄÄÄÄÄÄÄÄÄ> Polygon:
-	num_poly	     ÀÄÄÄÄÄÅÄÄÄÄÄ¿	num_vert
-	polygons[0]  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ	 ÀÄÄÄÄ	vertices[indices_in_poly[0]]
+	Vertex:    <ÄÄÄÄÄÄÄÄÄ¿	   ÚÄÄÄÄÄÄÄÄÄ? Polygon:
+	num_poly	     ÀÄÄÄÄÄÅÄÄÄÄÄ?num_vert
+	polygons[0]  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄ? ÀÄÄÄ?vertices[indices_in_poly[0]]
 	indices_in_poly[0]
 
 			Polygon -> Vertex link
-	Vertex:   <ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿  ÚÄ> Polygon:
-	num_poly		      ÚÄÄÅÄÄÙ	num_vert
-	polygons[indices_in_vert[0]] ÄÙ  ÀÄÄÄÄ	vertices[0]
+	Vertex:   <ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ? ÚÄ> Polygon:
+	num_poly		      ÚÄÄÅÄÄ?num_vert
+	polygons[indices_in_vert[0]] ÄÙ  ÀÄÄÄ?vertices[0]
 						indices_in_vert[0]
 *******************************************************************************/
 

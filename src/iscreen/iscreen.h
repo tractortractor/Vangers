@@ -339,6 +339,7 @@ const int 	EL_NONE_BMP	= 0x800;
 const int 	EL_KEY_NAME	= 0x1000;
 const int 	EL_NUMBER	= 0x2000;
 const int 	EL_JOYSTICK_KEY = 0x4000;
+const int 	EL_JOYSTICK_AXIS = 0x8000; // tractortractor's added
 
 struct iScreenElement : public iListElement
 {
@@ -972,6 +973,7 @@ void iHandleExtEvent(int code,int data = 0);
 
 const char* iGetKeyNameText(int vkey,int lang = 0);
 const char* iGetJoyBtnNameText(int vkey,int lang = 0);
+const char* iGetJoyAxisNameText(int axis_num,int axis_inverted,int lang = 0); // tractortractor's added
 
 void i_slake_pal(unsigned char* p,int delta);
 int iGetKeyName(int vkey,int shift,int lng_flag);

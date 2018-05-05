@@ -72,6 +72,7 @@ extern int aciWorldIndex;
 
 extern int light_modulation;
 //XStream ggg;
+extern Uint8 *controlsKeyboardState; // tractortractor's added
 
 
 int test_block(unsigned char* ptr, int size);
@@ -182,6 +183,15 @@ int aiHotBugAdd00;
 int aiHotBugAdd01;
 int aiHotBugAdd02;
 int aiHotBugAdd03;
+
+// tractortractor's added begin
+int NumPromptTest;
+extern int RecorderMode;
+
+bool bootsector_rubbox_present = false;
+int bootsector_rubbox_ActIntData0 = 0;
+int bootsector_rubbox_ActIntData1 = 0;
+// tractortractor's added end
 
 void aOutText32clip(int x,int y,int color,void* text,int font,int hspace,int vspace);
 
@@ -331,6 +341,18 @@ void AxisLen(Vector vA0,Vector vA1,Vector vC,Vector& vR)
 	/*line_trace(Vector(vA0.x,vA0.y,159),Vector(vA1.x,vA1.y,159));
 	line_trace(Vector(vA0.x,vA0.y,159),Vector(vC.x,vC.y,159));
 	line_trace(Vector(vR.x,vR.y,159),Vector(vC.x,vC.y,159));*/
+// tractortractor's added begin
+	/*
+	Vector temp_A0 = Vector(vA0.x,vA0.y,159);
+	Vector temp_A1 = Vector(vA1.x,vA1.y,159);
+	Vector temp_vC = Vector(vC.x,vC.y,159);
+	Vector temp_vR = Vector(vR.x,vR.y,159);
+
+	line_trace(temp_A0,temp_A1);
+	line_trace(temp_A0,temp_vC);
+	line_trace(temp_vR,temp_vC);
+	*/
+// tractortractor's added end
 };
 
 /*void PointDist(int x,int y,int z,int x1,int y1,int z1,int r,int radius,char dir,Vector& vd,Vector& v)
@@ -3650,12 +3672,38 @@ void VangerUnit::DrawQuant(void)
 						line_trace(Vector(pNode->BorderX[i],pNode->BorderY[i],159),Vector(pNode->BorderX[i - 1],pNode->BorderY[i - 1],159));
 						line_trace(Vector(pNode->BorderX[i],pNode->BorderY[i],159),Vector(pNode->x,pNode->y,159));
 					};*/
+// tractortractor's added begin
+					Vector temp_1 = Vector(pNode->BorderX[0],pNode->BorderY[0],159);
+					Vector temp_2 = Vector(pNode->BorderX[pNode->NumBranch - 1],pNode->BorderY[pNode->NumBranch - 1],159);
+					line_trace(temp_1,temp_2);
+					for(i = 1;i < pNode->NumBranch;i++){
+						Vector temp_3 = Vector(pNode->BorderX[i],pNode->BorderY[i],159);
+						Vector temp_4 = Vector(pNode->BorderX[i - 1],pNode->BorderY[i - 1],159);
+						Vector temp_5 = Vector(pNode->BorderX[i],pNode->BorderY[i],159);
+						Vector temp_6 = Vector(pNode->x,pNode->y,159);
+						line_trace(temp_3,temp_4);
+						line_trace(temp_5,temp_6);
+					};
+// tractortractor's added end
 				}else{
 					/*line_trace(Vector(pNode->BorderX[0],pNode->BorderY[0],cc2),Vector(pNode->BorderX[pNode->NumBranch - 1],pNode->BorderY[pNode->NumBranch - 1],cc2));
 					for(i = 1;i < pNode->NumBranch;i++){
 						line_trace(Vector(pNode->BorderX[i],pNode->BorderY[i],cc2),Vector(pNode->BorderX[i - 1],pNode->BorderY[i - 1],cc2));
 						line_trace(Vector(pNode->BorderX[i],pNode->BorderY[i],cc2),Vector(pNode->x,pNode->y,cc2));
 					};*/
+// tractortractor's added begin
+					Vector temp_1 = Vector(pNode->BorderX[0],pNode->BorderY[0],cc2);
+					Vector temp_2 = Vector(pNode->BorderX[pNode->NumBranch - 1],pNode->BorderY[pNode->NumBranch - 1],cc2);
+					line_trace(temp_1,temp_2);
+					for(i = 1;i < pNode->NumBranch;i++){
+						Vector temp_3 = Vector(pNode->BorderX[i],pNode->BorderY[i],cc2);
+						Vector temp_4 = Vector(pNode->BorderX[i - 1],pNode->BorderY[i - 1],cc2);
+						Vector temp_5 = Vector(pNode->BorderX[i],pNode->BorderY[i],cc2);
+						Vector temp_6 = Vector(pNode->x,pNode->y,cc2);
+						line_trace(temp_3,temp_4);
+						line_trace(temp_5,temp_6);
+					};
+// tractortractor's added end
 				};
 			};
 
@@ -3687,36 +3735,88 @@ void VangerUnit::DrawQuant(void)
 						line_trace(Vector(pNode->BorderX[i],pNode->BorderY[i],175),Vector(pNode->BorderX[i - 1],pNode->BorderY[i - 1],175));
 						line_trace(Vector(pNode->BorderX[i],pNode->BorderY[i],175),Vector(pNode->x,pNode->y,175));
 					};*/
+// tractortractor's added begin
+					Vector temp_1 = Vector(pNode->BorderX[0],pNode->BorderY[0],175);
+					Vector temp_2 = Vector(pNode->BorderX[pNode->NumBranch - 1],pNode->BorderY[pNode->NumBranch - 1],175);
+					line_trace(temp_1,temp_2);
+					for(i = 1;i < pNode->NumBranch;i++){
+						Vector temp_3 = Vector(pNode->BorderX[i],pNode->BorderY[i],175);
+						Vector temp_4 = Vector(pNode->BorderX[i - 1],pNode->BorderY[i - 1],175);
+						Vector temp_5 = Vector(pNode->BorderX[i],pNode->BorderY[i],175);
+						Vector temp_6 = Vector(pNode->x,pNode->y,175);
+						line_trace(temp_3,temp_4);
+
+						line_trace(temp_5,temp_6);
+
+					};
+// tractortractor's added end
 				}else{
 					/*line_trace(Vector(pNode->BorderX[0],pNode->BorderY[0],159),Vector(pNode->BorderX[pNode->NumBranch - 1],pNode->BorderY[pNode->NumBranch - 1],159));
 					for(i = 1;i < pNode->NumBranch;i++){
 						line_trace(Vector(pNode->BorderX[i],pNode->BorderY[i],159),Vector(pNode->BorderX[i - 1],pNode->BorderY[i - 1],159));
 						line_trace(Vector(pNode->BorderX[i],pNode->BorderY[i],159),Vector(pNode->x,pNode->y,159));
 					};*/
+// tractortractor's added begin
+					Vector temp_1 = Vector(pNode->BorderX[0],pNode->BorderY[0],159);
+					Vector temp_2 = Vector(pNode->BorderX[pNode->NumBranch - 1],pNode->BorderY[pNode->NumBranch - 1],159)
+					line_trace(temp_1,temp_2);
+					for(i = 1;i < pNode->NumBranch;i++){
+						Vector temp_3 = Vector(pNode->BorderX[i],pNode->BorderY[i],159);
+						Vector temp_4 = Vector(pNode->BorderX[i - 1],pNode->BorderY[i - 1],159);
+						Vector temp_5 = Vector(pNode->BorderX[i],pNode->BorderY[i],159);
+						Vector temp_6 = Vector(pNode->x,pNode->y,159);
+						line_trace(temp_3,temp_4);
+
+						line_trace(temp_5,temp_6);
+
+					};
+// tractortractor's added end
 				};
 			};
 		};
 
 		//line_trace(Vector(pNextLink->xl,pNextLink->yl,195),Vector(pNextLink->xr,pNextLink->yr,210));
 		//line_trace(Vector(pPrevLink->xl,pPrevLink->yl,195),Vector(pPrevLink->xr,pPrevLink->yr,210));
+// tractortractor's added begin
+		Vector temp_next_link_l = Vector(pNextLink->xl,pNextLink->yl,195);
+		Vector temp_next_link_r = Vector(pNextLink->xr,pNextLink->yr,210);
+		Vector temp_prev_link_l = Vector(pPrevLink->xl,pPrevLink->yl,195);
+		Vector temp_prev_link_r = Vector(pPrevLink->xr,pPrevLink->yr,210);
+		line_trace(temp_next_link_l,temp_next_link_r);
+		line_trace(temp_prev_link_l,temp_prev_link_r);
+// tractortractor's added end
 	};
 
 #else
-/*	VangerUnit* van;
+// tractortractor's uncommented begin, note: adds ray which shows facing direction of controlled vanger.
+	VangerUnit* van;
 	if(Status & SOBJ_ACTIVE){
 		vCheck = Vector(300,0,0)*RotMat;
 		vCheck += R_curr;
 		cycleTor(vCheck.x,vCheck.y);
-		line_trace(Vector(R_curr.x,R_curr.y,159),Vector(vCheck.x,vCheck.y,159));
+//		line_trace(Vector(R_curr.x,R_curr.y,159),Vector(vCheck.x,vCheck.y,159));
+// tractortractor's added begin
+		Vector temp_R_curr = Vector(R_curr.x,R_curr.y,159);
+		Vector temp_vCheck = Vector(vCheck.x,vCheck.y,159);
+		line_trace(temp_R_curr,temp_vCheck);
+// tractortractor's added end
 		van = (VangerUnit*)(ActD.Tail);	
 		while(van){
 			if(van->Visibility == VISIBLE && !(van->Status & SOBJ_ACTIVE)){
 				if(TouchSphere(R_curr,vCheck,van->R_curr,van->radius,i))
-					line_trace(Vector(XCYCL(van->R_curr.x - radius),van->R_curr.y,159),Vector(XCYCL(van->R_curr.x + radius),van->R_curr.y,175));
+				{
+//					line_trace(Vector(XCYCL(van->R_curr.x - radius),van->R_curr.y,159),Vector(XCYCL(van->R_curr.x + radius),van->R_curr.y,175));
+// tractortractor's added begin
+					Vector temp_R_curr_van1 = Vector(XCYCL(van->R_curr.x - radius),van->R_curr.y,159);
+					Vector temp_R_curr_van2 = Vector(XCYCL(van->R_curr.x + radius),van->R_curr.y,175);
+					line_trace(temp_R_curr_van1,temp_R_curr_van2);
+// tractortractor's added end
+				}
 			};
 			van = (VangerUnit*)(van->NextTypeList);
 		};
-	};*/
+	};
+// tractortractor's uncommented end
 
 
 	for(i = 0;i < pBranch->NumLink;i++){
@@ -3732,32 +3832,108 @@ void VangerUnit::DrawQuant(void)
 
 	if(PointStatus == TRK_IN_NODE){
 		if(pNode->Level){
-			line_trace(Vector(pNode->BorderX[0],pNode->BorderY[0],175),Vector(pNode->BorderX[pNode->NumBranch - 1],pNode->BorderY[pNode->NumBranch - 1],175));
+//			line_trace(Vector(pNode->BorderX[0],pNode->BorderY[0],175),Vector(pNode->BorderX[pNode->NumBranch - 1],pNode->BorderY[pNode->NumBranch - 1],175)); // tractortractor's commented
+// tractortractor's added begin
+			Vector temp_1 = Vector(pNode->BorderX[0],pNode->BorderY[0],175);
+			Vector temp_2 = Vector(pNode->BorderX[pNode->NumBranch - 1],pNode->BorderY[pNode->NumBranch - 1],175);
+			line_trace(temp_1,temp_2);
+// tractortractor's added end
 			for(i = 1;i < pNode->NumBranch;i++){
+// tractortractor's commented begin
+/*
 				line_trace(Vector(pNode->BorderX[i],pNode->BorderY[i],175),Vector(pNode->BorderX[i - 1],pNode->BorderY[i - 1],175));
 				line_trace(Vector(pNode->BorderX[i],pNode->BorderY[i],175),Vector(pNode->x,pNode->y,175));
+*/
+// tractortractor's commented end
+// tractortractor's added begin
+				Vector temp_3 = Vector(pNode->BorderX[i],pNode->BorderY[i],175);
+				Vector temp_4 = Vector(pNode->BorderX[i - 1],pNode->BorderY[i - 1],175);
+				Vector temp_5 = Vector(pNode->BorderX[i],pNode->BorderY[i],175);
+				Vector temp_6 = Vector(pNode->x,pNode->y,175);
+				line_trace(temp_3,temp_4);
+
+				line_trace(temp_5,temp_6);
+// tractortractor's added end
 			};
 		}else{
-			line_trace(Vector(pNode->BorderX[0],pNode->BorderY[0],159),Vector(pNode->BorderX[pNode->NumBranch - 1],pNode->BorderY[pNode->NumBranch - 1],159));
+//			line_trace(Vector(pNode->BorderX[0],pNode->BorderY[0],159),Vector(pNode->BorderX[pNode->NumBranch - 1],pNode->BorderY[pNode->NumBranch - 1],159)); // tractortractor's commented
+// tractortractor's added begin
+			Vector temp_1 = Vector(pNode->BorderX[0],pNode->BorderY[0],159);
+			Vector temp_2 = Vector(pNode->BorderX[pNode->NumBranch - 1],pNode->BorderY[pNode->NumBranch - 1],159);
+			line_trace(temp_1,temp_2);
+// tractortractor's added end
 			for(i = 1;i < pNode->NumBranch;i++){
+// tractortractor's commented begin
+/*
 				line_trace(Vector(pNode->BorderX[i],pNode->BorderY[i],159),Vector(pNode->BorderX[i - 1],pNode->BorderY[i - 1],159));
 				line_trace(Vector(pNode->BorderX[i],pNode->BorderY[i],159),Vector(pNode->x,pNode->y,159));
+*/
+// tractortractor's commented end
+// tractortractor's added begin
+				Vector temp_3 = Vector(pNode->BorderX[i],pNode->BorderY[i],159);
+				Vector temp_4 = Vector(pNode->BorderX[i - 1],pNode->BorderY[i - 1],159);
+				Vector temp_5 = Vector(pNode->BorderX[i],pNode->BorderY[i],159);
+				Vector temp_6 = Vector(pNode->x,pNode->y,159);
+				line_trace(temp_3,temp_4);
+				line_trace(temp_5,temp_6);
+// tractortractor's added end
 			};
 		};
 	};
 
-	line_trace(Vector(R_curr.x,R_curr.y,170),Vector(R_curr.x + vTarget.x / 2,R_curr.y + vTarget.y / 2,170));
+//	line_trace(Vector(R_curr.x,R_curr.y,170),Vector(R_curr.x + vTarget.x / 2,R_curr.y + vTarget.y / 2,170)); // tractortractor's commented
+// tractortractor's added begin
+	Vector temp_1 = Vector(R_curr.x,R_curr.y,170);
+	Vector temp_2 = Vector(R_curr.x + vTarget.x / 2,R_curr.y + vTarget.y / 2,170);
+	line_trace(temp_1,temp_2);
+// tractortractor's added end
 
 	if(SpeedDir == 0 || (OtherFlag & MECHOS_CALC_WAY)){
+// tractortractor's commented begin
+/*
 		line_trace(Vector(FrontPoint.pNextLink->xl,FrontPoint.pNextLink->yl,183),Vector(FrontPoint.pNextLink->xr,FrontPoint.pNextLink->yr,159));
 		line_trace(Vector(FrontPoint.pPrevLink->xl,FrontPoint.pPrevLink->yl,183),Vector(FrontPoint.pPrevLink->xr,FrontPoint.pPrevLink->yr,159));
+*/
+// tractortractor's commented end
+// tractortractor's added begin
+		Vector temp_3 = Vector(FrontPoint.pNextLink->xl,FrontPoint.pNextLink->yl,183);
+		Vector temp_4 = Vector(FrontPoint.pNextLink->xr,FrontPoint.pNextLink->yr,159);
+		Vector temp_5 = Vector(FrontPoint.pPrevLink->xl,FrontPoint.pPrevLink->yl,183);
+		Vector temp_6 = Vector(FrontPoint.pPrevLink->xr,FrontPoint.pPrevLink->yr,159);
+		line_trace(temp_3,temp_4);
+		line_trace(temp_5,temp_6);
+// tractortractor's added end
 	}else{
+// tractortractor's commented begin
+/*
 		line_trace(Vector(FrontPoint.pNextLink->xl,FrontPoint.pNextLink->yl,183),Vector(FrontPoint.pNextLink->xr,FrontPoint.pNextLink->yr,183));
 		line_trace(Vector(FrontPoint.pPrevLink->xl,FrontPoint.pPrevLink->yl,183),Vector(FrontPoint.pPrevLink->xr,FrontPoint.pPrevLink->yr,183));
+*/
+// tractortractor's commented end
+// tractortractor's added begin
+		Vector temp_3 = Vector(FrontPoint.pNextLink->xl,FrontPoint.pNextLink->yl,183);
+		Vector temp_4 = Vector(FrontPoint.pNextLink->xr,FrontPoint.pNextLink->yr,183);
+		Vector temp_5 = Vector(FrontPoint.pPrevLink->xl,FrontPoint.pPrevLink->yl,183);
+		Vector temp_6 = Vector(FrontPoint.pPrevLink->xr,FrontPoint.pPrevLink->yr,183);
+		line_trace(temp_3,temp_4);
+		line_trace(temp_5,temp_6);
+// tractortractor's added end
 	};
 
+// tractortractor's commented begin
+/*
 	line_trace(Vector(pNextLink->xl,pNextLink->yl,195),Vector(pNextLink->xr,pNextLink->yr,210));
 	line_trace(Vector(pPrevLink->xl,pPrevLink->yl,195),Vector(pPrevLink->xr,pPrevLink->yr,210));
+*/
+// tractortractor's commented end
+// tractortractor's added begin
+	Vector temp_next_link_l = Vector(pNextLink->xl,pNextLink->yl,195);
+	Vector temp_next_link_r = Vector(pNextLink->xr,pNextLink->yr,210);
+	Vector temp_prev_link_l = Vector(pPrevLink->xl,pPrevLink->yl,195);
+	Vector temp_prev_link_r = Vector(pPrevLink->xr,pPrevLink->yr,210);
+	line_trace(temp_next_link_l,temp_next_link_r);
+	line_trace(temp_prev_link_l,temp_prev_link_r);
+// tractortractor's added end
 #endif
 
 #endif
@@ -6363,6 +6539,7 @@ VangerUnit* addVanger(uvsVanger* p,uvsEscave* origin,int Human)
 	n = (VangerUnit*)(ActD.GetObject(ACTION_VANGER));
 	if(n){
 		
+		// tractortractor's comment: determening exit while leaving escave
 		s = origin->unitPtr.EnterT->GetCenter();
 		if(Human){
 			if(GeneralMapReload){
@@ -6381,6 +6558,8 @@ VangerUnit* addVanger(uvsVanger* p,uvsEscave* origin,int Human)
 
 		((origin->unitPtr).EnterT)->ActiveCenter();
 		n->CreateUnitType(p);
+		// tractortractor's comment: if exit have fixed mechos facing angle use this angle
+		// else randomize mechos facing angle.
 		if(s->Owner->Type == EngineTypeList::ESCAVE) ang = ((EscaveEngine*)(s->Owner))->StartAngle;
 		else ang = RND(PI*2);
 
@@ -6477,7 +6656,7 @@ void VangerUnit::NewKeyHandler(void)
 {
 	Vector vCheck;
 	BulletObject* g;
-//	VangerUnit* v;
+	VangerUnit* v; // tractortractor's uncommented
 	static int UseVectorFlag = 0;
 	int i;
 	StuffObject* p;
@@ -6545,9 +6724,9 @@ void VangerUnit::NewKeyHandler(void)
 //			if(v->Status & SOBJ_AUTOMAT) v->CalcImpulse();
 //			v = (VangerUnit*)(v->NextTypeList);
 //		};
-//		if(NumPromptTest >= aiNumMessage) NumPromptTest = 0;
-//		else NumPromptTest++;
-//		aiMessageData[NumPromptTest].Send();
+		if(NumPromptTest >= aiNumMessage) NumPromptTest = 0; // tractortractor's uncommented
+		else NumPromptTest++; // tractortractor's uncommented
+		aiMessageData[NumPromptTest].Send(); // tractortractor's uncommented
 
 //		aciWorldIndex = WORLD_NECROSS;
 //		aiMessageQueue.Send(AI_MESSAGE_MACHOTINE,Speed,1,0);
@@ -6697,9 +6876,19 @@ void VangerUnit::keyhandler(int key)
 		case SDL_SCANCODE_7: {
 			static int i_model = 0;
 			static int models[2] = {0,0};
-			mod = SDL_GetModState();
-			if(!(mod&KMOD_CTRL)){
-				if(!(mod&KMOD_SHIFT)){
+// tractortractor's commented begin
+//			mod = SDL_GetModState();
+//			if(!(mod&KMOD_CTRL)){
+// tractortractor's commented end
+// tractortractor's added begin
+			if(!(controlsKeyboardState[SDL_SCANCODE_LSHIFT]
+				|| controlsKeyboardState[SDL_SCANCODE_RSHIFT])){
+// tractortractor's added end
+//				if(!(mod&KMOD_SHIFT)){ // tractortractor's commented
+// tractortractor's added begin
+				if(!(controlsKeyboardState[SDL_SCANCODE_LCTRL]
+					|| controlsKeyboardState[SDL_SCANCODE_RCTRL])){
+// tractortractor's added end
 					if(++NumHumanModel >= ModelD.MaxModel)
 						NumHumanModel = 0;
 					}
@@ -7092,7 +7281,9 @@ void VangerUnit::Go2Universe(void)
 		uvsPoint->Pmechos->teleport = PassageCount | (Armor & 0xffffff00);
 		aciDropMoveItem();
 		if(vSetVangerFlag != -1){
+			bootsector_rubbox_present = false; // tractortractor's added
 			if(DeviceData){
+				bool rubbox_found = false; // tractortractor's added
 				p = DeviceData;
 				while(p){
 					pp = p->NextDeviceList;
@@ -7101,6 +7292,17 @@ void VangerUnit::Go2Universe(void)
 						CheckOutDevice(p);
 						ActD.CheckDevice(p);
 						aciRemoveItem(&(p->ActIntBuffer));
+// tractortractor's added begin
+					}else if(p->uvsDeviceType == UVS_ITEM_TYPE::RUBBOX && !rubbox_found){
+						bootsector_rubbox_ActIntData0 = p->ActIntBuffer.data0;
+						bootsector_rubbox_ActIntData1 = p->ActIntBuffer.data1;
+						bootsector_rubbox_present = true;
+						rubbox_found = true;
+
+						CheckOutDevice(p);
+						ActD.CheckDevice(p);
+						aciRemoveItem(&(p->ActIntBuffer));
+// tractortractor's added end
 					}else{
 						g = new uvsItem(p->uvsDeviceType);
 						aciGetItemCoords(&(p->ActIntBuffer),g->pos_x,g->pos_y);
@@ -7125,6 +7327,18 @@ void VangerUnit::Go2Universe(void)
 				g = new uvsItem(UVS_ITEM_TYPE::SECTOR);
 				aciGetItemCoords(ACI_BOOT_SECTOR,g->pos_x,g->pos_y);
 				n->addItem(g,1);
+// tractortractor's added begin
+				if(bootsector_rubbox_present) // rubbox was here
+				{
+					if(!aciPutItem(ACI_RUBOX))
+						ErrH.Abort("Water Closet Droped");
+					g = new uvsItem(UVS_ITEM_TYPE::RUBBOX);
+					g->param1 = bootsector_rubbox_ActIntData0;
+					g->param2 = bootsector_rubbox_ActIntData1;
+					aciGetItemCoords(ACI_RUBOX,g->pos_x,g->pos_y);
+					n->addItem(g,1);
+				}
+// tractortractor's added end
 			}else{
 				i = 1;
 				l = (VangerUnit*)(ActD.Tail);
@@ -7299,6 +7513,46 @@ void VangerUnit::Go2World(void)
 		p = addDevice(0,0,0,g->type,g->param1,g->param2,this);
 		p->ActIntBuffer.slot = -1;
 		aciReInitItem(&p->ActIntBuffer);
+// tractortractor's added begin
+		if(bootsector_rubbox_present) // rubbox was here
+		{
+			g = new uvsItem(UVS_ITEM_TYPE::RUBBOX);
+			uvsPoint->addItem(g,1);
+			g->param1 = bootsector_rubbox_ActIntData0;
+			g->param2 = bootsector_rubbox_ActIntData1;
+			p = addDevice(0,0,0,g->type,g->param1,g->param2,this);
+			p->ActIntBuffer.slot = -1;
+//			aciPutItem(ACI_RUBOX);
+			if(!aciPutItem(ACI_RUBOX))
+			{
+				p->DeviceOut(ActD.Active->R_curr + Vector(0,0,ActD.Active->radius*3));
+				SOUND_TAKE_ITEM(getDistX(ActD.Active->R_curr.x,p->R_curr.x))
+//				ErrH.Abort("Water Closet Droped");
+			} else {
+				aciReInitItem(&p->ActIntBuffer);
+			}
+		}
+// Fill inventory with Rubboxes
+/*
+			while(true)
+			{
+				g = new uvsItem(UVS_ITEM_TYPE::RUBBOX);
+				uvsPoint->addItem(g,1);
+//				g->param1 = bootsector_rubbox_ActIntData0;
+//				g->param2 = bootsector_rubbox_ActIntData1;
+				p = addDevice(0,0,0,g->type,g->param1,g->param2,this);
+				p->ActIntBuffer.slot = -1;
+	//			aciPutItem(ACI_RUBOX);
+				if(!aciPutItem(ACI_RUBOX))
+				{
+					break;
+				} else {
+					aciReInitItem(&p->ActIntBuffer);
+				}
+			}
+		}
+*/
+// tractortractor's added end
 	}else{
 		//stalkerg Или тут
 		n = uvsPoint->Pitem;

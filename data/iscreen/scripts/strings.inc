@@ -499,7 +499,7 @@
 #define iSTR_VAN_WAR2			"ВАН-ВАР"
 
 #define iSTR_MECHOSOMA1 		"MECHOSOMA"
-#define iSTR_MECHOSOMA2 		"МЕХАСОМА"
+#define iSTR_MECHOSOMA2 		"МЕХОСОМА"
 
 #define iSTR_PASSEMBLOSS1		"PASSEMBLOSS"
 #define iSTR_PASSEMBLOSS2		"ПАССЕМБЛОС"
@@ -536,6 +536,20 @@
 
 #define iSTR_JoystickAlternFnc1 	"Handle Alternative Function:"
 #define iSTR_JoystickAlternFnc2 	"Альтернативная функция рукоятки:"
+
+// tractortractor's added begin
+#define iSTR_JoystickTractionAxis1	"Traction axis:"
+#define iSTR_JoystickTractionAxis2	"Ось тяги:"
+
+#define iSTR_JoystickTractionSensitivity1 "Traction axis sensitivity:"
+#define iSTR_JoystickTractionSensitivity2 "Чувствительность оси тяги:"
+
+#define iSTR_JoystickRudderAxis1	"Rudder axis:"
+#define iSTR_JoystickRudderAxis2	"Ось руля:"
+
+#define iSTR_JoystickRudderSensitivity1	"Rudder axis sensitivity:"
+#define iSTR_JoystickRudderSensitivity2	"Чувствительность оси руля:"
+// tractortractor's added end
 
 #define iSTR_JoystickBUTTON11		"BUTTON1"
 #define iSTR_JoystickBUTTON12		"КНОПКА1"

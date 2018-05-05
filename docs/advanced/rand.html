@@ -1,0 +1,149 @@
+<ol>
+	<li>
+	<h3>Main ones:</h3>
+		<ol>
+			<li>
+				<p>"inline unsigned int RND(unsigned int)" function:</p>
+				<p>Defined in "src\common.h".</p>
+				<p>Seed: "unsigned int RNDVAL", default is "83".</p>
+				<p>Used most often. Seems like it's called at least each quant.</p>
+			</li>
+
+			<li>
+				<p>c "rand()" - used but relatively rare.</p>
+				<p>Used to determine next sound effect. Used while interacting with walls of escave.</p>
+			</li>
+
+			<li>
+				<p>"int _rand()" function:</p>
+				<p>Defined in "src\3d\3d_math.cpp".</p>
+				<p>Seed: "unsigned long int next", default is "1".</p>
+				<p>Used while mechos is hit by projectiles.</p>
+			</li>
+
+			<li>
+				<p>"class RandomGenerator":</p>
+				<p>Class defined in "lib\xtool\xmath\xmath.h".</p>
+				<p>Random function: "int operator()", member of class, defined in "lib\xtool\xmath\xmath.cpp".</p>
+				<p>Seed: "int value", member of this class, default is "1".</p>
+				<p>Used very rarely if ever.</p>
+			</li>
+
+			<li>
+				<p>"int InitialRND" value:</p>
+				<p>Set using "time" function.</p>
+				<p>Used to set "RNDVAL" seed if this is multiplayer game.</p>
+			</li>
+
+			<li>
+				<p>"int rndValue", member of aciML_Event:</p>
+				<p>Loaded from script file.</p>
+				<p>Used with c "rand" in "rnd_event_quant" function in "scr/actint/aci_scr.cpp" file.</p>
+				<p>Default is 0.</p>
+				<p>Values loaded from scripts: 1-5.</p>
+			</li>
+		</ol>
+	</li>
+	<li>
+		<h3>Complete copies of "RND", LIST IS NOT FULL:</h3>
+
+		<ol>
+			<li>
+				<p>"inline unsigned int effectRND(unsigned int)":</p>
+				<p>Defined in "src\units\effect.cpp".</p>
+				<p>Seed: "unsigned int effectRNDVAL", default is "8383".</p>
+				<p>Used very often. Seems like it's called at least each quant while outside of escave.</p>
+			</li>
+
+			<li>
+				<p>"inline unsigned int BogusRND(unsigned int)":</p>
+				<p>Defined in "src\particle\particle.h".</p>
+				<p>Seed: "unsigned int BogusRNDVAL", default is "83838383".</p>
+				<p>Used heavily while one of these explodes: Beebbanoza Blockade's projectile while hitting vanger, MacHOTine gun's projectile while hitting vanger, Weexow's fish, Crustest cannon's projectile.</p>
+			</li>
+
+			<li>
+				<p>"struct NetRndType".</p>
+				<p>Defined in "src\network.h".</p>
+				<p>Random function: "inline unsigned int Get(unsigned int)", member of class.</p>
+				<p>Seed: "unsigned int NetRndVal", member of class, default is "0".</p>
+			</li>
+
+			<li>
+				<p>"struct aiRndType".</p>
+				<p>Defined in "src/units/hobj.h".</p>
+				<p>Random function: "inline unsigned int aiRnd(unsigned int)", member of class.</p>
+				<p>Seed: "unsigned int aiRndVal", member of class, default is "0".</p>
+				<p>Used to generate checkpoints in multiplayer race.</p>
+			</li>
+		</ol>
+
+	</li>
+
+	<li>
+		<h3>Some functions/function-like macros which are using previous ones, LIST IS NOT FULL:</h3>
+
+		<ol>
+			<li>
+				<p>"random":</p>
+					<ol>
+						<li>
+							<p>macros:</p>
+							<ol>
+								<li>
+									<p>Defined in "src\3d\3d_math.h" if not yet defined.</p>
+									<p>Uses  "_rand".</p>
+								</li>
+								<li>
+									<p>Always redefined in "src\3d\dynamics.cpp".</p>
+									<p>Uses "_rand".</p>
+								</li>
+								<li>
+									<p>Always redefined in "src\common.h".</p>
+									<p>Uses "RND".</p>
+								</li>
+								<li>
+									<p>Always redefined in "src\particle\partmap.cpp".</p>
+									<p>Uses "BogusRND".</p>
+									<p>Right After that if __HIGHC__ is defined, EXTERNAL_USE is NOT defined, random is NOT defined then "random" macro is defined.</p>
+									<p>Uses "rand".</p>
+								</li>
+							</ol>
+						</li>
+						<li>
+							<p>functions:</p>
+							<ol>
+								<li>
+									<p>"xm_inline unsigned int random(unsigned int)": defined in "lib\xtool\xmath\xmath.h", uses "RandomGenerator".</p>
+								</li>
+							</ol>
+						</li>
+					</ol>
+			</li>
+
+			<li>
+				<p>"inline unsigned int realRND(unsigned int)": defined in "src\common.h", uses "rand", previously was complete copy of "RND" and used "realRNDVAL" as seed.</p>
+			</li>
+
+			<li>
+				<p>"RNDSIGN" macro: defined in "src\common.h", uses "RND".</p>
+			</li>
+
+			<li>
+				<p>"xm_inline float frnd(float)", defined in "lib\xtool\xmath\xmath.h", uses "RandomGenerator".</p>
+			</li>
+
+			<li>
+				<p>"xm_inline float fabsRnd(float)", defined in "lib\xtool\xmath\xmath.h", uses "RandomGenerator".</p>
+			</li>
+		</ol>
+	</li>
+	<li>
+		<h3>Some unused, LIST IS NOT FULL:</h3>
+		<ol>
+			<li>
+				<p>"unsigned int storeRNDVAL, storerealRNDVAL" declared in "src\iscreen\ivmap.cpp". Never defined or used.</p>
+			</li>
+		</ol>
+	</li>
+</ol>

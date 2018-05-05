@@ -2,6 +2,8 @@
 #ifndef __XRECORDER_H
 #define __XRECORDER_H
 
+#include "../../src/iscreen/controls.h" // tractortractor's added
+
 // XRecorderMessage types...
 enum XRecorderMessages
 {
@@ -51,6 +53,13 @@ struct XRecorder
 	void Open(char* fname,int mode);
 	void Close(void);
 	void Flush(void);
+
+// tractortractor's added begin
+	bool saveControls(iKeyControls *iControlsObj);
+	bool loadControls(iKeyControls *iControlsObj);
+	void saveAciAutoRun(int aciAutoRun);
+	void loadAciAutoRun(int &aciAutoRun);
+// tractortractor's added end
 
 	//void PutMessage(int msg,int sz = 0,void* p = NULL);
 	void PutSysMessage(int id,SDL_Event *e);

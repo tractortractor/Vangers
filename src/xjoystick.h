@@ -1,6 +1,8 @@
 #ifndef _XJOYSTICK_H
 #define _XJOYSTICK_H
 
+#include <SDL_joystick.h> // tractortractor's added
+
 //---------------------------------------------------------------------------
 
 struct XJOYSTATE {
@@ -12,15 +14,42 @@ struct XJOYSTATE {
 //    long    lRz;                    /* z-axis rotation              */
 //    long    rglSlider[2];           /* extra axes positions         */
 //    unsigned int   rgdwPOV[4];             /* POV directions               */
+	int              rgdwPOVNum; // tractortractor's added
+	unsigned char   *rgdwPOV = NULL; // tractortractor's added
     unsigned char    rgbButtons[32];         /* 32 buttons                   */
+// tractortractor's added begin
+	long previous_lX;
+	long previous_lY;
+// tractortractor's added end
 };
    
 extern XJOYSTATE  XJoystickState;
+
+// tractortractor's added begin
+extern int XJoystickTractionSensitivity;
+extern int XJoystickRudderSensitivity;
+// tractortractor's added end
 
 // prototypes
 bool XJoystickInit();
 void XJoystickCleanup();
 int XJoystickInput();  // updates XJoystickState if !0
+// tractortractor's added begin
+bool XJoystickHandleAxisMotion_helper_gamepadStateCompare(int val1, int val2);
+int XJoystickHandleAxisMotion(SDL_Event* p);
+void XJoystickGetAxisPressed(int &axis_num, int &axis_inverted);
+int JoystickStickSwitchButtonPressed();
+int JoystickStickSwitchButtonCheck(int key);
+void XJoystickSetTractionAxisSensitivity(int value);
+void XJoystickSetRudderAxisSensitivity(int value);
+int JoystickAvailableCheck(void);
+// tractortractor's added end
+
+// tractortractor's added begin
+#define JOYSTICK_MAX_USED_AXES 2
+#define JOYSTICK_TRACTION_AXIS 0
+#define JOYSTICK_RUDDER_AXIS 1
+// tractortractor's added end
 
 // constants used for scaling the input device
 #define DEADZONE        2500            // 25% of the axis range
@@ -34,6 +63,15 @@ int XJoystickInput();  // updates XJoystickState if !0
 #define EF_BOUNCE   0x00000001l
 #define EF_EXPLODE  0x00000002l
 #define EF_FIRE     0x00000004l
+
+// tractortractor's added begin
+#ifndef SDL_JOYSTICK_AXIS_MAX
+#define SDL_JOYSTICK_AXIS_MAX   32767
+#endif
+#ifndef SDL_JOYSTICK_AXIS_MIN
+#define SDL_JOYSTICK_AXIS_MIN   -32768
+#endif
+// tractortractor's added end
 
 #define VK_BUTTON		0x100
 #define VK_STICK_SWITCH	  0x200

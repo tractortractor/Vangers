@@ -67,7 +67,7 @@ char* win32_findfirst(char* mask)
 extern int ViewX,ViewY;
 extern iGameMap* curGMap;
 extern int MLstatus,MLprocess;
-extern std::string path_to_world; 
+extern std::string path_to_world;
 /* --------------------------- PROTOTYPE SECTION --------------------------- */
 char* GetTargetName(const char* name);
 /* --------------------------- DEFINITION SECTION -------------------------- */

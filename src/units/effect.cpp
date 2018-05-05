@@ -42,9 +42,11 @@ int SPViewX,SPViewY,SPScaleMap,SPTorXSize,SPTorYSize;
 extern int AdvancedView;
 extern int RAM16;
 
-unsigned effectRNDVAL = 8383;
-inline unsigned effectRND(unsigned m)
+unsigned int effectRNDVAL = 8383; // tractortractor's added "int"
+inline unsigned int effectRND(unsigned m) // tractortractor's added "int"
 {
+//	std::cout << __FILE__ << "; " << __LINE__ << "; custom" << std::endl; // tractortractor's test
+//	return 2; // tractortractor's test
 	effectRNDVAL ^= effectRNDVAL >> 3;
 	effectRNDVAL ^= effectRNDVAL << 28;
 	effectRNDVAL &= 0x7FFFFFFF;
@@ -1970,7 +1972,7 @@ void ParticleGenerator::Quant(void)
 		vT += Vector(getDistX(vTarget.x,R_curr.x),getDistY(vTarget.y,R_curr.y),0);
 
 	if((TargetMode & PG_TARGET_RANDOM) && RND(100) < 50)
-		vT += Vector(BMAX_TARGET_VECTOR - RND(BMAX_TARGET_VECTOR2),BMAX_TARGET_VECTOR - RND(BMAX_TARGET_VECTOR2),BMAX_TARGET_VECTOR - RND(BMAX_TARGET_VECTOR2));
+		vT += Vector(BMAX_TARGET_VECTOR - RND(BMAX_TARGET_VECTOR2),BMAX_TARGET_VECTOR - RND(BMAX_TARGET_VECTOR2),BMAX_TARGET_VECTOR - RND(BMAX_TARGET_VECTOR2)); // tractortractor's comented
 
 	if(TargetMode & PG_TARGET_RANDOM)
 		vT += Vector(vDelta.y,-vDelta.x,0);

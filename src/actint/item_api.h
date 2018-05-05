@@ -255,7 +255,7 @@ extern const char* aci_curLocationName;
 
 void aciSendEvent2actint(int code,actintItemData* p,int data = 0);
 void aciSendEvent2itmdsp(int code,actintItemData* p,int data = 0);
-char getObjectPosition(int& x,int& y);
+char getObjectPosition(int& x,int& y,DBM*& matrix,int& facing_vector,bool& facing_direct,int& side_vector,bool& side_left); // tractortractor's added ",DBM*& matrix,int& facing_vector,bool& facing_direct,int& side_vector,bool& side_left"
 actintItemData* aciGetLast(void);
 
 int aciGetScreenItem(int x,int y);

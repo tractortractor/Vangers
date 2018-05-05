@@ -11,6 +11,8 @@
 #ifndef __XGRAPH_H__
 #define __XGRAPH_H__
 
+//#include "../../src/3d/3d_math.h" // tractortractor's added, causes function names conflicts
+struct DBM; // tractortractor's added
 #ifdef WITH_OPENGL
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -153,6 +155,8 @@ struct XGR_Screen
 	void line(int x1,int y1,int x2,int y2,int col);
 	void lineto(int x,int y,int len,int dir,int col);
 
+	void facingArrow(int x,int y,DBM *matrix,int facing_vector,bool facing_direct,int side_vector,bool side_left,int size,int col); // tractortractor's added
+
 	int init(int x,int y,int flags);
 	void close(void);
 	void finit(void);
@@ -181,7 +185,9 @@ struct XGR_Screen
 	void lineto16(int x,int y,int len,int dir,int col);
 
 	void rectangle16(int x,int y,int sx,int sy,int outcol,int incol,int mode);
-	
+
+	void facingArrow16(int x,int y,DBM *matrix,int facing_vector,bool facing_direct,int side_vector,bool side_left,int size,int col); // tractortractor's added
+
 	void blitScreen(uint32_t *dst, uint8_t *src);
 
 	void set_render_buffer(SDL_Surface *buf);
@@ -416,6 +422,8 @@ struct XGR_Mouse
 #define XGR_Line(x1,y1,x2,y2,col)			XGR_Obj.line(x1,y1,x2,y2,col)
 #define XGR_LineTo(x,y,len,dir,col)			XGR_Obj.lineto(x,y,len,dir,col)
 
+#define XGR_FacingArrow(x,y,matrix,facing_vector,facing_direct,side_vector,side_left,size,col)	XGR_Obj.facingArrow(x,y,matrix,facing_vector,facing_direct,side_vector,side_left,size,col) // tractortractor's added
+
 #define XGR_SetPal(ptr,st,cnt)				XGR_Obj.setpal(ptr,st,cnt)
 #define XGR_GetPal(ptr) 				XGR_Obj.getpal(ptr)
 
@@ -435,6 +443,7 @@ struct XGR_Mouse
 #define XGR_Line16(x1,y1,x2,y2,col)				XGR_Obj.line(x1,y1,x2,y2,col)
 #define XGR_LineTo16(x,y,len,dir,col)				XGR_Obj.lineto(x,y,len,dir,col)
 #define XGR_Rectangle16(x,y,sx,sy,outcol,incol,mode)		XGR_Obj.rectangle(x,y,sx,sy,outcol,incol,mode)
+#define XGR_FacingArrow16(x,y,matrix,facing_vector,facing_direct,side_vector,side_left,size,col)	XGR_Obj.facingArrow(x,y,matrix,facing_vector,facing_direct,side_vector,side_left,size,col) // tractortractor's added
 #else
 #define XGR_PutSpr16(x,y,sx,sy,p,mode)				XGR_Obj.putspr16(x,y,sx,sy,p,mode)
 #define XGR_GetSpr16(x,y,sx,sy,p)				XGR_Obj.getspr16(x,y,sx,sy,p)
@@ -446,6 +455,7 @@ struct XGR_Mouse
 #define XGR_Line16(x1,y1,x2,y2,col)				XGR_Obj.line16(x1,y1,x2,y2,col)
 #define XGR_LineTo16(x,y,len,dir,col)				XGR_Obj.lineto16(x,y,len,dir,col)
 #define XGR_Rectangle16(x,y,sx,sy,outcol,incol,mode)		XGR_Obj.rectangle16(x,y,sx,sy,outcol,incol,mode)
+#define XGR_FacingArrow16(x,y,matrix,facing_vector,facing_direct,side_vector,side_left,size,col)	XGR_Obj.facingArrow16(x,y,matrix,facing_vector,facing_direct,side_vector,side_left,size,col) // tractortractor's added
 #endif
 
 #define XGR_MouseInit(x,y,sx,sy,num,p)			XGR_MouseObj.Init(x,y,sx,sy,num,p)

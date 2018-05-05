@@ -1,0 +1,1 @@
+devenv clunk.sln /build Release /projectconfig Release /project INSTALL /out logfile.txt

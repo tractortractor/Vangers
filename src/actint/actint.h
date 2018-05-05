@@ -6,7 +6,7 @@
 #define _ACI_CHECK_DIALOGS_
 //#define _ACI_SKIP_MAINMENU_
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 //#define _ACTINT_MEMSTAT_
 
 //#define _ACI_STARTUP_LOAD_GAME_
@@ -22,7 +22,7 @@
 /* -------------------------------------------------------------------------- */
 
 #define _ACI_BML_FONTS_
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 //#define _GENERATE_MATRIX_SHAPES_
 //#define _GENERATE_iMATRIX_SHAPES_
 //#define _GENERATE_ITEM_DATA_
@@ -1443,7 +1443,8 @@ struct actIntDispatcher
 	void save_data(XStream* fh);
 	void load_data(XStream* fh);
 
-#ifdef _DEBUG
+//#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG and commented
+#ifdef _GENERATE_ITEM_DATA_ // tractortractor's added
 	void save_items(void);
 #endif
 

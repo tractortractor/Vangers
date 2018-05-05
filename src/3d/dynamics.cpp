@@ -1,3 +1,7 @@
+#if defined(ENTRIES_CONTROL) || defined(VANGERS_DEBUG)
+#include <boost/filesystem.hpp> // tractortractor's added
+#endif
+
 #include "../global.h"
 
 #include "general.h"
@@ -28,9 +32,11 @@ struct ParticleProcess;
 #include "../dast/poly3d.h"
 
 #include "../iscreen/controls.h"
+#include "../iscreen/ikeys.h" // tractortractor's added
 
 #undef random
 #define random(num) ((int)(((long)_rand()*(num)) >> 15))
+//#define random(num) (std::cout << __FILE__ << "; " << __LINE__ << "; _rand()" << std::endl, (int)(((long)_rand()*(num)) >> 15)) // tractortractor's test
 
 #ifdef SICHER_DEBUG
 #define NO_BORDER_FIELD
@@ -39,7 +45,7 @@ struct ParticleProcess;
 #define UsingCutterig(t)	1
 #endif
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 #define ENTRIES_CONTROL
 #define MSG_OUT
 #endif
@@ -76,9 +82,11 @@ struct ParticleProcess;
 #define DUST_BY_BODY(x,y,speed,level) DrawMechosBody(x,y,speed,level)
 #define WHEEL_TRACK(x_curr,y_curr,speed,level,n) DrawMechosParticle(x_curr,y_curr,speed,level,n)
 
-#define GET_DEVICE_LATENCY() (SDL_GetTicks() + 4000)
+//#define GET_DEVICE_LATENCY() (SDL_GetTicks() + 4000) // tractortractor's commented
+#define DEVICE_LATENCY_MAX 50 // tractortractor's added
 
 #ifdef MSG_OUT
+const bool msg_log = true; // tractortractor's added, temporary workaround
 #define RESTRICT(v,a)	{ if(v.vabs() > a){ if(active) msg_buf < "Restriction of " #v "\n"; v.norm(a); } else if(active) msg_buf < "\n"; }
 #else
 #define RESTRICT(v,a)	{ if(v.vabs() > a){ v.norm(a); } }
@@ -326,7 +334,11 @@ double speed_correction_factor = 1;
 double speed_correction_tau = 0.01;
 
 
-unsigned int last_keyboard_touch;
+// tractortractor's added begin
+extern Uint8 *controlsKeyboardState;
+// tractortractor's added end
+
+//unsigned int last_keyboard_touch; // tractortractor's commented
 int terrain_analysis_flag;
 int non_loaded_space;
 
@@ -349,6 +361,8 @@ int gSx=0,gSx2=0;
 int gSy=0,gSy2=0;
 int gSz=0;
 int gSxz=0,gSyz=0;
+
+// static int recorder_coord_cout_delay = 0; // tractortractor's test recorder
 
 int check_dynamics_locals()
 {
@@ -487,15 +501,20 @@ void Object::entries_control()
 	#endif
 
 	switch(entry_scan_code){
-		case VK_NEXT:
-			if(XKey.Pressed(VK_CONTROL)){
+//		case VK_NEXT: // tractortractor's commented
+		case SDL_SCANCODE_END: // tractortractor's added
+//			if(XKey.Pressed(VK_CONTROL)){ // tractortractor's commented
+			if(controlsKeyboardState[SDL_SCANCODE_LCTRL] // tractortractor's added
+				|| controlsKeyboardState[SDL_SCANCODE_RCTRL]){ // tractortractor's added
 				do{
 					if(++indices_entry[curr_entry] >= num_entries)
 						indices_entry[curr_entry] = 0;
 					} while(!(type_entries[indices_entry[curr_entry]] & FIRST_IN_GROUP));
 				break;
 				}
-			if(XKey.Pressed(VK_SHIFT)){
+//			if(XKey.Pressed(VK_SHIFT)){ // tractortractor's commented
+			if(controlsKeyboardState[SDL_SCANCODE_LSHIFT] // tractortractor's added
+				|| controlsKeyboardState[SDL_SCANCODE_RSHIFT]){ // tractortractor's added
 				if(++curr_entry >= num_indices)
 					curr_entry = 0;
 				break;
@@ -503,15 +522,20 @@ void Object::entries_control()
 			if(++indices_entry[curr_entry] >= num_entries)
 				indices_entry[curr_entry] = 0;
 			break;
-		case VK_PRIOR:
-			if(XKey.Pressed(VK_CONTROL)){
+//		case VK_PRIOR: // tractortractor's commented
+		case SDL_SCANCODE_PAGEUP: // tractortractor's added
+//			if(XKey.Pressed(VK_CONTROL)){ // tractortractor's commented
+			if(controlsKeyboardState[SDL_SCANCODE_LCTRL] // tractortractor's added
+				|| controlsKeyboardState[SDL_SCANCODE_RCTRL]){ // tractortractor's added
 				do{
 					if(--indices_entry[curr_entry] < 0)
 						indices_entry[curr_entry] = num_entries - 1;
 					} while(!(type_entries[indices_entry[curr_entry]] & FIRST_IN_GROUP));
 				break;
 				}
-			if(XKey.Pressed(VK_SHIFT)){
+//			if(XKey.Pressed(VK_SHIFT)){ // tractortractor's commented
+			if(controlsKeyboardState[SDL_SCANCODE_LSHIFT] // tractortractor's added
+				|| controlsKeyboardState[SDL_SCANCODE_RSHIFT]){ // tractortractor's added
 				if(--curr_entry < 0)
 					curr_entry = num_indices - 1;
 				break;
@@ -519,42 +543,70 @@ void Object::entries_control()
 			if(--indices_entry[curr_entry] < 0)
 				indices_entry[curr_entry] = num_entries - 1;
 			break;
-		case VK_ADD:
-			if(XKey.Pressed(VK_CONTROL)){
+//		case VK_ADD: // tractortractor's commented
+		case SDL_SCANCODE_KP_PLUS: // tractortractor's added
+//			if(XKey.Pressed(VK_CONTROL)){ // tractortractor's commented
+			if(controlsKeyboardState[SDL_SCANCODE_LCTRL] // tractortractor's added
+				|| controlsKeyboardState[SDL_SCANCODE_RCTRL]){ // tractortractor's added
 				if(++num_indices >= max_indices)
 					num_indices = max_indices;
 				break;
 				}
-			if(type_entries[indices_entry[curr_entry]] & INT_ENTRY)
-				if(XKey.Pressed(VK_SHIFT))
+			if(type_entries[indices_entry[curr_entry]] & INT_ENTRY){
+//				if(XKey.Pressed(VK_SHIFT)){ // tractortractor's commented
+				if(controlsKeyboardState[SDL_SCANCODE_LSHIFT] || controlsKeyboardState[SDL_SCANCODE_RSHIFT]){ // tractortractor's added
 					(*(int*)pval_entries[indices_entry[curr_entry]])++;
-				else
+					}
+				else{
 					(*(int*)pval_entries[indices_entry[curr_entry]]) += abs((*(int*)pval_entries[indices_entry[curr_entry]]))/16 + 1;
-			else
-				if(XKey.Pressed(VK_SHIFT))
+					}
+				}
+			else{
+//				if(XKey.Pressed(VK_SHIFT)){ // tractortractor's commented
+				if(controlsKeyboardState[SDL_SCANCODE_LSHIFT] // tractortractor's added
+					|| controlsKeyboardState[SDL_SCANCODE_RSHIFT]){ // tractortractor's added
 					*(double*)pval_entries[indices_entry[curr_entry]] *= 1.0002;
-				else
+					}
+				else{
 					*(double*)pval_entries[indices_entry[curr_entry]] *= 1.05;
+					}
+				}
 			break;
-		case VK_SUBTRACT:
-			if(XKey.Pressed(VK_CONTROL)){
+//		case VK_SUBTRACT: // tractortractor's commented
+		case SDL_SCANCODE_KP_MINUS: // tractortractor's added
+//			if(XKey.Pressed(VK_CONTROL)){ // tractortractor's commented
+			if(controlsKeyboardState[SDL_SCANCODE_LCTRL] // tractortractor's added
+				|| controlsKeyboardState[SDL_SCANCODE_RCTRL]){ // tractortractor's added
 				if(--num_indices < 0)
 					num_indices = 0;
 				break;
 				}
-			if(type_entries[indices_entry[curr_entry]] & INT_ENTRY)
-				if(XKey.Pressed(VK_SHIFT))
+			if(type_entries[indices_entry[curr_entry]] & INT_ENTRY) {
+//				if(XKey.Pressed(VK_SHIFT)){ // tractortractor's commented
+				if(controlsKeyboardState[SDL_SCANCODE_LSHIFT] // tractortractor's added
+					|| controlsKeyboardState[SDL_SCANCODE_RSHIFT]){ // tractortractor's added
 					(*(int*)pval_entries[indices_entry[curr_entry]])--;
-				else
+					}
+				else {
 					(*(int*)pval_entries[indices_entry[curr_entry]]) -= abs((*(int*)pval_entries[indices_entry[curr_entry]]))/16 + 1;
-			else
-				if(XKey.Pressed(VK_SHIFT))
+					}
+				}
+			else{
+//				if(XKey.Pressed(VK_SHIFT)){ // tractortractor's commented
+				if(controlsKeyboardState[SDL_SCANCODE_LSHIFT] // tractortractor's added
+					|| controlsKeyboardState[SDL_SCANCODE_RSHIFT]){ // tractortractor's added
 					*(double*)pval_entries[indices_entry[curr_entry]] /= 1.0002;
-				else
+					}
+				else{
 					*(double*)pval_entries[indices_entry[curr_entry]] /= 1.05;
+					}
+				}
 			break;
-		case 'S':
-			if(XKey.Pressed(VK_CONTROL))
+//		case 'S': // tractortractor's commented
+		case SDL_SCANCODE_S: // tractortractor's added
+//			if(XKey.Pressed(VK_CONTROL)) // tractortractor's commented
+			if(controlsKeyboardState[SDL_SCANCODE_LCTRL] // tractortractor's added
+				|| controlsKeyboardState[SDL_SCANCODE_RCTRL]) // tractortractor's added
 				global_save_parameter(indices_entry[curr_entry]);
 			else{
 				save_parameters(prm_name);
@@ -602,6 +654,10 @@ void Object::save_parameters(char* name)
 	out < f.GetBuf() + f.tell();
 }
 
+
+
+// tractortractor's commented begin
+/*
 void Object::global_save_parameter(int i_entry)
 {
 	if(i_entry >= first_common_entry)
@@ -641,6 +697,58 @@ void Object::global_save_parameter(int i_entry)
 			log = win32_findnext();
 		}
 }
+*/
+// tractortractor's commented end
+
+
+// tractortractor's added begin
+void Object::save_mechous_prm(int i_entry, std::string filename)
+{
+	Parser f(filename.c_str());
+	XStream out(filename.c_str(),XS_OUT);
+	out.SetDigits(6);
+	char* str = f.GetBuf() + f.tell();
+	do
+		f.search_name(name_entries[i_entry]);
+		while(*(f.GetBuf() + f.tell()) != ':');
+	*(f.GetBuf() + f.tell()) = 0;
+	++f;
+	out < str < ":" < "\t\t";
+	if(type_entries[i_entry] & INT_ENTRY){
+		f.get_int();
+		out <= *(int*)pval_entries[i_entry];
+		}
+	else{
+		f.get_double();
+		out <= *(double*)pval_entries[i_entry];
+		}
+	out < f.GetBuf() + f.tell();
+}
+
+void Object::global_save_parameter(int i_entry)
+{
+	if(i_entry >= first_common_entry)
+		return;
+// tractortractor's added begin
+	boost::filesystem::path mechous_prm_dir ("resource/m3d/mechous");
+
+	if(boost::filesystem::exists(mechous_prm_dir) && boost::filesystem::is_directory(mechous_prm_dir))
+	{
+		for (const boost::filesystem::directory_entry& dir_entry : boost::filesystem::directory_iterator(mechous_prm_dir))
+		{
+			if(is_directory(dir_entry))
+				continue;
+			if(dir_entry.path().extension() != "prm")
+				continue;
+			if(dir_entry.path().filename() == "default.prm");
+				continue;
+			save_mechous_prm(i_entry, dir_entry.path().string());
+		}
+		save_mechous_prm(i_entry, "resource/m3d/mechous/default.prm");
+	}
+}
+// tractortractor's added end
+
 #endif
 
 void Object::load_parameters(const char* name)
@@ -2194,7 +2302,9 @@ void Object::dynamics_init(char* name)
 	mole_on = 0;
 	draw_mode = NORMAL_DRAW_MODE;
 	//draw_mode = TRANSPARENCY_DRAW_MODE;
-	device_switch_latency = 0;
+//	device_switch_latency = 0; // tractortractor's commented
+	device_switch_latency_max = DEVICE_LATENCY_MAX; // tractortractor's added
+	device_switch_latency_current = 0; // tractortractor's added
 	prev_controls = current_controls = 0;
 	last_send_time = 0;
 
@@ -2341,12 +2451,44 @@ void Object::set_active(int on)
 void Object::motor_control(int dir)
 {
 	int sign = SIGN(traction);
-	if(dir == ADD_POWER)
-		if((traction += traction_increment) > 256)
-			traction = 256;
-	if(dir == DEL_POWER)
-		if((traction -= traction_increment) < -256)
-			traction = -256;
+	if(dir == ADD_POWER){
+// tractortractor's added begin
+		if(active){
+			if(traction > traction_joystick_max){
+				if(traction - traction_increment > traction_joystick_max)
+					traction -= traction_increment;
+				else
+					traction = traction_joystick_max;
+				}
+			else if((traction += traction_increment) > traction_joystick_max){
+				traction = traction_joystick_max;
+				}
+			}
+		else{
+// tractortractor's added end
+			if((traction += traction_increment) > 256)
+				traction = 256;
+			} // tractortractor's added
+		} // tractortractor's added
+	if(dir == DEL_POWER){
+// tractortractor's added begin
+		if(active){
+			if(traction < traction_joystick_min){
+				if(traction + traction_increment < traction_joystick_min)
+					traction += traction_increment;
+				else
+					traction = traction_joystick_min;
+				}
+			else if((traction -= traction_increment) < traction_joystick_min){
+				traction = traction_joystick_min;
+				}
+			}
+		else{
+// tractortractor's added end
+			if((traction -= traction_increment) < -256)
+				traction = -256;
+			} // tractortractor's added
+		} // tractortractor's added
 	if(!(sign + SIGN(traction)))
 		traction = 0;
 }
@@ -2360,13 +2502,44 @@ void Object::steer(int dir)
 	int delta = rudder_step << 1;
 	//zmod 1.17
 	//if (!hand_brake && traction>0 && abs(rudder)<delta) delta = delta/2;
-	if(dir == LEFT_SIDE)
-		if((rudder += delta) > rudder_max)
-			rudder = rudder_max;
-
-	if(dir == RIGHT_SIDE)
-		if((rudder -= delta) < -rudder_max)
-			rudder = -rudder_max;
+	if(dir == LEFT_SIDE){
+// tractortractor's added begin
+		if(active){
+			if(rudder > rudder_joystick_max){
+				if(rudder - delta > rudder_joystick_max)
+					rudder -= delta;
+				else
+					rudder = rudder_joystick_max;
+				}
+			else if((rudder += delta) > rudder_joystick_max){
+				rudder = delta;
+				}
+			}
+		else{
+// tractortractor's added end
+			if((rudder += delta) > rudder_max)
+				rudder = rudder_max;
+			} // tractortractor's added
+		} // tractortractor's added
+	if(dir == RIGHT_SIDE){
+// tractortractor's added begin
+		if(active){
+			if(rudder < rudder_joystick_min){
+				if(rudder + delta < rudder_joystick_min)
+					rudder += delta;
+				else
+					rudder = rudder_joystick_min;
+				}
+			else if((rudder -= delta) < rudder_joystick_min){
+				rudder = rudder_joystick_min;
+				}
+			}
+		else{
+// tractortractor's added end
+			if((rudder -= delta) < -rudder_max)
+				rudder = -rudder_max;
+			} // tractortractor's added
+		} // tractortractor's added
 }
 void Object::impulse(int side)
 {
@@ -2519,14 +2692,16 @@ void Object::controls(int mode,int param)
 		case CONTROLS::HELICOPTER_DOWN:
 			if(helicopter && (helicopter -= helicopter_height_decr) < 0){
 				helicopter = 0;
-				device_switch_latency = GET_DEVICE_LATENCY();
+//				device_switch_latency = GET_DEVICE_LATENCY(); // tractortractor's commented
+				device_switch_latency_current = 0; // tractortractor's added
 				}
 			break;
 
 		case CONTROLS::FLOTATION_UP:
 			if(dynamic_state & TOUCH_OF_WATER && archimedean < 256 && (archimedean += 4) >= 256){
 				archimedean = 256;
-				device_switch_latency = GET_DEVICE_LATENCY();
+//				device_switch_latency = GET_DEVICE_LATENCY(); // tractortractor's commented
+				device_switch_latency_current = 0; // tractortractor's added
 				 }
 			break;
 		case CONTROLS::FLOTATION_DOWN:
@@ -2539,12 +2714,14 @@ void Object::controls(int mode,int param)
 				mole_on = 256;
 				rudder = 0;
 				StartMoleProcess();
-				device_switch_latency = GET_DEVICE_LATENCY();
+//				device_switch_latency = GET_DEVICE_LATENCY(); // tractortractor's commented
+				device_switch_latency_current = 0; // tractortractor's added
 				}
 			break;
 		case CONTROLS::MOLE_UP:
 			mole_on--;
-			device_switch_latency = GET_DEVICE_LATENCY();
+//			device_switch_latency = GET_DEVICE_LATENCY(); // tractortractor's commented
+			device_switch_latency_current = 0; // tractortractor's added
 			break;
 
 		case CONTROLS::VIRTUAL_UP:
@@ -2557,8 +2734,10 @@ void Object::controls(int mode,int param)
 				controls(CONTROLS::FLOTATION_UP);
 				return;
 				}
-			if(device_switch_latency > SDL_GetTicks())
+//			if(device_switch_latency > SDL_GetTicks()) // tractortractor's commented
+			if(device_switch_latency_max > device_switch_latency_current){ // tractortractor's added
 				return;
+			}
 			controls(CONTROLS::HELICOPTER_UP);
 			break;
 
@@ -2568,8 +2747,10 @@ void Object::controls(int mode,int param)
 				controls(CONTROLS::HELICOPTER_DOWN);
 				return;
 				}
-			if(device_switch_latency > SDL_GetTicks())
+//			if(device_switch_latency > SDL_GetTicks()) // tractortractor's commented
+			if(device_switch_latency_max > device_switch_latency_current){ // tractortractor's added
 				return;
+			}
 			if(dynamic_state & TOUCH_OF_WATER)
 				controls(CONTROLS::FLOTATION_DOWN);
 			else 
@@ -2581,85 +2762,116 @@ void Object::controls(int mode,int param)
 #ifdef SICHER_DEBUG
 void Object::direct_keyboard_control()
 {
-	if(XKey.Pressed(VK_UP)){
+//	if(XKey.Pressed(VK_UP)){ // tractortractor's commented
+	if(controlsKeyboardState[SDL_SCANCODE_UP]){ // tractortractor's added
 		static int delay;
 		if(traction < 0)
 			delay = 5;
 		if(delay-- > 0)
 			controls(CONTROLS::BRAKE_QUANT);
-		else
+		else{
+			traction_joystick_max = 256; // tractortractor's added
 			controls(CONTROLS::TRACTION_INCREASE);
+			}
 		}
-	if(XKey.Pressed(VK_DOWN) || XKey.Pressed(VK_OEM_5) || XKey.Pressed('5')){
+//	if(XKey.Pressed(VK_DOWN) || XKey.Pressed(VK_OEM_5) || XKey.Pressed('5')){ // tractortractor's commented
+// tractortractor's added begin
+	if(controlsKeyboardState[SDL_SCANCODE_DOWN]
+		|| controlsKeyboardState[SDL_SCANCODE_KP_5]
+		|| controlsKeyboardState[SDL_SCANCODE_5]){
+// tractortractor's added end
 		static int delay;
 		if(traction > 0)
 			delay = 5;
 		if(delay-- > 0)
 			controls(CONTROLS::BRAKE_QUANT);
-		else
+		else{
+			traction_joystick_min = -256; // tractortractor's added
 			controls(CONTROLS::TRACTION_DECREASE);
+			}
 		}
 
 	if(!aciAutoRun){
-		if(XKey.Pressed(VK_SHIFT))
+//		if(XKey.Pressed(VK_SHIFT)) // tractortractor's commented
+		if(controlsKeyboardState[SDL_SCANCODE_LSHIFT] // tractortractor's added
+			|| controlsKeyboardState[SDL_SCANCODE_RSHIFT]) // tractortractor's added
 			controls(CONTROLS::TURBO_QUANT);
 		}
 	else{
-		if(!XKey.Pressed(VK_SHIFT))
+//		if(!XKey.Pressed(VK_SHIFT)) // tractortractor's commented
+		if(controlsKeyboardState[SDL_SCANCODE_LSHIFT] // tractortractor's added
+			|| controlsKeyboardState[SDL_SCANCODE_RSHIFT]) // tractortractor's added
 			controls(CONTROLS::TURBO_QUANT);
 		}
-	if(XKey.Pressed('X'))
+//	if(XKey.Pressed('X')) // tractortractor's commented
+	if(controlsKeyboardState[SDL_SCANCODE_X]) // tractortractor's added
 		controls(CONTROLS::HAND_BRAKE_QUANT);
 
-	if(XKey.Pressed(VK_LEFT))
+//	if(XKey.Pressed(VK_LEFT)) // tractortractor's commented
+	if(controlsKeyboardState[SDL_SCANCODE_LEFT]){ // tractortractor's added
+		rudder_joystick_max = rudder_max; // tractortractor's added
 		controls(CONTROLS::STEER_LEFT);
-	if(XKey.Pressed(VK_RIGHT))
+		} // tractortractor's added
+//	if(XKey.Pressed(VK_RIGHT)) // tractortractor's commented
+	if(controlsKeyboardState[SDL_SCANCODE_RIGHT]){ // tractortractor's added
+		rudder_joystick_min = -rudder_max; // tractortractor's added
 		controls(CONTROLS::STEER_RIGHT);
+		} // tractortractor's added
 
-	if(XKey.Pressed(VK_END))
+//	if(XKey.Pressed(VK_END)) // tractortractor's commented
+	if(controlsKeyboardState[SDL_SCANCODE_END]) // tractortractor's added
 		controls(CONTROLS::LEFT_SIDE_IMPULSE);
-	if(XKey.Pressed(VK_NEXT))
+//	if(XKey.Pressed(VK_NEXT)) // tractortractor's commented
+	if(controlsKeyboardState[SDL_SCANCODE_PAGEUP]) // tractortractor's added
 		controls(CONTROLS::RIGHT_SIDE_IMPULSE);
 
-	if(XKey.Pressed(VK_INSERT) | XKey.Pressed('A'))
+//	if(XKey.Pressed(VK_INSERT) | XKey.Pressed('A')) // tractortractor's commented
+	if(controlsKeyboardState[SDL_SCANCODE_INSERT] // tractortractor's added
+		|| controlsKeyboardState[SDL_SCANCODE_A]) // tractortractor's added
 		controls(CONTROLS::JUMP_POWER_ACCUMULATION_ON);
 	else
 		if(jump_power)
 			controls(CONTROLS::JUMP_USING_ACCUMULATED_POWER);
 
-	if(XKey.Pressed('Z'))
+//	if(XKey.Pressed('Z')) // tractortractor's commented
+	if(controlsKeyboardState[SDL_SCANCODE_Z]) // tractortractor's added
 		controls(CONTROLS::VIRTUAL_UP);
 
-	if(XKey.Pressed(VK_PRIOR))
+//	if(XKey.Pressed(VK_PRIOR)) // tractortractor's commented
+	if(controlsKeyboardState[SDL_SCANCODE_PAGEDOWN]) // tractortractor's added
 		controls(CONTROLS::VIRTUAL_UP);
 
-	if(XKey.Pressed(VK_HOME))
+//	if(XKey.Pressed(VK_HOME)) // tractortractor's commented
+	if(controlsKeyboardState[SDL_SCANCODE_HOME]) // tractortractor's added
 		controls(CONTROLS::VIRTUAL_DOWN);
 
 #ifdef SICHER_DEBUG	
 	static int fish_switch = 1;
-	if(XKey.Pressed('G') && fish_switch){
+//	if(XKey.Pressed('G') && fish_switch){ // tractortractor's commented
+	if(controlsKeyboardState[SDL_SCANCODE_G] && fish_switch){ // tractortractor's added
 		fish_test = 1 - fish_test;
 		fish_switch = 0;
 		}
 	else
 		fish_switch = 1;
 
-	/*
-	static int skyfarmer_switch = 1;
-	if(XKey.Pressed('H') && skyfarmer_switch){
-		skyfarmer_test = 1 - skyfarmer_test;
-		if(skyfarmer_test){
-			skyfarmer_start(round(R.x),round(R.y),0);
-			skyfarmer_set_direction(DBV(1,1,0));
-			}
-		skyfarmer_switch = 0;
-		}
-	else
-		skyfarmer_switch = 1;
-	 */
+
+	static int skyfarmer_switch = 1; // tractortractor's uncommented
+//	if(XKey.Pressed('H') && skyfarmer_switch){
+	if(controlsKeyboardState[SDL_SCANCODE_H] && skyfarmer_switch){ // tractortractor's added
+		skyfarmer_test = 1 - skyfarmer_test; // tractortractor's uncommented
+		if(skyfarmer_test){ // tractortractor's uncommented
+			skyfarmer_start(static_cast<int>(round(R.x)),static_cast<int>(round(R.y)),0); // tractortractor's uncommented added static_cast<int>
+			skyfarmer_set_direction(DBV(1,1,0)); // tractortractor's uncommented
+			} // tractortractor's uncommented
+		skyfarmer_switch = 0; // tractortractor's uncommented
+		} // tractortractor's uncommented
+	else // tractortractor's uncommented
+		skyfarmer_switch = 1; // tractortractor's uncommented
+
 	static int stop_switch = 1;
-	if(XKey.Pressed('B') && stop_switch){
+//	if(XKey.Pressed('B') && stop_switch){ // tractortractor's commented
+	if(controlsKeyboardState[SDL_SCANCODE_B] && stop_switch){ // tractortractor's added
 		stop_flag = 1 - stop_flag;
 		stop_switch = 0;
 		}
@@ -2679,9 +2891,11 @@ void Object::direct_keyboard_control()
 			delay = 5;
 		if(delay-- > 0)
 			controls(CONTROLS::BRAKE_QUANT);
-		else
+		else{
+			traction_joystick_max = 256; // tractortractor's added
 			controls(CONTROLS::TRACTION_INCREASE);
-		last_keyboard_touch = SDL_GetTicks();
+			}
+//		last_keyboard_touch = SDL_GetTicks(); // tractortractor's commented
 		}
 	if(iKeyPressed(iKEY_MOVE_BACKWARD)){
 		static int delay;
@@ -2689,9 +2903,11 @@ void Object::direct_keyboard_control()
 			delay = 5;
 		if(delay-- > 0)
 			controls(CONTROLS::BRAKE_QUANT);
-		else
+		else{
+			traction_joystick_min = -256; // tractortractor's added
 			controls(CONTROLS::TRACTION_DECREASE);
-		last_keyboard_touch = SDL_GetTicks();
+			}
+//		last_keyboard_touch = SDL_GetTicks(); // tractortractor's commented
 		}
 
 	if(!aciAutoRun){
@@ -2706,12 +2922,14 @@ void Object::direct_keyboard_control()
 		controls(CONTROLS::HAND_BRAKE_QUANT);
 
 	if(iKeyPressed(iKEY_TURN_WHEELS_LEFT)){
+		rudder_joystick_max = rudder_max; // tractortractor's added
 		controls(CONTROLS::STEER_LEFT);
-		last_keyboard_touch = SDL_GetTicks();
+//		last_keyboard_touch = SDL_GetTicks(); // tractortractor's commented
 		}
 	if(iKeyPressed(iKEY_TURN_WHEELS_RIGHT)){
+		rudder_joystick_min = -rudder_max; // tractortractor's added
 		controls(CONTROLS::STEER_RIGHT);
-		last_keyboard_touch = SDL_GetTicks();
+//		last_keyboard_touch = SDL_GetTicks(); // tractortractor's commented
 		}
 
 	if(iKeyPressed(iKEY_TURN_OVER_LEFT))
@@ -2742,11 +2960,19 @@ void Object::direct_keyboard_control()
 
 void Object::direct_joystick_control()
 {
-	if(!XJoystickInput())
+// tractortractor's commented begin
+//	if(!XJoystickInput())
+//		return;
+// tractortractor's commented end
+// tractortractor's added begin
+	if(!JoystickAvailableCheck())
 		return;
+// tractortractor's added end
 
-	if((int)(SDL_GetTicks() - last_keyboard_touch) < 2000)
-		return;
+// tractortractor's commented begin
+//	if((int)(SDL_GetTicks() - last_keyboard_touch) < 2000)
+//		return;
+// tractortractor's commented end
 
 	int dx = XJoystickState.lX;
 	if(abs(dx) < RANGE_MAX/16)
@@ -2755,7 +2981,8 @@ void Object::direct_joystick_control()
 	if(abs(dy) < RANGE_MAX/16)
 		dy = 0;
 
-	if(!XJoystickState.rgbButtons[JoystickStickSwitchButton - VK_BUTTON_1])
+//	if(!XJoystickState.rgbButtons[JoystickStickSwitchButton - VK_BUTTON_1]) // tractortractor's commented
+	if(!(JoystickStickSwitchButtonPressed())) // tractortractor's added
 		switch(JoystickMode){
 			case JOYSTICK_GamePad:
 				if(dy < 0){
@@ -2764,8 +2991,10 @@ void Object::direct_joystick_control()
 						delay = 5;
 					if(delay-- > 0)
 						controls(CONTROLS::BRAKE_QUANT);
-					else
+					else{
+						traction_joystick_max = 256; // tractortractor's added
 						controls(CONTROLS::TRACTION_INCREASE);
+						}
 					}
 				if(dy > 0){
 					static int delay;
@@ -2773,23 +3002,72 @@ void Object::direct_joystick_control()
 						delay = 5;
 					if(delay-- > 0)
 						controls(CONTROLS::BRAKE_QUANT);
-					else
+					else{
+						traction_joystick_min = -256; // tractortractor's added
 						controls(CONTROLS::TRACTION_DECREASE);
+						}
 					}
 				
-				if(dx < 0)
+				if(dx < 0){
+					rudder_joystick_max = rudder_max; // tractortractor's added
 					controls(CONTROLS::STEER_LEFT);
-				if(dx > 0)
+					} // tractortractor's added
+				if(dx > 0){
+					rudder_joystick_min = -rudder_max; // tractortractor's added
 					controls(CONTROLS::STEER_RIGHT);
+					} // tractortractor's added
 				break;
 
 			case JOYSTICK_Joystick:
+// tractortractor's commented begin
+/*
 				traction = round(sqrt((double)(sqr(XJoystickState.lX) + sqr(XJoystickState.lY))));
 				if(dy > 0)
 					traction = -traction;
 				rudder = -XJoystickState.lX*rudder_max >> 8;
+
+//				std::cout << "abs(traction): " << abs(traction) << '\n'; // tractortractor's test
 				if(abs(traction) > 200)
 					controls(CONTROLS::TURBO_QUANT);
+*/
+// tractortractor's commented end
+// tractortractor's added begin
+				if(dy < 0){
+					static int delay;
+					if(traction < 0)
+						delay = 5;
+					if(delay-- > 0)
+						controls(CONTROLS::BRAKE_QUANT);
+					else{
+						traction_joystick_max = round(256 * XJoystickState.lY/SDL_JOYSTICK_AXIS_MIN * 256/(256-XJoystickTractionSensitivity));
+						if (traction_joystick_max > 256) traction_joystick_max = 256;
+						controls(CONTROLS::TRACTION_INCREASE);
+						}
+					}
+				if(dy > 0){
+					static int delay;
+					if(traction > 0)
+						delay = 5;
+					if(delay-- > 0)
+						controls(CONTROLS::BRAKE_QUANT);
+					else{
+						traction_joystick_min = -round(256 * XJoystickState.lY/SDL_JOYSTICK_AXIS_MAX * 256/(256-XJoystickTractionSensitivity));
+						if (traction_joystick_min < -256) traction_joystick_min = -256;
+						controls(CONTROLS::TRACTION_DECREASE);
+						}
+					}
+
+				if(dx < 0){
+					rudder_joystick_max = round(256 * XJoystickState.lX/SDL_JOYSTICK_AXIS_MIN * 256/(256-XJoystickRudderSensitivity));
+					if (rudder_joystick_max > 256) rudder_joystick_max = 256;
+					controls(CONTROLS::STEER_LEFT);
+					}
+				if(dx > 0){
+					rudder_joystick_min = -round(256 * XJoystickState.lX/SDL_JOYSTICK_AXIS_MAX * 256/(256-XJoystickRudderSensitivity));
+					if (rudder_joystick_min < -256) rudder_joystick_min = -256;
+					controls(CONTROLS::STEER_RIGHT);
+					}
+// tractortractor's added end
 				//if(abs(dx) > 200)
 				//	controls(CONTROLS::HAND_BRAKE_QUANT);
 				break;
@@ -2816,6 +3094,44 @@ void Object::import_controls()
 *******************************************************************************/
 void Object::analysis()
 {
+// tractortractor's test recorder begin
+/*
+	if(active && 100 < ++recorder_coord_cout_delay){
+		recorder_coord_cout_delay = 0;
+
+		std::cout << std::endl << std::endl << std::endl;
+
+		std::cout << "RNDVAL: " << RNDVAL << std::endl;
+		std::cout << std::endl;
+
+		std::cout << "A_g2l.a[0]: " << A_g2l.a[0] << std::endl;
+		std::cout << "A_g2l.a[1]: " << A_g2l.a[1] << std::endl;
+		std::cout << "A_g2l.a[2]: " << A_g2l.a[2] << std::endl;
+		std::cout << std::endl;
+
+		std::cout << "A_g2l.a[3]: " << A_g2l.a[3] << std::endl;
+		std::cout << "A_g2l.a[4]: " << A_g2l.a[4] << std::endl;
+		std::cout << "A_g2l.a[5]: " << A_g2l.a[5] << std::endl;
+		std::cout << std::endl;
+
+		std::cout << "A_g2l.a[6]: " << A_g2l.a[6] << std::endl;
+		std::cout << "A_g2l.a[7]: " << A_g2l.a[7] << std::endl;
+		std::cout << "A_g2l.a[8]: " << A_g2l.a[8] << std::endl;
+		std::cout << std::endl;
+
+		std::cout << "R_curr.x: " << R_curr.x << std::endl;
+		std::cout << "R_curr.y: " << R_curr.y << std::endl;
+		std::cout << "R_curr.z: " << R_curr.z << std::endl;
+		std::cout << std::endl;
+
+		std::cout << std::endl << std::endl << std::endl;
+	}
+*/
+// tractortractor's test recorder end
+// tractortractor's added begin
+	if(device_switch_latency_max > device_switch_latency_current)
+		++device_switch_latency_current;
+// tractortractor's added end
 	//dt0 = XTCORE_FRAME_DELTA/0.1286;
 	if(analysis_off){
 		test_objects_collision();
@@ -2845,8 +3161,9 @@ void Object::analysis()
 			entries_control();
 			if(!disable_control){
 				direct_keyboard_control();
-				/*if(JoystickMode)
-					direct_joystick_control();*/
+//				std::cout << "JoystickMode: " << JoystickMode << std::endl; // tractortractor's test
+				if(JoystickMode) // tractortractor's uncommented /*
+					direct_joystick_control(); // tractortractor's uncommented */
 				}
 			}
 		}
@@ -2977,7 +3294,8 @@ void Object::mechous_analysis(double dt)
 
 		if(R.z - helicopter > 2*helicopter_height_decr && dynamic_state & TOUCH_OF_GROUND) {
 			helicopter = 0;
-			device_switch_latency = GET_DEVICE_LATENCY();
+//			device_switch_latency = GET_DEVICE_LATENCY(); // tractortractor's commented
+			device_switch_latency_current = 0; // tractortractor's added
 		}
 
 		double dz = R.z;
@@ -3473,6 +3791,8 @@ wheel_continue :
 
 
 	V += (F + A_g2l*F_global)*dt;
+//	std::cout << "f_traction: " << f_traction << std::endl;// tractortractor's test
+//	std::cout << "V: " << V.y << std::endl;// tractortractor's test
 	W += (J_inv*(K + A_g2l*K_global))*dt;
 
 	if(non_loaded_space){

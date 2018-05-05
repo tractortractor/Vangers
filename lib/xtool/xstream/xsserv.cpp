@@ -1,6 +1,7 @@
 #include "xglobal.h"
 
 #include <fstream>
+#include <string> // tractortractor's added
 
 static const char *sizeMSG = "FILE SIZE CALCULATION ERROR";
 

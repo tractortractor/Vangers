@@ -2,12 +2,15 @@
 
 #include "../global.h"
 #include "../common.h"
+#include "../xjoystick.h" // tractortractor's added
 
 #include "ikeys.h"
 
 #include "hfont.h"
 #include "iscreen.h"
 #include "i_mem.h"
+
+#include "../../lib/xtool/xrec.h" // tractortractor's added
 
 #include "../actint/item_api.h"
 #include "../actint/a_consts.h"
@@ -18,7 +21,7 @@
 
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 extern int iBoundsLog;
 #endif
 
@@ -30,7 +33,7 @@ extern actIntDispatcher* aScrDisp;
 extern unsigned char* aciCurColorScheme;
 
 extern int iRussian;
-extern char* AVInotFound;
+extern const char* AVInotFound; // tractortractor's added const
 
 extern int iFrameFlag;
 
@@ -39,6 +42,8 @@ extern iScreenOption** iScrOpt;
 extern XBuffer* iResBuf;
 extern const char* iVideoPath;
 extern const char* iVideoPathDefault;
+
+extern int RecorderMode; // tractortractor's added
 
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 
@@ -90,7 +95,7 @@ void i_pal_quant(unsigned char* pal_buf,int lev,int n_lev);
 
 void aci_SendEvent(int cd,int dt = 0);
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 void map_rectangle(int x,int y,int sx,int sy,int col);
 #endif
 
@@ -113,6 +118,10 @@ int iScreenOffs = 0;
 int iScreenOffsDelta = 0;
 int iScreenTargetOffs = 0;
 int iScreenLastInput = 0;
+// tractortractor's added begin
+int lastAxisPressed = -1;
+int lastAxisInverted = 0;
+// tractortractor's added end
 
 int aciCurCredits06 = 0;
 
@@ -1963,7 +1972,7 @@ void iScreenObject::redraw(int mode)
 			p -> redraw(PosX,PosY,curHeightScale,SmoothLevel,hide_mode);
 		p = (iScreenElement*)p -> prev;
 	}
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 	if(iBoundsLog)
 		map_rectangle(PosX + 1,PosY + 1,SizeX - 2,SizeY - 2,111);
 #endif
@@ -2366,8 +2375,7 @@ void iScreenDispatcher::EventQuant(void)
 	iScreenObject* obj;
 	if(flags & SD_INPUT_STRING){
 		input_string_quant();
-	}
-	else {
+	} else {
 		if(ActiveEv){
 			ProcessEvent(ActiveEv);
 		}
@@ -3518,22 +3526,42 @@ void iScreenDispatcher::input_string_quant(void)
 						else
 							key_name = iGetJoyBtnNameText(k,iRussian);
 						*/
-						key_name = iGetKeyNameText(k,iRussian);
-						if(flags & SD_INPUT_STRING && key_name){
-							if(!(ActiveEl -> flags & EL_JOYSTICK_KEY) || (k & iJOYSTICK_MASK)){
-								strcpy((char*)ptr,key_name);
-								flags ^= SD_INPUT_STRING;
-								flags |= SD_FINISH_INPUT;
-								init_flag = 1;
-								redraw_flag = 1;
-								iScreenLastInput = k;
+						if(!(ActiveEl -> flags & EL_JOYSTICK_AXIS)){ // tractortractor's added
+							key_name = iGetKeyNameText(k,iRussian);
+							if(flags & SD_INPUT_STRING && key_name){
+//								if(!(ActiveEl -> flags & EL_JOYSTICK_KEY) || (k & iJOYSTICK_MASK)){ // tractortractor's commented
+								if(!(ActiveEl -> flags & EL_JOYSTICK_KEY) || !(k & VK_STICK_SWITCH)){ // tractortractor's added
+									strcpy((char*)ptr,key_name);
+									flags ^= SD_INPUT_STRING;
+									flags |= SD_FINISH_INPUT;
+									init_flag = 1;
+									redraw_flag = 1;
+									iScreenLastInput = k;
+								}
 							}
-						}
-						break;
+							break;
+						} // tractortractor's added
 				}
 			}
 		}
 	}
+// tractortractor's added begin
+	if(ActiveEl -> flags & EL_JOYSTICK_AXIS && flags & SD_INPUT_STRING)
+	{
+		int axisPressed, axisInverted;
+		XJoystickGetAxisPressed(axisPressed,axisInverted);
+		key_name = iGetJoyAxisNameText(axisPressed,axisInverted,iRussian);
+		if(key_name){
+			strcpy((char*)ptr,key_name);
+			flags ^= SD_INPUT_STRING;
+			flags |= SD_FINISH_INPUT;
+			init_flag = 1;
+			redraw_flag = 1;
+			lastAxisPressed = axisPressed;
+			lastAxisInverted = axisInverted;
+		}
+	}
+// tractortractor's added end
 	if(init_flag){
 		obj = (iScreenObject*)ActiveEl -> owner;
 		obj -> flags |= OBJ_REINIT;
@@ -4268,12 +4296,13 @@ void iScreenDispatcher::save_data(XStream* fh)
 	std::cout<<"iScreenDispatcher::save_data"<<std::endl;
 	int i,num_opt = iMAX_OPTION_ID;
 	*fh < num_opt;
+
 	for(i = 0; i < iMAX_OPTION_ID; i ++){
-		if(iScrOpt[i])
 			iScrOpt[i] -> save(fh);
 	}
 }
 
+/*
 void iScreenDispatcher::load_data(XStream* fh)
 {
 	int i,num_opt;
@@ -4283,6 +4312,50 @@ void iScreenDispatcher::load_data(XStream* fh)
 		if(iScrOpt[i])
 			iScrOpt[i] -> load(fh);
 	}
+}
+*/
+
+void iScreenDispatcher::load_data(XStream* fh)
+{
+	int i,num_opt;
+	*fh > num_opt;
+	if(num_opt != iMAX_OPTION_ID) return;
+
+// tractortractor's added begin
+	if(RecorderMode == XRC_PLAY_MODE){
+		for(i = 0; i < iMAX_OPTION_ID; i ++){
+			if(iScreenOptionIDRec.count(i)){
+				iScrOpt[i] -> load(XRec.hFile);
+				static int value_size = 0;
+				if(iScrOpt[i] -> ObjectType == iTRIGGER || iScrOpt[i] -> ObjectType == iSCROLLER)
+				{
+					value_size = sizeof(int);
+				}
+				else if(iScrOpt[i] -> ObjectType == iSTRING || iScrOpt[i] -> ObjectType == iS_STRING){
+					value_size = sizeof(int) + strlen(iScrOpt[i] -> GetValueCHR());
+				}
+				fh->seek(value_size, XS_CUR);
+			}
+			else{
+				iScrOpt[i] -> load(fh);
+			}
+		}
+	}
+	else{
+// tractortractor's added end
+		for(i = 0; i < iMAX_OPTION_ID; i ++){
+			iScrOpt[i] -> load(fh);
+		}
+// tractortractor's added begin
+	}
+
+	if(RecorderMode == XRC_RECORD_MODE){
+		for(int i : iScreenOptionIDRec)
+		{
+			iScrOpt[i] -> save(XRec.hFile);
+		}
+	}
+// tractortractor's added end
 }
 
 void iScreenDispatcher::end_event(void)

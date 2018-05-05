@@ -1,0 +1,7 @@
+1. Start the game.
+2. Buy new mechos.
+3. Try to abort the game.
+Game crashes while trying to delete gamer's mechos.
+File: "ascr_fnc.cpp"
+Function: "aciFreeUVS"
+Code: "if(GGamerMechos) aciFreeUVSList(GGamerMechos);"

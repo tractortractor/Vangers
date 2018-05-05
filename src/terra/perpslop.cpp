@@ -77,7 +77,7 @@ int PerpSlopTurn(int Turn,int Slop,int H,int F,int cx,int cy,int xc,int yc,int X
 		}
 
 #ifdef __ZORTECHC__
-	char* vp = _video + (yc - YDstSize)*XGR_MAXX + (xc - XDstSize);
+	char* vp = (char*)_video + (yc - YDstSize)*XGR_MAXX + (xc - XDstSize); // tractortractor's added "(char*)"
 #else
 	char* vp = (char*)XGR_VIDEOBUF + (yc - YDstSize)*XGR_MAXX + (xc - XDstSize);
 #endif

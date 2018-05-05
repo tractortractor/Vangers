@@ -40,7 +40,7 @@ void change_terrain(int x,int y,int sx,int sy,int terr1,int terr2);
 
 void map_init(void);
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 void map_rectangle(int x,int y,int sx,int sy,int col);
 #endif
 
@@ -852,7 +852,7 @@ void iPutS_Str(int x,int y,int font,int color,unsigned char* str,int bsx,int bsy
 */
 }
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 void map_rectangle(int x,int y,int sx,int sy,int col)
 {
 	int i,scr_offs = iScreenOffs;

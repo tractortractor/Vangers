@@ -6,8 +6,9 @@ const int  PARTICLE_PROCESS_COLOR_FIRST = 128;     // 64 - 32;
 
 const int  PARTICLE_PROCESS_COLOR_MAX = 1 << PARTICLE_PROCESS_COLOR_BITS;
 
-extern unsigned BogusRNDVAL;
-inline unsigned BogusRND(unsigned m){
+extern unsigned int BogusRNDVAL; // tractortractor's added "int"
+inline unsigned int BogusRND(unsigned m){ // tractortractor's added "int"
+//	std::cout << __FILE__ << "; " << __LINE__ << "; custom" << std::endl; // tractortractor's test
 	BogusRNDVAL ^= BogusRNDVAL >> 3;
 	BogusRNDVAL ^= BogusRNDVAL << 28;
 	BogusRNDVAL &= 0x7FFFFFFF;

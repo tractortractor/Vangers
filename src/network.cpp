@@ -31,7 +31,7 @@ NetRndType NetRnd;
 
 #define PLAYER_REMOVAL_EVENT(p) {NetCheckRemovePlayer(p);}
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 #define EVENTS_LOG
 #define _FOUT_
 #endif
@@ -364,7 +364,7 @@ int ServersList::find_servers(int bc_port)
 			talk_to_server(IP,port,name);
 		}
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 	if(host_name)
 		talk_to_server(0,host_port,host_name);
 #endif
@@ -1443,7 +1443,7 @@ double single_measurement(int size,int delay,int N)
 	int recv_time;
 	double sum_time = 0;
 	double sum_time2 = 0;
-	XCon < "Measurement: " <= size < "\t" <= delay < "\t" <= N < "\n";
+//	XCon < "Measurement: " <= size < "\t" <= delay < "\t" <= N < "\n"; // tractortractor's commented
 	if((size -= 8) < 0)
 		size = 0;
 	for(;recv < N;){
@@ -1466,11 +1466,11 @@ double single_measurement(int size,int delay,int N)
 				}
 			events_in.ignore_event();
 			}
-		XCon <= sent < "\t" <= recv < "\r";
+//		XCon <= sent < "\t" <= recv < "\r"; // tractortractor's commented
 		}
 	double avr_time = sum_time/N;
 	_sigma_ = sqrt((sum_time2 - N*sqr(avr_time))/(N*(N-1)));
-	XCon < "\nResult: " <= avr_time < "\t" <= _sigma_ < "\n";
+//	XCon < "\nResult: " <= avr_time < "\t" <= _sigma_ < "\n"; // tractortractor's commented
 	fout < "Measurement: " <= size < "\t" <= delay < "\t" <= N < "\n";
 	fout < "\nResult: " <= avr_time < "\t" <= _sigma_ < "\n";
 	return avr_time;

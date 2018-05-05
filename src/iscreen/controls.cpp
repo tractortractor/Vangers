@@ -9,39 +9,50 @@
 #include "ikeys.h"
 #include "controls.h"
 
+#include "../../lib/xtool/xrec.h" // tractortractor's added
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 
 // flags...
 #define iKEY_NO_RESET	0x01
 
-struct iKeyControls
-{
-	int* keyCodes;
-	int* defaultCodes;
-	int* flags;
-
-	void init(void);
-	void reset(void);
-
-	void setFlag(int id,int fl){ flags[id] |= fl; }
-	void dropFlag(int id,int fl){ flags[id] &= ~fl; }
-	void clearFlag(int id){ flags[id] = 0; }
-
-	void addCode(int id,int key,int num = 0);
-	void removeCode(int id,int num = 0);
-	void addDefaultCode(int id,int key,int num = 0);
-
-	int getCode(int id,int num);
-
-	int GetID(int key);
-	int CheckID(int id,int key);
-
-	iKeyControls(void);
-};
+// tractortractor's moved to "src/iscreen/controls.h" begin
+//struct iKeyControls
+//{
+//	int* keyCodes;
+//	int* defaultCodes;
+//	int* flags;
+//
+//	void init(void);
+//	void reset(void);
+//
+//	void setFlag(int id,int fl){ flags[id] |= fl; }
+//	void dropFlag(int id,int fl){ flags[id] &= ~fl; }
+//	void clearFlag(int id){ flags[id] = 0; }
+//
+//	void addCode(int id,int key,int num = 0);
+//	void removeCode(int id,int num = 0);
+//	void addDefaultCode(int id,int key,int num = 0);
+//
+//	int getCode(int id,int num);
+//
+//	int GetID(int key);
+//	int CheckID(int id,int key);
+//
+//	iKeyControls(void);
+//};
+// tractortractor's moved to "src/iscreen/controls.h" end
 
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 
 extern int RecorderMode;
+// tractortractor's added begin
+extern Uint8 *controlsKeyboardState;
+extern Uint8 *controlsControllerState;
+// Global State of Joystick
+extern XJOYSTATE  XJoystickState;
+extern int CurrentStickSwitchCode;
+// tractortractor's added end
 
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 
@@ -89,10 +100,10 @@ void iKeyControls::init(void)
 	addDefaultCode(iKEY_TURN_OVER_RIGHT,SDL_SCANCODE_PERIOD,1);
 
 	addDefaultCode(iKEY_DEVICE_ON,SDL_SCANCODE_PAGEUP);
-	//addDefaultCode(iKEY_DEVICE_ON,VK_STICK_SWITCH_9,1);
+	addDefaultCode(iKEY_DEVICE_ON,VK_STICK_SWITCH_9,1); // tractortractor's uncommented
 
 	addDefaultCode(iKEY_DEVICE_OFF,SDL_SCANCODE_HOME);
-	//addDefaultCode(iKEY_DEVICE_OFF,VK_STICK_SWITCH_7,1);
+	addDefaultCode(iKEY_DEVICE_OFF,VK_STICK_SWITCH_7,1); // tractortractor's uncommented
 
 	addDefaultCode(iKEY_ACTIVATE_KID,SDL_SCANCODE_INSERT);
 	addDefaultCode(iKEY_ACTIVATE_KID,SDL_SCANCODE_SLASH,1);
@@ -101,10 +112,10 @@ void iKeyControls::init(void)
 	addDefaultCode(iKEY_ACCELERATION,SDL_SCANCODE_LSHIFT);
 //	  addDefaultCode(iKEY_VERTICAL_THRUST,'Z');
 	addDefaultCode(iKEY_INVENTORY,SDL_SCANCODE_RETURN);
-	//addDefaultCode(iKEY_INVENTORY,VK_STICK_SWITCH_3,1);
+	addDefaultCode(iKEY_INVENTORY,VK_STICK_SWITCH_3,1); // tractortractor's uncommented
 
 	addDefaultCode(iKEY_OPEN,SDL_SCANCODE_SPACE);
-	//addDefaultCode(iKEY_OPEN,VK_STICK_SWITCH_2,1);
+	addDefaultCode(iKEY_OPEN,VK_STICK_SWITCH_2,1); // tractortractor's uncommented
 
 	addDefaultCode(iKEY_FIRE_WEAPON1,SDL_SCANCODE_1);
 	addDefaultCode(iKEY_FIRE_WEAPON2,SDL_SCANCODE_2);
@@ -114,7 +125,7 @@ void iKeyControls::init(void)
 	addDefaultCode(iKEY_FIRE_ALL_WEAPONS,SDL_SCANCODE_RCTRL, 1);
 
 	addDefaultCode(iKEY_CHANGE_TARGET,SDL_SCANCODE_TAB);
-	//addDefaultCode(iKEY_CHANGE_TARGET,VK_STICK_SWITCH_1,1);
+	addDefaultCode(iKEY_CHANGE_TARGET,VK_STICK_SWITCH_1,1); // tractortractor's uncommented
 
 	addDefaultCode(iKEY_FULLSCREEN,SDL_SCANCODE_F1);
 	addDefaultCode(iKEY_REDUCE_VIEW,SDL_SCANCODE_F2);
@@ -251,19 +262,32 @@ void iSaveControls(void)
 void iLoadControls(void)
 {
 	int sz0,sz1;
-	if(!iControlsObj || RecorderMode) return;
+//	if(!iControlsObj || RecorderMode) return;  // tractortractor's commented
+// tractortractor's added begin
+	if(!iControlsObj) return;
 
-	XStream fh(0);
-	if(!fh.open("controls.dat",XS_IN)) return;
-
-	fh > sz0 > sz1;
-	if(sz0 != iKEY_MAX_ID || sz1 != iKEY_OBJECT_SIZE){
-		fh.close();
-		return;
+	if(RecorderMode == XRC_PLAY_MODE){
+		if(XRec.loadControls(iControlsObj))
+			iInitControlObjects();
 	}
-	fh.read(iControlsObj -> keyCodes,iKEY_OBJECT_SIZE * iKEY_MAX_ID * sizeof(int));
-	fh.close();
-	iInitControlObjects();
+	else
+	{
+// tractortractor's added end
+		XStream fh(0);
+		if(!fh.open("controls.dat",XS_IN)) return;
+
+		fh > sz0 > sz1;
+		if(sz0 != iKEY_MAX_ID || sz1 != iKEY_OBJECT_SIZE){
+			fh.close();
+			return;
+		}
+		fh.read(iControlsObj -> keyCodes,iKEY_OBJECT_SIZE * iKEY_MAX_ID * sizeof(int));
+		fh.close();
+		if(RecorderMode == XRC_RECORD_MODE){
+			XRec.saveControls(iControlsObj);
+		}
+		iInitControlObjects();
+	} // tractortractor's added
 }
 
 int iKeyPressed(int id)
@@ -277,16 +301,49 @@ int iKeyPressed(int id)
 		code = iControlsObj->getCode(id, i);
 		//std::cout<<"iKeyPressed code:"<<(int)code<<" id:"<<id<<" i:"<<i<<std::endl;
 		if(code) {
-			if (code & SDLK_JOYSTICK_BUTTON_MASK && joy) {
-				state = SDL_JoystickGetButton(joy, code ^ SDLK_JOYSTICK_BUTTON_MASK);
-			} else if (code & SDLK_GAMECONTROLLER_BUTTON_MASK && ctrl) {
-				state = SDL_GameControllerGetButton(ctrl, (SDL_GameControllerButton)(code ^ SDLK_GAMECONTROLLER_BUTTON_MASK));
-			} else if (code & SDLK_JOYSTICK_HAT_MASK && joy) {
-				state = SDL_JoystickGetHat(joy, (code ^ SDLK_JOYSTICK_HAT_MASK) / 10 ) == (code ^ SDLK_JOYSTICK_HAT_MASK) % 10;
+//			if (code & SDLK_JOYSTICK_BUTTON_MASK && joy) { // tractortractor's commented
+			if (code & VK_BUTTON) { // tractortractor's added
+				//std::cout<<"iKeyPressed code:"<<(int)code<<" id:"<<id<<" i:"<<i<<std::endl;
+//				state = SDL_JoystickGetButton(joy, code ^ SDLK_JOYSTICK_BUTTON_MASK); // tractortractor's commented
+// tractortractor's added begin
+				int joyButtonNum = code - VK_BUTTON_1;
+				if (joyButtonNum < 32)
+					state = XJoystickState.rgbButtons[joyButtonNum];
+// tractortractor's added end
+//			} else if (code & SDLK_GAMECONTROLLER_BUTTON_MASK && ctrl) { // tractortractor's commented
+			} else if (code & SDLK_GAMECONTROLLER_BUTTON_MASK) { // tractortractor's added
+//				state = SDL_GameControllerGetButton(ctrl, (SDL_GameControllerButton)(code ^ SDLK_GAMECONTROLLER_BUTTON_MASK)); // tractortractor's test
+// tractortractor's added begin
+//				std::cout << "code: " << (0|code) << '\n';
+//				std::cout << "SDLK_GAMECONTROLLER_BUTTON_MASK: " << (0|SDLK_GAMECONTROLLER_BUTTON_MASK) << '\n';
+				int controllerButtonNum = code ^ SDLK_GAMECONTROLLER_BUTTON_MASK;
+				if(controllerButtonNum < SDL_CONTROLLER_BUTTON_MAX)
+					state = controlsControllerState[controllerButtonNum];
+// tractortractor's added end
+//			} else if (code & SDLK_JOYSTICK_HAT_MASK && joy) { // tractortractor's commented
+			} else if (code & SDLK_JOYSTICK_HAT_MASK) { // tractortractor's added
+//				state = SDL_JoystickGetHat(joy, (code ^ SDLK_JOYSTICK_HAT_MASK) / 10 ) == (code ^ SDLK_JOYSTICK_HAT_MASK) % 10; // tractortractor's commented
+// tractortractor's added begin
+//				std::cout << "((code ^ SDLK_JOYSTICK_HAT_MASK) / 10): " << (0|((code ^ SDLK_JOYSTICK_HAT_MASK) / 10)) << std::endl; // tractortractor's test
+//				std::cout << "(code ^ SDLK_JOYSTICK_HAT_MASK) % 10: " << (code ^ SDLK_JOYSTICK_HAT_MASK) % 10 << std::endl; // tractortractor's test
+				int joyHatIndex = (code ^ SDLK_JOYSTICK_HAT_MASK) / 10;
+				int joyHatValue = (code ^ SDLK_JOYSTICK_HAT_MASK) % 10;
+				if(joyHatIndex < XJoystickState.rgdwPOVNum)
+					state = XJoystickState.rgdwPOV[joyHatIndex] & joyHatValue;
+//					std::cout << "XJoystickState.rgdwPOV[" << joyHatIndex << "]: " << (0|XJoystickState.rgdwPOV[joyHatIndex]) << std::endl; // tractortractor's test
+//			} else if (code & VK_STICK_SWITCH && joy) { // tractortractor's commented
+			} else if (code & VK_STICK_SWITCH) { // tractortractor's added
+				state = (CurrentStickSwitchCode == code) ? SDL_PRESSED : SDL_RELEASED;
+// tractortractor's added end
 			} else if (code & SDLK_SCANCODE_MASK) {
-				state = SDL_GetKeyboardState(NULL)[SDL_GetScancodeFromKey(code)];
+//				state = SDL_GetKeyboardState(NULL)[SDL_GetScancodeFromKey(code)]; // tractortractor's commented
+				state = controlsKeyboardState[SDL_GetScancodeFromKey(code)]; // tractortractor's added
 			} else {
-				state = SDL_GetKeyboardState(NULL)[code];
+//				state = SDL_GetKeyboardState(NULL)[code]; // tractortractor's commented
+// tractortractor's added begin
+				if(code < SDL_NUM_SCANCODES)
+					state = controlsKeyboardState[code];
+// tractortractor's added end
 			}
 			if (state) {
 				return state;

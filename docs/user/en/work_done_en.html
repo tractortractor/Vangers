@@ -1,0 +1,134 @@
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+<h2>General</h2>
+
+<h4>MSVC compilation</h4>
+<ul>
+	<li>MSVC was not able to compile 2016 release. Now this compiler is supported.</li>
+</ul>
+
+<h4>Documentation</h4>
+<ul>
+	<li>Documented all found macros which do not expand to any values and are used in "#ifdef"/"#ifndef" statements. See "debug_observations.html".</li>
+	<li>Documented most used RNG functions/classes/macros. See "rand.html".</li>
+	<li>Wrote compile instruction for MSVC. See "compile.html".</li>
+	<li>Created table with all item types list. Useful for development and debugging. See "vangers_item_types.xls". Also available in "*.ods" and Excel 2003 ".xml"</li>
+	<li>Created table with all 3d models list. Useful for modifying them. See "items_models.xls". Also available in ".ods" and Excel 2003 "*.xml"</li>
+</ul>
+
+
+
+<br/>
+<br/>
+<br/>
+
+
+
+<h2>Code changes</h2>
+
+<h3>All builds</h3>
+
+<h4>Controls</h4>
+<ul>
+	<li>In many places game used old control system. SDL library controls system is now used everywhere.</li>
+	<li>In most cases game now gets state of controls from SDL library, writes this state in it's own tables and uses those to determine which action to perform. Originally it directly queried SDL library. This change was made to make it possible to play replays without changing variables of SDL library.</li>
+</ul>
+
+<h4>Command line arguments</h4>
+<ul>
+	<li>Restored use of command line arguments.</li>
+</ul>
+
+<h4>Joystick support</h4>
+<ul>
+	<li>Fixed joystick controls type "Joystick".</li>
+	<li>Added second screen in joystick options, ability to set axis, sensitivity.</li>
+	<li>Changed "alternative joystick action" button behavior, restored ability to assign actions on alternative joystick moves.</li>
+</ul>
+
+<h4>Mini-map</h4>
+<ul>
+	<li>Rewrote function which returns coordinates of certain object. It's a bit slower in some cases now but much easier to maintain and it returns direction and slope of object.</li>
+	<li>More types of objects can be seen on mini-map.</li>
+	<li>Added arrow marker for mini-map. It changes arrow's shape according to object direction.</li>
+	<li>Changed almost all mini-map markers. Only larva/dolly marker is the same.</li>
+</ul>
+
+<h4>Boot Sector artifact tweaks</h4>
+<ul>
+	<li>Now the game checks if there is Rubbox during teleportation with Boot Sector. If it's here than removes it in original mechos and creates new one with same properties in new mechos.</li>
+</ul>
+
+
+
+<br/>
+
+
+
+<h3>VANGERS_DEBUG</h3>
+<ul>
+	<li>Replaced all occurrences of MSVC "_DEBUG" macro to "VANGERS_DEBUG" macro.</li>
+	<li>Now the game uses GetRSS library for getting number of bytes of RAM used by game. Available here: <a href="http://nadeausoftware.com/articles/2012/07/c_c_tip_how_get_process_resident_set_size_physical_memory_use">http://nadeausoftware.com/articles/2012/07/c_c_tip_how_get_process_resident_set_size_physical_memory_use</a>.</li>
+	<li>Now the game uses Boost library to save new "*.prm" values. Available here: <a href="https://www.boost.org/">https://www.boost.org/</a></li>
+</ul>
+
+<h3>SICHER_DEBUG</h3>
+<ul>
+	<li>Uncommented and tweaked code responsible for skyfarmer switch.</li>
+</ul>
+
+<h3>UNIT_DEBUG_VIEW</h3>
+<ul>
+	<li>Uncommented code responsible for drawing facing ray.</li>
+	<li>Uncommented code responsible for printing of next tip.</li>
+</ul>
+
+<h3>iMOVE_MOUSE_OBJECTS</h3>
+<ul>
+	<li>Changed controls to prevent conflicts.</li>
+	<li>Added ability to move screen.</li>
+</ul>
+
+<h3>_ACI_MAP_TESTING_</h3>
+<ul>
+	<li>Added ability to switch tests in-game. Previously specific test was hardcoded.</li>
+</ul>
+
+<h3>_ACI_SHOW_BUGS_ON_MAP_</h3>
+<ul>
+	<li>Changed beeb's marker color from orange to green.</li>
+</ul>
+
+<h3>DIAGEN_TEST</h3>
+<ul>
+	<li>Now dialogs are loaded from "diagen.text"/"diagen_eng.text" for Russian/English texts respectively. Originally it was loaded from "room.lst".</li>
+	<li>Fixed code responsible for console input.</li>
+	<li>
+		<p>Changed dialog variables system. Quote from "debug_observations.html":</p>
+		<p>
+		<q>
+			Originally 2 variable arrays were used by dialog system. First contained global variables and second contained dialog variables. Dialog functions directly queried global variables while those console commands modified dialog variables. Dialog variables were never used, so next commands were completely useless.
+			<br/>
+			In this version dialog variables are used by dialog functions. Each time dialog starts or updates through console commands, dialog variables are updated from global variables. There is also filter array which is used to prevent manually set dialog variables from being updated.
+		</q>
+		</p>
+	</li>
+	<li>Added more console commands to add functionality and cover new dialog variables system.</li>
+</ul>
+
+
+
+<h3>zRECORDER_ENABLED</h3>
+<ul>
+	<li>Restored and thoroughly tested recording and playing of replays.</li>
+	<li>Now RNG seed is generated and saved in replay file. Originally default RNG seed was always used.</li>
+	<li>Now controls are saved in replay file. Originally default controls were always used.</li>
+	<li>Added ability to steal items through walls while recording or playing replays.</li>
+</ul>
+
+
+
+<h3>Insignificant builds</h3>
+<ul>
+	<li>Loads of small fixes for many other insignificant builds.</li>
+</ul>

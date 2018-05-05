@@ -9,6 +9,8 @@
 #ifndef __XMATH_H__
 #define __XMATH_H__
 
+#include "../../../src/global.h" // tractortractor's added
+
 #include <math.h>
 
 #ifndef _XMATH_NO_IOSTREAM
@@ -109,6 +111,7 @@ xm_inline int SIGN(const T& x) { return x ? (x > 0 ? 1 : -1 ) : 0; }
 xm_inline double SIGN(double a, double b) { return b >= 0.0 ? fabs(a) : -fabs(a); }
 xm_inline float SIGN(float a, float b) { return b >= 0.0f ? fabsf(a) : -fabsf(a); }
 
+/* // tractortractor's moved to "src/common.h" begin
 class RandomGenerator 
 {
 	enum { max_value = 0x7fff };
@@ -123,12 +126,16 @@ public:
 	xm_inline float fabsRnd(float x = 1.f){ return (float)((*this)())*x/(float)max_value; }
 	xm_inline float frand(){ return (*this)()/(float)max_value; }
 };
+*/ // tractortractor's moved to "src/common.h" end
 
 #undef random
 extern RandomGenerator xm_random_generator;
 xm_inline unsigned random(unsigned m){ return xm_random_generator(m); }
+//xm_inline unsigned random(unsigned m){ std::cout << __FILE__ << "; " << __LINE__ << "; xm_random_generator" << std:endl; return xm_random_generator(m); } // tractortractor's test
 xm_inline float frnd(float x){ return xm_random_generator.frnd(x); }
+//xm_inline float frnd(float x){ std::cout << __FILE__ << "; " << __LINE__ << "; xm_random_generator" << std::endl; return xm_random_generator.frnd(x); } // tractortractor's test
 xm_inline float fabsRnd(float x){ return xm_random_generator.fabsRnd(x); }
+//xm_inline float fabsRnd(float x){ std::cout << __FILE__ << "; " << __LINE__ << "; xm_random_generator" << std::endl; return xm_random_generator.fabsRnd(x); } // tractortractor's test
 
 
 #define NOMINMAX

@@ -8,7 +8,7 @@
 
 //XStream VOVA("VOVA.LST", XS_OUT);
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 //#define _DEMO_
 #define STAND_REPORT
 #define TABU_REPORT
@@ -7782,6 +7782,7 @@ void uvsVanger::prepare_shop(int how){
 
 int uvsVanger::CirtDelivery(void){
 	int Total = 0;
+	if(!Pworld -> escT) return 0; // tractortractor's added to fix diagen crashes while visiting Parapheen
 	uvsBunch *pb = Pworld -> escT[0] -> Pbunch;
 
 	for( int i = 0; i < pb -> cycleN; i++)
@@ -8916,10 +8917,12 @@ uvsItem::uvsItem(XStream& pfile){
 	pfile > pos_z;
 	pfile > type;
 
-#ifdef _DEBUG
-	if (uvsItemTable[type] -> type == UVS_ITEM_STATUS::MECHOS_PART)
-		XCon <= type < "\n";
-#endif
+// tractortractor's commented begin
+//#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
+//	if (uvsItemTable[type] -> type == UVS_ITEM_STATUS::MECHOS_PART)
+//		XCon <= type < "\n";
+//#endif
+// tractortractor's commented end
 
 	if ((uvsLoadVersion < 3)&&(uvsItemTable[type] -> type == UVS_ITEM_STATUS::DEVICE)){
 		pfile > param2;

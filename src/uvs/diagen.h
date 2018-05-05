@@ -413,3 +413,4 @@ struct DiagenDispatcher {
 /* ------------ Prototypes & Externs ----------------*/
 void diagenPrepare(void);
 void diagenEventHandle(int code);
+void diagenKeyboardControl(int k); // tractortractor's added

@@ -18,7 +18,7 @@
 /* ----------------------------- EXTERN SECTION ---------------------------- */
 extern int* SI;
 extern int* CO;
-extern unsigned storeRNDVAL,storerealRNDVAL;
+extern unsigned int storeRNDVAL,storerealRNDVAL; // tractortractor's added "int"
 extern int RestoreLog,CGenLog,MobilityLog,InitLog,SSSLog,ROLog,EncodeLog,DirectLog;
 extern char* aci_ivMapName;
 extern int actIntLog;

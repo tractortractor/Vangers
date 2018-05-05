@@ -4,9 +4,9 @@
 
 #include "../common.h"
 
-#ifdef _DEBUG
-#include "../win32f.h"
-#endif
+//#ifdef _DEBUG // tractortractor's commented
+//#include "../win32f.h" // tractortractor's commented
+//#endif // tractortractor's commented
 
 #include "../sqexp.h"
 #include "../backg.h"
@@ -22,11 +22,13 @@
 
 #undef random
 #define random(a) BogusRND(a)
+//#define random(a) (std::cout << __FILE__ << "; " << __LINE__ << "; BogusRND" << std::endl , BogusRND(a)) // tractortractor's test
 
 #ifdef __HIGHC__
 #ifndef EXTERNAL_USE
 #ifndef random
 	#define random(a) ((rand() >> 16)*(a) >> 15)
+//	#define random(a) (std::cout << __FILE__ << "; " << __LINE__ << "; rand" << std::endl , (rand() >> 16)*(a) >> 15) // tractortractor's test
 #endif
 #endif
 #endif
@@ -37,6 +39,7 @@ int ParticleMapProcessMaskTotal = 0;
 
 unsigned char *FirePaletteTable;
 #define random1(a) (rand() & 1 ? random(a) : -random(a))
+//#define random1(a) (std::cout << __FILE__ << "; " << __LINE__ << "; rand and random" << '\n', rand() & 1 ? random(a) : -random(a)) // tractortractor's test
 
 void color_line_f(int len,unsigned char* dbuf,int bx,int bKx,int fx,int fy);
 void transparency_line_f(int len,unsigned char* dbuf,int bx,int bKx,int fx,int fy);
@@ -524,7 +527,7 @@ void SaveExplosion(int xs,int ys,uchar* b)
 	XStream fout;
 	int i;
 	fn < "Expl" <= ExplosionSaveNumber < ".bmp";
-	fout.open((char*)(fn),XS_OUT);
+	fout.open((char*)(fn.GetBuf()),XS_OUT); // tractortractor's added ".GetBuf()"
 
 	fout < (short)(xs);
 	fout < (short)(ys);

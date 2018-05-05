@@ -3,6 +3,7 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "global.h"
+#include "../../src/3d/3d_math.h" // tractortractor's added
 #include <assert.h>
 
 #ifdef __APPLE__
@@ -24,6 +25,7 @@ struct XGR_ColorData
 //extern HANDLE XAppHinst;
 //extern HANDLE XGR_hWnd;
 extern int XAppMode;
+extern int RecorderMode; // tractortractor's added
 
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 
@@ -34,6 +36,7 @@ void xtRegisterSysFinitFnc(void (*fPtr)(void),int id);
 void xtDeactivateSysFinitFnc(int id);
 
 void XGR_FinitFnc(void);
+void XGR_MouseFnc_helper_moveMouseToPos(int new_x, int new_y); // tractortractor's added
 void XGR_MouseFnc(SDL_Event* p);
 
 //char* ddError(HRESULT error);
@@ -1463,6 +1466,96 @@ void XGR_Screen::rectangle16(int x,int y,int sx,int sy,int outcol,int incol,int 
 	}
 }
 
+// tractortractor's added begin
+// facing_vector and side_vector expected values - 0-2
+void XGR_Screen::facingArrow(int x,int y,DBM *matrix,int facing_vector,bool facing_direct,int side_vector,bool side_left,int size,int col)
+{
+	double facing_SinXY = 0.0;
+	double facing_CosXY = 0.0;
+	double facing_CosXY_Z = 0.0;
+	double facing_XYhypo = 0.0;
+	double facing_XYZhypo = 0.0;
+	double side_CosXY_Z = 0.0;
+	double side_XYhypo = 0.0;
+	double side_XYZhypo = 0.0;
+	int x_arrow_pointer,y_arrow_pointer;
+	int x_arrow_begining,y_arrow_begining;
+	int x_arrow_right_end, y_arrow_right_end;
+	int x_arrow_left_end,y_arrow_left_end;
+	int arrow_half_length = 2*size;
+	int side_spread = size;
+
+	facing_XYhypo = sqrt(sqr(matrix->a[facing_vector]) + sqr(matrix->a[3+facing_vector]));
+	facing_XYZhypo = sqrt(sqr(facing_XYhypo) + sqr(matrix->a[6+facing_vector]));
+	side_XYhypo = sqrt(sqr(matrix->a[side_vector]) + sqr(matrix->a[3+side_vector]));
+	side_XYZhypo = sqrt(sqr(side_XYhypo) + sqr(matrix->a[6+side_vector]));
+	if(facing_XYhypo != 0){
+		facing_SinXY = matrix->a[3+facing_vector]/facing_XYhypo;
+		facing_CosXY = matrix->a[facing_vector]/facing_XYhypo;
+	}
+	if(facing_XYZhypo != 0)
+		facing_CosXY_Z = facing_XYhypo/facing_XYZhypo;
+	if(side_XYhypo != 0)
+		side_CosXY_Z = side_XYhypo/side_XYZhypo;
+	x_arrow_pointer = static_cast<int>(round(facing_CosXY_Z * facing_CosXY * arrow_half_length));
+	y_arrow_pointer = static_cast<int>(round(facing_CosXY_Z * facing_SinXY * arrow_half_length));
+	x_arrow_begining = -x_arrow_pointer;
+	y_arrow_begining = -y_arrow_pointer;
+
+	x_arrow_right_end = static_cast<int>(round(side_CosXY_Z * facing_SinXY * side_spread));
+	y_arrow_right_end = static_cast<int>(round(side_CosXY_Z * -facing_CosXY * side_spread));
+	x_arrow_left_end = -x_arrow_right_end;
+	y_arrow_left_end = -y_arrow_right_end;
+
+	line(x+x_arrow_begining,y+y_arrow_begining,x+x_arrow_pointer,y+y_arrow_pointer,col);
+	line(x+x_arrow_left_end,y+y_arrow_left_end,x+x_arrow_pointer,y+y_arrow_pointer,col);
+	line(x+x_arrow_right_end,y+y_arrow_right_end,x+x_arrow_pointer,y+y_arrow_pointer,col);
+}
+
+void XGR_Screen::facingArrow16(int x,int y,DBM *matrix,int facing_vector,bool facing_direct,int side_vector,bool side_left,int size,int col)
+{
+	double facing_SinXY = 0.0;
+	double facing_CosXY = 0.0;
+	double facing_CosXY_Z = 0.0;
+	double facing_XYhypo = 0.0;
+	double facing_XYZhypo = 0.0;
+	double side_CosXY_Z = 0.0;
+	double side_XYhypo = 0.0;
+	double side_XYZhypo = 0.0;
+	int x_arrow_pointer,y_arrow_pointer;
+	int x_arrow_begining,y_arrow_begining;
+	int x_arrow_right_end, y_arrow_right_end;
+	int x_arrow_left_end,y_arrow_left_end;
+	int arrow_half_length = 2*size;
+	int side_spread = size;
+
+	facing_XYhypo = sqrt(sqr(matrix->a[facing_vector]) + sqr(matrix->a[3+facing_vector]));
+	facing_XYZhypo = sqrt(sqr(facing_XYhypo) + sqr(matrix->a[6+facing_vector]));
+	side_XYhypo = sqrt(sqr(matrix->a[side_vector]) + sqr(matrix->a[3+side_vector]));
+	side_XYZhypo = sqrt(sqr(side_XYhypo) + sqr(matrix->a[6+side_vector]));
+	if(facing_XYhypo != 0){
+		facing_SinXY = matrix->a[3+facing_vector]/facing_XYhypo;
+		facing_CosXY = matrix->a[facing_vector]/facing_XYhypo;
+	}
+	if(facing_XYZhypo != 0)
+		facing_CosXY_Z = facing_XYhypo/facing_XYZhypo;
+	if(side_XYhypo != 0)
+		side_CosXY_Z = side_XYhypo/side_XYZhypo;
+	x_arrow_pointer = static_cast<int>(round(facing_CosXY_Z * facing_CosXY * arrow_half_length));
+	y_arrow_pointer = static_cast<int>(round(facing_CosXY_Z * facing_SinXY * arrow_half_length));
+	x_arrow_begining = -x_arrow_pointer;
+	y_arrow_begining = -y_arrow_pointer;
+
+	x_arrow_right_end = static_cast<int>(round(side_CosXY_Z * facing_SinXY * side_spread));
+	y_arrow_right_end = static_cast<int>(round(side_CosXY_Z * -facing_CosXY * side_spread));
+	x_arrow_left_end = -x_arrow_right_end;
+	y_arrow_left_end = -y_arrow_right_end;
+
+	line16(x+x_arrow_begining,y+y_arrow_begining,x+x_arrow_pointer,y+y_arrow_pointer,col);
+	line16(x+x_arrow_left_end,y+y_arrow_left_end,x+x_arrow_pointer,y+y_arrow_pointer,col);
+	line16(x+x_arrow_right_end,y+y_arrow_right_end,x+x_arrow_pointer,y+y_arrow_pointer,col);
+}
+// tractortractor's added end
 
 XGR_Mouse::XGR_Mouse(void)
 {
@@ -2309,6 +2402,14 @@ void XGR_SetTextYFnc(XGR_TextHeightHandler p)
 	}
 }*/
 
+// tractortractor's added begin
+void XGR_MouseFnc_helper_moveMouseToPos(int new_x, int new_y)
+{
+		XGR_MouseObj.InitPos(new_x, new_y);
+		XGR_MouseObj.Move(0, XGR_MouseObj.PosX, XGR_MouseObj.PosY);
+}
+// tractortractor's added end
+
 void XGR_MouseFnc(SDL_Event* p)
 {
 	int x,y,x1,y1,rec_flag = 0;
@@ -2320,6 +2421,8 @@ void XGR_MouseFnc(SDL_Event* p)
 			return;
 		}
 		//std::cout<<"x:"<<p->motion.x<<" y:"<<p->motion.y<<std::endl;
+// tractortractor's commented begin
+/*
 		x = p->motion.x;
 		y = p->motion.y;
 
@@ -2333,16 +2436,36 @@ void XGR_MouseFnc(SDL_Event* p)
 
 		// TODO(amdmi3): first arg is button state, not used actually
 		XGR_MouseObj.Move(0, XGR_MouseObj.PosX, XGR_MouseObj.PosY);
+*/
+// tractortractor's commented end
+// tractortractor's added begin
+		if(RecorderMode)
+			XGR_MouseObj.InitPos(p->motion.x, p->motion.y);
+		else
+			XGR_MouseFnc_helper_moveMouseToPos(p->motion.x, p->motion.y);
+// tractortractor's added end
 		//if(XGR_MouseVisible())
 		//	XGR_MouseRedraw();
 		rec_flag = 1;
 		return;
 	} else if (p->type == SDL_MOUSEWHEEL ) {
+		// tractortractor's added begin
+		if(RecorderMode)
+		{
+			XGR_MouseFnc_helper_moveMouseToPos(p->wheel.x, p->wheel.y);
+		}
+		// tractortractor's added end
 		XGR_MouseObj.LastPosZ = XGR_MouseObj.PosZ;
 		// TODO (amdmi3): mouse wheel may be reversed; change 1 <-> -1 if so
 		XGR_MouseObj.PosZ += XGR_MouseObj.MovementZ = (p->wheel.y > 0) ? 1 : -1;
 		rec_flag = 1;
 	} else if (p->type == SDL_MOUSEBUTTONDOWN || p->type == SDL_MOUSEBUTTONUP) {
+		// tractortractor's added begin
+		if(RecorderMode)
+		{
+			XGR_MouseFnc_helper_moveMouseToPos(p->button.x, p->button.y);
+		}
+		// tractortractor's added end
 		int flag = 0;
 		switch (p->button.button) {
 		case SDL_BUTTON_LEFT: flag = XGM_LEFT_BUTTON; break;
@@ -2359,5 +2482,6 @@ void XGR_MouseFnc(SDL_Event* p)
 	}
 	if(rec_flag && XRec.flags & XRC_RECORD_MODE){
 		//XRec.PutSysMessage(XRC_XMOUSE_MESSAGE,p -> message,p -> wParam,p -> lParam);
+		XRec.PutSysMessage(XRC_XMOUSE_MESSAGE,p); // tractortractor's added
 	}
 }

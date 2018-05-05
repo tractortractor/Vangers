@@ -1,6 +1,7 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "../global.h"
+#include "../3d/3d_math.h" // tractortractor's added
 #include <zlib.h>
 
 #include "../runtime.h"
@@ -380,7 +381,7 @@ void aciInitItmTextQueue(void);
 #define ACI_ITEM_QUEUE_MAX	5
 
 //#define _ACI_CHECK_PHRASES_
-#define _GENERATE_EXIT_
+//#define _GENERATE_EXIT_ // tractortractor's commented
 //#define _ACI_MAP_TESTING_
 
 aciFont** aScrFonts32 = NULL;
@@ -467,6 +468,9 @@ int aciAutoRun = 0;
 #ifdef _ACI_ESCAVE_DEBUG_
 int aci_dgMoodNext = -1;
 #endif
+#ifdef _ACI_MAP_TESTING_ //tractortractor's added
+int aci_map_testing_mode = 1; //tractortractor's added
+#endif //tractortractor's added
 
 int aciAutoSaveFlag = 0;
 
@@ -496,10 +500,10 @@ const char* aciSTR_BURST = aciSTR_BURST1;
 const char* aciSTR_WORKING_TIME = aciSTR_WORKING_TIME1;
 const char* aciSTR_SECONDS = aciSTR_SECONDS1;
 const char* aciSTR_IN_PACK = aciSTR_IN_PACK1;
-const char* aciSTR_NO_CASH = aciSTR_NO_CASH1;
-const char* aciSTR_PICKUP_ITEMS_OFF = aciSTR_PICKUP_ITEMS_OFF1;
-const char* aciSTR_PICKUP_WEAPONS_OFF = aciSTR_PICKUP_WEAPONS_OFF1;
-const char* aciSTR_PutThis = aciSTR_PutThis1;
+char* aciSTR_NO_CASH = aciSTR_NO_CASH1; // tractortractor's removed const
+char* aciSTR_PICKUP_ITEMS_OFF = aciSTR_PICKUP_ITEMS_OFF1; // tractortractor's removed const
+char* aciSTR_PICKUP_WEAPONS_OFF = aciSTR_PICKUP_WEAPONS_OFF1; // tractortractor's removed const
+char* aciSTR_PutThis = aciSTR_PutThis1; // tractortractor's removed const
 const char* aciSTR_Ware1 = aciSTR_Ware11;
 const char* aciSTR_Ware2 = aciSTR_Ware21;
 const char* aciSTR_Checkpoints = aciSTR_Checkpoints1;
@@ -664,14 +668,14 @@ void aInit(void)
 	aScrDisp -> send_event(EV_FULLSCR_CHANGE);
 #endif
 
-/*
+// tractortractor's uncommented begin
 #ifdef _GENERATE_ITEM_DATA_
 	aScrDisp -> save_items();
 #ifdef _GENERATE_EXIT_
 	ErrH.Abort("Done...");
 #endif
 #endif
-*/
+// tractortractor's uncommented end
 
 #ifdef _ACTINT_MEMSTAT_
 	aciDetectLeaks();
@@ -1256,6 +1260,12 @@ void aMS_RightUnpress(int fl, int x, int y)
 #define MAP_PTR_X2	1
 #define MAP_PTR_XL	6
 #define MAP_PTR_XL2	3
+// tractortractor's added begin
+#define MAP_ITEM_SIZE	2
+#define MAP_HORDE_SIZE	6
+#define MAP_FACING_ARROW_SIZE_VANGER	3
+#define MAP_FACING_ARROW_SIZE_OTHER		2
+// tractortractor's added end
 
 #define MAP_CUR_VANGER	0
 #define MAP_VANGER	1
@@ -1267,6 +1277,11 @@ void show_map(int x,int y,int sx,int sy)
 {
 	int i,index,m_index,cx,cy,y0,x_index = 0,_x = 0,_y = 0,vy,sx2,sy2;
 	int scr_x,scr_y,dx,scr_x0;
+// tractortractor's added begin
+	DBM *_matrix;
+	int _facing_vector,_side_vector;
+	bool _facing_direct,_side_left;
+// tractortractor's added end
 
 	unsigned char* ptr;
 	bmlObject* p = aScrDisp -> mapObj;
@@ -1389,7 +1404,7 @@ void show_map(int x,int y,int sx,int sy)
 */
 
 #ifdef _ACI_MAP_TESTING_
-	index = 2;
+//	index = 2; // tractortractor's commented
 	for(_y = 0; _y < (1 << MAP_POWER_Y); _y += 256){
 		for(_x = 0; _x < (1 << MAP_POWER_X); _x += 256){
 			scr_x = -1;
@@ -1425,7 +1440,8 @@ void show_map(int x,int y,int sx,int sy)
 				scr_y += p -> SizeY;
 
 			if(scr_x > MAP_PTR_X && scr_x < sx - MAP_PTR_X && scr_y > MAP_PTR_X && scr_y < sy - MAP_PTR_X){
-				switch(index){
+//				switch(index){ // tractortractor's commented
+				switch(aci_map_testing_mode){ // tractortractor's added
 					case 1:
 						XGR_Rectangle(x + scr_x - MAP_PTR_X2,y + scr_y - MAP_PTR_X2,MAP_PTR_X,MAP_PTR_X,MAP_COLOR1,MAP_COLOR1,XGR_FILLED);
 						break;
@@ -1440,7 +1456,7 @@ void show_map(int x,int y,int sx,int sy)
 		}
 	}
 #else
-	index = getObjectPosition(_x,_y);
+	index = getObjectPosition(_x,_y,_matrix,_facing_vector,_facing_direct,_side_vector,_side_left); // tractortractor's added ",_matrix,_facing_vector,_facing_direct,_side_vector,_side_left"
 	while(index != -1){
 		if(index){
 			scr_x = -1;
@@ -1482,23 +1498,44 @@ void show_map(int x,int y,int sx,int sy)
 						break;
 #ifdef _ACI_SHOW_BUGS_ON_MAP_
 					case 2:
-						XGR_SetPixel(x + scr_x,y + scr_y,MAP_COLOR2);
+//						XGR_SetPixel(x + scr_x,y + scr_y,MAP_COLOR2); // tractortractor's commented
+						XGR_SetPixel(x + scr_x,y + scr_y,aciMapVngColors[0]); // tractortractor's added
 						break;
 #endif
 					case 3:
-						XGR_Rectangle(x + scr_x - MAP_PTR_X2,y + scr_y - MAP_PTR_X2,MAP_PTR_X,MAP_PTR_X,MAP_COLOR3,MAP_COLOR3,XGR_FILLED);
+//						XGR_Rectangle(x + scr_x - MAP_PTR_X2,y + scr_y - MAP_PTR_X2,MAP_PTR_X,MAP_PTR_X,MAP_COLOR3,MAP_COLOR3,XGR_FILLED); // tractortractor's commented
+// tractortractor's added begin
+						if(scr_x > MAP_PTR_XL && scr_x < sx - MAP_PTR_XL && scr_y > MAP_PTR_XL && scr_y < sy - MAP_PTR_XL)
+							XGR_FacingArrow(x + scr_x - MAP_PTR_X2,y + scr_y - MAP_PTR_X2,_matrix,_facing_vector,_facing_direct,_side_vector,_side_left,MAP_FACING_ARROW_SIZE_VANGER,MAP_COLOR3);
+// tractortractor's added end
 						break;
 					case 4:
-						XGR_Rectangle(x + scr_x - MAP_PTR_X2,y + scr_y - MAP_PTR_X2,MAP_PTR_X,MAP_PTR_X,aciMapVngColors[0],aciMapVngColors[0],XGR_FILLED);
+//						XGR_Rectangle(x + scr_x - MAP_PTR_X2,y + scr_y - MAP_PTR_X2,MAP_PTR_X,MAP_PTR_X,aciMapVngColors[0],aciMapVngColors[0],XGR_FILLED);
+// tractortractor's added begin
+						if(scr_x > MAP_PTR_XL && scr_x < sx - MAP_PTR_XL && scr_y > MAP_PTR_XL && scr_y < sy - MAP_PTR_XL)
+							XGR_FacingArrow(x + scr_x - MAP_PTR_X2,y + scr_y - MAP_PTR_X2,_matrix,_facing_vector,_facing_direct,_side_vector,_side_left,MAP_FACING_ARROW_SIZE_VANGER,aciMapVngColors[0]);
 						break;
+// tractortractor's added end
 					case 5:
-						XGR_Rectangle(x + scr_x - MAP_PTR_X2,y + scr_y - MAP_PTR_X2,MAP_PTR_X,MAP_PTR_X,aciMapVngColors[1],aciMapVngColors[1],XGR_FILLED);
+//						XGR_Rectangle(x + scr_x - MAP_PTR_X2,y + scr_y - MAP_PTR_X2,MAP_PTR_X,MAP_PTR_X,aciMapVngColors[1],aciMapVngColors[1],XGR_FILLED);
+// tractortractor's added begin
+						if(scr_x > MAP_PTR_XL && scr_x < sx - MAP_PTR_XL && scr_y > MAP_PTR_XL && scr_y < sy - MAP_PTR_XL)
+							XGR_FacingArrow(x + scr_x - MAP_PTR_X2,y + scr_y - MAP_PTR_X2,_matrix,_facing_vector,_facing_direct,_side_vector,_side_left,MAP_FACING_ARROW_SIZE_VANGER,aciMapVngColors[1]);
+// tractortractor's added end
 						break;
 					case 6:
-						XGR_Rectangle(x + scr_x - MAP_PTR_X2,y + scr_y - MAP_PTR_X2,MAP_PTR_X,MAP_PTR_X,aciMapVngColors[2],aciMapVngColors[2],XGR_FILLED);
+//						XGR_Rectangle(x + scr_x - MAP_PTR_X2,y + scr_y - MAP_PTR_X2,MAP_PTR_X,MAP_PTR_X,aciMapVngColors[2],aciMapVngColors[2],XGR_FILLED);
+// tractortractor's added begin
+						if(scr_x > MAP_PTR_XL && scr_x < sx - MAP_PTR_XL && scr_y > MAP_PTR_XL && scr_y < sy - MAP_PTR_XL)
+							XGR_FacingArrow(x + scr_x - MAP_PTR_X2,y + scr_y - MAP_PTR_X2,_matrix,_facing_vector,_facing_direct,_side_vector,_side_left,MAP_FACING_ARROW_SIZE_VANGER,aciMapVngColors[2]);
+// tractortractor's added end
 						break;
 					case 7:
-						XGR_Rectangle(x + scr_x - MAP_PTR_X2,y + scr_y - MAP_PTR_X2,MAP_PTR_X,MAP_PTR_X,aciMapVngColors[3],aciMapVngColors[3],XGR_FILLED);
+//						XGR_Rectangle(x + scr_x - MAP_PTR_X2,y + scr_y - MAP_PTR_X2,MAP_PTR_X,MAP_PTR_X,aciMapVngColors[3],aciMapVngColors[3],XGR_FILLED);
+// tractortractor's added begin
+						if(scr_x > MAP_PTR_XL && scr_x < sx - MAP_PTR_XL && scr_y > MAP_PTR_XL && scr_y < sy - MAP_PTR_XL)
+							XGR_FacingArrow(x + scr_x - MAP_PTR_X2,y + scr_y - MAP_PTR_X2,_matrix,_facing_vector,_facing_direct,_side_vector,_side_left,MAP_FACING_ARROW_SIZE_VANGER,aciMapVngColors[3]);
+// tractortractor's added end
 						break;
 					case 8:
 						if(scr_x > MAP_PTR_XL && scr_x < sx - MAP_PTR_XL && scr_y > MAP_PTR_XL && scr_y < sy - MAP_PTR_XL)
@@ -1512,10 +1549,45 @@ void show_map(int x,int y,int sx,int sy)
 						if(scr_x > MAP_PTR_XL && scr_x < sx - MAP_PTR_XL && scr_y > MAP_PTR_XL && scr_y < sy - MAP_PTR_XL)
 							XGR_Rectangle(x + scr_x - MAP_PTR_XL2,y + scr_y - MAP_PTR_XL2,MAP_PTR_XL,MAP_PTR_XL,aciMapVngColors[3],aciMapVngColors[2],XGR_FILLED);
 						break;
+					// for items
+//#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG and commented
+					case 11:
+//						XGR_Rectangle(x + scr_x - MAP_PTR_X2,y + scr_y - MAP_PTR_X2,MAP_PTR_X,MAP_PTR_X,MAP_COLOR3,MAP_COLOR3,XGR_FILLED); // tractortractor's commented
+						XGR_Rectangle(x + scr_x - MAP_PTR_X2,y + scr_y - MAP_PTR_X2,MAP_ITEM_SIZE,MAP_ITEM_SIZE,aciMapVngColors[0],aciMapVngColors[0],XGR_FILLED); // tractortractor's added
+						break;
+//#endif // tractortractor's commented
+// tractortractor's added begin
+					// for fishes
+					case 12:
+						if(scr_x > MAP_PTR_XL && scr_x < sx - MAP_PTR_XL && scr_y > MAP_PTR_XL && scr_y < sy - MAP_PTR_XL)
+							XGR_FacingArrow(x + scr_x - MAP_PTR_X2,y + scr_y - MAP_PTR_X2,_matrix,_facing_vector,_facing_direct,_side_vector,_side_left,MAP_FACING_ARROW_SIZE_OTHER,aciMapVngColors[1]);
+						break;
+					// for HordeSources
+					case 13:
+						if(scr_x > MAP_PTR_XL && scr_x < sx - MAP_PTR_XL && scr_y > MAP_PTR_XL && scr_y < sy - MAP_PTR_XL)
+							XGR_Rectangle(x + scr_x - MAP_PTR_X2,y + scr_y - MAP_PTR_X2,MAP_HORDE_SIZE,MAP_HORDE_SIZE,aciMapVngColors[0],aciMapVngColors[0],XGR_OUTLINED);
+//						XGR_Rectangle(x + scr_x - MAP_PTR_X2,y + scr_y - MAP_PTR_X2,MAP_PTR_X,MAP_PTR_X,aciMapVngColors[0],aciMapVngColors[0],XGR_OUTLINED);
+						break;
+					// for Hordes
+					case 14:
+						if(scr_x > MAP_PTR_XL && scr_x < sx - MAP_PTR_XL && scr_y > MAP_PTR_XL && scr_y < sy - MAP_PTR_XL)
+							XGR_Rectangle(x + scr_x - MAP_PTR_X2,y + scr_y - MAP_PTR_X2,MAP_HORDE_SIZE,MAP_HORDE_SIZE,aciMapVngColors[1],aciMapVngColors[1],XGR_OUTLINED);
+//						XGR_Rectangle(x + scr_x - MAP_PTR_X2,y + scr_y - MAP_PTR_X2,MAP_PTR_X,MAP_PTR_X,aciMapVngColors[1],aciMapVngColors[1],XGR_OUTLINED);
+						break;
+					// for farmers
+					case 15:
+						if(scr_x > MAP_PTR_XL && scr_x < sx - MAP_PTR_XL && scr_y > MAP_PTR_XL && scr_y < sy - MAP_PTR_XL)
+							XGR_FacingArrow(x + scr_x - MAP_PTR_X2,y + scr_y - MAP_PTR_X2,_matrix,_facing_vector,_facing_direct,_side_vector,_side_left,MAP_FACING_ARROW_SIZE_OTHER,MAP_COLOR3);
+						break;
+					//for bullets
+					case 16:
+						XGR_SetPixel(x + scr_x,y + scr_y,aciMapVngColors[1]);
+						break;
+// tractortractor's added end
 				}
 			}
 		}
-		index = getObjectPosition(_x,_y);
+		index = getObjectPosition(_x,_y,_matrix,_facing_vector,_facing_direct,_side_vector,_side_left); // tractortractor's added ",_matrix,_facing_vector,_facing_direct,_side_vector,_side_left"
 	}
 #endif
 }
@@ -2803,7 +2875,7 @@ void aciInitShopItems(void)
 			p -> uvsDataPtr = u;
 
 #ifdef _ACI_LOGFILE_
-		aScrDisp -> logFile < "\r\nItem \"" < p -> ID_ptr < "\"";
+		aScrDisp -> logFile < "\r\nItem \"" < p -> ID_ptr.c_str() < "\""; // tractortractor's added c_str()
 #endif
 
 		u = (uvsActInt*)u -> next;
@@ -2818,7 +2890,7 @@ void aciInitShopItems(void)
 		while(p){
 			p -> uvsDataPtr = NULL;
 #ifdef _ACI_LOGFILE_
-			aScrDisp -> logFile < "\r\n" < p -> ID_ptr;
+			aScrDisp -> logFile < "\r\n" < p -> ID_ptr.c_str(); // tractortractor's added c_str()
 #endif
 			p = (invItem*)p -> prev;
 		}
@@ -4313,7 +4385,7 @@ int aciGetCurCycle(void)
 #endif
 }
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 void aciChangeMouseItem(void)
 {
 	invItem* temp_item;
@@ -5647,7 +5719,7 @@ void aciShowFrags(void)
 	}
 }
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 void scale_bmp(int sx,int sy,int sx0,int sy0,void* dest,void* src)
 {
 	int x,y;
@@ -5664,7 +5736,7 @@ void scale_bmp(int sx,int sy,int sx0,int sy0,void* dest,void* src)
 		for(x = 0; x < sx; x ++){
 			iy = y * dy;
 			ix = x * dx;
-			dest_buf[x + y * sx] = src_buf[round(ix) + (round(iy) * sx0)];
+			dest_buf[x + y * sx] = src_buf[static_cast<int>(round(ix)) + (static_cast<int>(round(iy)) * sx0 )]; //tractortractor's added static_cast<int>
 		}
 	}
 }

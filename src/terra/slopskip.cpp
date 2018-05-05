@@ -46,7 +46,7 @@ void SlopTurnSkip(int Turn,int Slop,int H,int F,int cx,int cy,int xc,int yc,int 
 	int sinAlpha,cosAlpha;
 	int sinTetta,cosTetta;
 #ifdef __ZORTECHC__
-	char* vp = _video + (yc - YDstSize)*XGR_MAXX + (xc - XDstSize);
+	char* vp = (char*)_video + (yc - YDstSize)*XGR_MAXX + (xc - XDstSize); // tractortractor added "(char*)"
 #else
 	char* vp = (char*)XGR_VIDEOBUF + (yc - YDstSize)*XGR_MAXX + (xc - XDstSize);
 #endif

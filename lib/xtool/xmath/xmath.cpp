@@ -70,6 +70,7 @@ const Se3f  Se3f::ID    (QuatF::ID, Vect3f::ZERO);
 
 RandomGenerator xm_random_generator;
 int RandomGenerator::operator()(){ return ((value = value*214013L + 2531011L) >> 16) & 0x7fff; }
+//int RandomGenerator::operator()(){std::cout << __FILE__ << "; " << __LINE__ << "; custom" << std::endl; return ((value = value*214013L + 2531011L) >> 16) & 0x7fff; } // tractortractor's test
 
 
 ///////////////////////////////////////////////////////////////////////////////

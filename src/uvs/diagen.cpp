@@ -17,6 +17,12 @@
 #include "../units/compas.h"
 #include "univang.h"
 
+// tractortractor's added begin
+#include<string>
+#include<iostream>
+#include<limits>
+// tractortractor's added end
+
 
 /*#ifdef DIAGEN_TEST
 #	include "../diagen/inp.h"
@@ -49,11 +55,13 @@ struct FileBox {
 	int* lens;
 
 		FileBox(void){	cN = 0;
-#ifdef DIAGEN_TEST
-			memset(names = new char*[256],0,256*4);
-			memset(data = new char*[256],0,256*4);
-			memset(lens = new int[256],0,256*4);
-#endif
+// tractortractor's commented begin
+//#ifdef DIAGEN_TEST
+//			memset(names = new char*[256],0,256*4);
+//			memset(data = new char*[256],0,256*4);
+//			memset(lens = new int[256],0,256*4);
+//#endif
+// tractortractor's commented end
 			};
 
 	void load(void);
@@ -102,6 +110,16 @@ void dataList(int val = -1);
 void loadList(void);
 void saveList(void);
 void showmap(void);
+// tractortractor's added begin
+#ifdef DIAGEN_TEST
+void saveListReadable(void);
+void dataListReadable(int val = -1);
+#endif
+void updateDGData(void);
+#ifdef DIAGEN_TEST
+void DGDataUpdatableAll(bool val);
+#endif
+// tractortractor's added end
 /* --------------------------- DEFINITION SECTION -------------------------- */
 static char dgSyntaxError[] = "dgFile syntax error";
 
@@ -131,6 +149,8 @@ static int eventOUT;
 
 static FileBox* FBox;
 
+static std::string inpS; // tractortractor's added
+
 #ifdef RUSSIAN_VERSION
 #define DIAGEN_TEXT "diagen.text"
 #else
@@ -141,8 +161,10 @@ static FileBox* FBox;
 static char DiagenTextName[] = DIAGEN_TEXT;
 //DiagenDispatcher* nDD;
 
-#ifdef DIAGEN_TEST
+// #ifdef DIAGEN_TEST // tractortractor's commented
 int DGdata[DG_EXTERNS::MAX];
+#ifdef DIAGEN_TEST // tractortractor's added
+bool DGdataUpdatable[DG_EXTERNS::MAX]; // tractortractor's added
 //int NetworkON = 0;
 //int aciEscaveDead;
 //int aciEscaveEmpty;
@@ -250,9 +272,13 @@ std::string cp866_to_cp1251(std::string in) {
 	if(!dgRUSSIAN) {
 		return in;
 	}
+// tractortractor's commented begin
+/*
 #ifdef WIN32
 	return in;
 #endif
+*/
+// tractortractor's commented end
 	unsigned int i;
 	for (i = 0; i < in.length(); i++) {
 		if ((unsigned char)in[i]>=128&&(unsigned char)in[i]<=175)
@@ -277,9 +303,13 @@ std::string cp1251_to_utf8(std::string in_string) {
 	if(!dgRUSSIAN) {
 		return in_string;
 	}
+// tractortractor's commented begin
+/*
 #ifdef WIN32
 	return in_string;
 #endif
+*/
+// tractortractor's commented end
 	
 	char *out_mem = new char[in_string.length()*3+3];
 	char *out = out_mem;
@@ -331,10 +361,11 @@ XStream ffsave(1);
 void ParseCommand(char* s)
 {
 	int ind = 0;
-	while(1){
-		while(*s && (*s == ' ' || *s == '\t')) s++; if(!*s) return;
+//	while(1){ // tractortractor's commented
+	while(ind < 16){ // tractortractor's added
+		while(*s && (*s == ' ' || *s == '\t')) s++; if(!*s) break; // tractortractor's replaced "return" with "break"
 		Command[ind++] = s;
-		while(*s && !(*s == ' ' || *s == '\t')) s++; if(!*s) return;
+		while(*s && !(*s == ' ' || *s == '\t')) s++; if(!*s) break; // tractortractor's replaced "return" with "break"
 		*s++ = '\0';
 		}
 	CommandMax = ind;
@@ -343,23 +374,48 @@ void ParseCommand(char* s)
 void doCommand(void)
 {
 	char* c = Command[0];
-	if(!strcmp(c,"GO")) dgD -> startSession(strdup(Convert(Command[1],1)));
+	if(!strcmp(c,"GO") && (CommandMax > 1)) dgD -> startSession(strdup(Convert(Command[1],1))); // tractortractor's added "&& (CommandMax > 1)" inside "if()"
 	else if(!strcmp(c,"FINISH")) dgD -> endSession();
 	else if(!strcmp(c,"STATUS")) dgD -> getStatus();
-	else if(!strcmp(c,"ASK")) dgD -> getAnswer(Command[1]);
-	else if(!strcmp(c,"ESTATUS")) dgD -> eStatus = atoi(Command[1]);
-	else if(!strcmp(c,"BSTATUS")) dgD -> bStatus = atoi(Command[1]);
-	else if(!strcmp(c,"ZSTATUS")) dgD -> zStatus = atoi(Command[1]);
-	else if(!strcmp(c,"SAVE")) dgD -> save(ffsave);
-	else if(!strcmp(c,"LOAD")) dgD -> load(ffsave);
-	else if(!strcmp(c,"DATA")){
-		DGdata[atoi(Command[1])] = atoi(Command[2]);
+	else if(!strcmp(c,"ASK") && (CommandMax > 1)) dgD -> getAnswer(Command[1]); // tractortractor's added "&& (CommandMax > 1)" inside "if()"
+	else if(!strcmp(c,"ESTATUS") && (CommandMax > 1)) dgD -> eStatus = atoi(Command[1]); // tractortractor's added "&& (CommandMax > 1)" inside "if()"
+	else if(!strcmp(c,"BSTATUS") && (CommandMax > 1)) dgD -> bStatus = atoi(Command[1]); // tractortractor's added "&& (CommandMax > 1)" inside "if()"
+	else if(!strcmp(c,"ZSTATUS") && (CommandMax > 1)) dgD -> zStatus = atoi(Command[1]); // tractortractor's added "&& (CommandMax > 1)" inside "if()"
+	else if(!strcmp(c,"SSTATUS") && (CommandMax > 1)) dgD -> sStatus = atoi(Command[1]); // tractortractor's added
+	else if(!strcmp(c,"SAVE")){
+		if(!ffsave.open("diagen_saveff.txt", XS_OUT)) return; // tractortractor's added
+		dgD -> save(ffsave);
+		ffsave.close(); // tractortractor's added
+		}
+	else if(!strcmp(c,"LOAD")){
+		if(!ffsave.open("diagen_saveff.txt", XS_IN)) return; // tractortractor's added
+		dgD -> load(ffsave);
+		ffsave.close(); // tractortractor's added
+		}
+	else if(!strcmp(c,"DATA") && (CommandMax > 2)){ // tractortractor's added "&& (CommandMax > 2)" inside "if()"
+// tractortractor's added begin
+		int DGdataIndex = atoi(Command[1]);
+		if(DGdataIndex >= DG_EXTERNS::MAX) return;
+		DGdataUpdatable[DGdataIndex] = false;
+		DGdata[DGdataIndex] = atoi(Command[2]);
+// tractortractor's added end
+//		DGdata[atoi(Command[1])] = atoi(Command[2]); // tractortractor's commented
 		saveList();
 		}
 	else if(!strcmp(c,"DATALIST")) dataList();
 	else if(!strcmp(c,"DATALIST0")) dataList(0);
+// tractortractor's added begin
+	else if(!strcmp(c,"DATALIST_READABLE")) dataListReadable();
+	else if(!strcmp(c,"DATALIST0_READABLE")) dataListReadable(0);
+	else if(!strcmp(c,"DATA_UPDATABLE") && (CommandMax > 2)){
+		int DGdataIndex = atoi(Command[1]);
+		if(DGdataIndex >= DG_EXTERNS::MAX) return;
+		DGdataUpdatable[DGdataIndex] = (atoi(Command[2]) != 0);
+		}
+	else if(!strcmp(c,"DATA_UPDATABLE_ALL") && (CommandMax > 1)) DGDataUpdatableAll(atoi(Command[1]) != 0);
+// tractortractor's added end
 	else if(!strcmp(c,"MAP")) showmap();
-	else if(!strcmp(c,"VISIT")){
+	else if(!strcmp(c,"VISIT") && (CommandMax > 3)){ // tractortractor's added "&& (CommandMax > 3)"
 		dgRoom* r = dgD -> seekR(Command[1],1);
 		if(r){
 			r -> visitCounter = atoi(Command[2]);
@@ -414,6 +470,7 @@ void showmap(void)
 
 void diagenEventHandle(int code)
 {
+	if (!dgD) return; // tractortractor's added
 	char* s = NULL;
 	int i;
 	switch(code){
@@ -427,15 +484,15 @@ void diagenEventHandle(int code)
 			console_clear();
 			std::cout << strLine << strLine << "\n";
 			s = dgD -> getQprefix();
-			if(s) std::cout << cp1251_to_utf8(cp866_to_cp1251(s)) << ":\n\n";
+			if(s) std::cout << cp1251_to_utf8(cp866_to_cp1251(s)).c_str() << ":\n\n"; // tractortractor's added c_str()
 			s = dgD -> findQfirst();
 			while(s){
 //				dgLog(s);
-				std::cout << cp1251_to_utf8(cp866_to_cp1251(s)) << "\n";
+				std::cout << cp1251_to_utf8(cp866_to_cp1251(s)).c_str() << "\n"; // tractortractor's added c_str()
 				s = dgD -> findQnext();
 				}
 			s = dgD -> getQpostfix();
-			if(s) std::cout << "\n" << cp1251_to_utf8(cp866_to_cp1251(s)) << "\n";
+			if(s) std::cout << "\n" << cp1251_to_utf8(cp866_to_cp1251(s)).c_str() << "\n"; // tractortractor's added c_str
 			std::cout << strLine << strLine << "\n\n";
 			break;
 		case DG_TEST_QUERY:
@@ -444,7 +501,7 @@ void diagenEventHandle(int code)
 				std::cout << strLine << strLine << "\n";
 				s = dgD -> findQfirst();
 				while(s){
-					std::cout << cp1251_to_utf8(cp866_to_cp1251(s)) << "\n";
+					std::cout << cp1251_to_utf8(cp866_to_cp1251(s)).c_str() << "\n"; // tractortractor's added c_str
 					dgD -> getAnswer(s);
 					s = dgD -> findQnext();
 					}
@@ -455,11 +512,22 @@ void diagenEventHandle(int code)
 			console_clear();
 			//TODO stalkerg
 			//inpS.initString();
-			std::cout << "Command:\n";
+//			std::cout << "Command:\n"; // tractortractor's commented
+// tractortractor's added begin
+			std::cout << "Diagen command:\n";
+			getline(std::cin, inpS);
+			std::cin.clear();
+			#ifdef _MSC_VER
+			std::cin.sync();
+			#else
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			#endif
+// tractortractor's added end
 			break;
 		case DG_GET_COMMAND:
 			//TODO stalkerg
 			//s = inpS.getString();
+			s = &inpS[0]; // tractortractor's added
 			console_clear();
 			if(s && *s){
 				std::cout << "Accept command (" << s << ")...\n";
@@ -469,6 +537,36 @@ void diagenEventHandle(int code)
 			break;
 		}
 }
+
+// tractortractor's added begin
+void diagenKeyboardControl(int k) {
+//	const Uint8 *keyState = SDL_GetKeyboardState(NULL);
+//	if(keyState[SDL_SCANCODE_5]){
+	if(k == SDL_SCANCODE_5){
+		diagenEventHandle(DG_GET_NEXT_PHRASE);
+		}
+//	if(keyState[SDL_SCANCODE_6]){
+	if(k == SDL_SCANCODE_6){
+		diagenEventHandle(DG_SKIP_ALL);
+		}
+//	if(keyState[SDL_SCANCODE_7]){
+	if(k == SDL_SCANCODE_7){
+		diagenEventHandle(DG_GET_QUERY_LIST);
+		}
+//	if(keyState[SDL_SCANCODE_8]){
+	if(k == SDL_SCANCODE_8){
+		diagenEventHandle(DG_TEST_QUERY);
+		}
+//	if(keyState[SDL_SCANCODE_9]){
+	if(k == SDL_SCANCODE_9){
+		diagenEventHandle(DG_ENTER_COMMAND);
+		}
+//	if(keyState[SDL_SCANCODE_0]){
+	if(k == SDL_SCANCODE_0){
+		diagenEventHandle(DG_GET_COMMAND);
+		}
+}
+// tractortractor's end
 
 //TODO stalkerg redifined func
 //char* uvsGetLarvaWorld(int n){ return "Glorx"; }
@@ -498,7 +596,7 @@ void dgLog(char* string)
 	if(!string) return;
 #ifdef DIAGEN_TEST
 	if(checkStatus) return;
-	std::cout << cp1251_to_utf8(cp866_to_cp1251(string)) << "\n";
+	std::cout << cp1251_to_utf8(cp866_to_cp1251(string)).c_str() << "\n"; // tractortractor's added c_str
 	std::cout << strLine << strLine << "\n\n";
 #endif
 }
@@ -659,18 +757,18 @@ void dgFile::load(char* fname,int _len)
 	static char mss[] = "Wrong dgFile format";
 	int handle = 0;
 	if(!_len){
-#ifdef DIAGEN_TEST
-		external = 0;
-		XStream ff(fname,XS_IN);
-		buf = new char[(len = ff.size()) + 1];
-		ff.read(buf,len);
-		ff.close();
-		buf[len] = '\0';
-		handle = 1;
-#else
+//#ifdef DIAGEN_TEST // tractortractor's commented
+//		external = 0; // tractortractor's commented
+//		XStream ff(fname,XS_IN); // tractortractor's commented
+//		buf = new char[(len = ff.size()) + 1]; // tractortractor's commented
+//		ff.read(buf,len); // tractortractor's commented
+//		ff.close(); // tractortractor's commented
+//		buf[len] = '\0'; // tractortractor's commented
+//		handle = 1; // tractortractor's commented
+//#else // tractortractor's commented
 		external = 1;
 		buf = FBox -> get(fname,len);
-#endif
+//#endif // tractortractor's commented
 	} else {
 		external = 1;
 		len = _len;
@@ -1008,8 +1106,8 @@ char* dgMolecule::getVarPhrase(char* s)
 	if(!strcmp(s,"World of Larva0")) ret = dgD -> getWorldName(uvsGetLarvaWorld(0));
 	else if(!strcmp(s,"World of Larva1")) ret = dgD -> getWorldName(uvsGetLarvaWorld(1));
 	else if(!strcmp(s,"World of Larva2")) ret = dgD -> getWorldName(uvsGetLarvaWorld(2));
-	else if(!strcmp(s,"Cirt Delivery")) ret = port_itoa(uvsgetDGdata(DG_EXTERNS::CIRT_DELIVERY),nbuf,10);
-	else if(!strcmp(s,"Cycle Name of Locked Larva")) ret = dgD -> CycleName[dgRUSSIAN][dgD -> currentR -> bios][uvsgetDGdata(DG_EXTERNS::LARVA_CYCLE)];
+	else if(!strcmp(s,"Cirt Delivery")) ret = port_itoa(DGdata[DG_EXTERNS::CIRT_DELIVERY],nbuf,10); // tractortractor's changed uvsgetDGdata to DGData
+	else if(!strcmp(s,"Cycle Name of Locked Larva")) ret = dgD -> CycleName[dgRUSSIAN][dgD -> currentR -> bios][DGdata[DG_EXTERNS::LARVA_CYCLE]]; // tractortractor's changed uvsgetDGdata to DGData
 	else if(!strcmp(s,"Boozeena Secret Code")) ret = StringOfBoozeeniada();
 
 	if(!ret) return s;
@@ -1277,7 +1375,10 @@ void dataList(int val)
 	console_clear();
 	int i = 0;
 	while(ArgData[i].name){
-		if(val != -1) DGdata[i] = val;
+		if(val != -1){
+			DGdata[i] = val;
+			DGdataUpdatable[i] = false; // tractortractor's added
+			}
 		//XCon.setpos(22*(i/25),i%25);
 		//XCon <= i < ":" < ArgData[i].name < ": " <= DGdata[i];
 		i++;
@@ -1298,9 +1399,14 @@ void loadList(void)
 {
 	XStream ff(0);
 	if(!ff.open("data.lst",XS_IN)) return;
+	DGDataUpdatableAll(false); // tractortractor's added
 	int i = 0;
 	while(ArgData[i].name){
-		ff >= DGdata[i] < "\r\n";
+//		ff >= DGdata[i] < "\r\n"; // tractortractor's commented
+// tractortractor's added begin
+		ff >= DGdata[i];
+		ff.seek(1,XS_CUR);
+// tractortractor's added end
 		i++;
 		}
 	dgRoom* r = dgD -> rtail;
@@ -1333,7 +1439,82 @@ void saveList(void)
 {
 	return DGdata[code];
 }*/
+
+// tractortractor's added begin
+void dataListReadable(int val)
+{
+	console_clear();
+	int i = 0;
+	while(ArgData[i].name){
+		if(val != -1){
+			DGdata[i] = val;
+			DGdataUpdatable[i] = false;
+			}
+		//XCon.setpos(22*(i/25),i%25);
+		//XCon <= i < ":" < ArgData[i].name < ": " <= DGdata[i];
+		i++;
+		}
+
+	i = 0;
+	dgRoom* r = dgD -> rtail;
+	while(r){
+		//XCon.setpos(60,i++);
+		//XCon < "[" < *r -> roomName < "]: " <= r -> visitCounter < "/" <= r -> comingCounter < " (" < Convert(r -> roomName) < ")";
+		r = r -> next;
+		}
+	//XCon.setpos(0,24);
+	saveListReadable();
+}
+
+void saveListReadable(void)
+{
+	XStream ff("data_readable.lst",XS_OUT);
+	int i = 0;
+	while(ArgData[i].name){
+		ff < "id: " <= i < ";\tname: " < ArgData[i].name < ";\tupdatable: " <= DGdataUpdatable[i] < ";\tvalue: " <= DGdata[i] < "\r\n";
+		i++;
+		}
+	dgRoom* r = dgD -> rtail;
+	while(r){
+		ff < (r -> roomName) < "\r\n";
+		ff < "visitCounter: " <= r -> visitCounter < "\r\n";
+		ff < "comingCounter: " <= r -> comingCounter < "\r\n";
+		r = r -> next;
+		}
+	ff.close();
+}
+
+void DGDataUpdatableAll(bool val)
+{
+	int i = 0;
+	while(ArgData[i].name){
+		DGdataUpdatable[i] = val;
+		i++;
+		}
+}
+// tractortractor's added end
 #endif
+// tractortractor's added begin
+void updateDGData(void)
+{
+	int i = 0;
+	while(ArgData[i].name){
+#ifdef DIAGEN_TEST
+		if(DGdataUpdatable[i]){
+#endif
+			DGdata[i] = uvsgetDGdata(i);
+#ifdef DIAGEN_TEST
+			}
+		else{
+			uvsgetDGdata(i);
+			}
+#endif
+		i++;
+		}
+}
+// tractortractor's added end
+
+
 
 int dgCell::analyzeACCESS(char* p)
 {
@@ -1355,10 +1536,10 @@ int dgCell::analyzeACCESS(char* p)
 			arg2 = Access.getElement(DGF_NONE);
 			if(*arg2 == '$'){
 				arg2++;
-				if(!strcmp(arg2,"ELR_TOTAL")) rvalue = uvsgetDGdata(DG_EXTERNS::ELR_TOTAL);
-				else if(!strcmp(arg2,"KER_TOTAL")) rvalue = uvsgetDGdata(DG_EXTERNS::KER_TOTAL);
-				else if(!strcmp(arg2,"PIP_TOTAL")) rvalue = uvsgetDGdata(DG_EXTERNS::PIP_TOTAL);
-				else if(!strcmp(arg2,"ZYK_TOTAL")) rvalue = uvsgetDGdata(DG_EXTERNS::ZYK_TOTAL);
+				if(!strcmp(arg2,"ELR_TOTAL")) rvalue = DGdata[DG_EXTERNS::ELR_TOTAL]; // tractortractor's changed uvsgetDGdata to DGData
+				else if(!strcmp(arg2,"KER_TOTAL")) rvalue = DGdata[DG_EXTERNS::KER_TOTAL]; // tractortractor's changed uvsgetDGdata to DGData
+				else if(!strcmp(arg2,"PIP_TOTAL")) rvalue = DGdata[DG_EXTERNS::PIP_TOTAL]; // tractortractor's changed uvsgetDGdata to DGData
+				else if(!strcmp(arg2,"ZYK_TOTAL")) rvalue = DGdata[DG_EXTERNS::ZYK_TOTAL]; // tractortractor's changed uvsgetDGdata to DGData
 #ifdef DIAGEN_TEST
 				else if(!strcmp(arg2,"PREV_CYCLE_1")) rvalue = 0;
 				else if(!strcmp(arg2,"PREV_CYCLE_2")) rvalue = 1;
@@ -1381,7 +1562,7 @@ int dgCell::analyzeACCESS(char* p)
 			i = 0; do if(!strcmp(p,ArgData[i].name)) break;
 			while(ArgData[++i].name);
 			if(!ArgData[i].name) ErrH.Abort("Unknown data",XERR_USER,-1,p);
-			lvalue = uvsgetDGdata(ArgData[i].id);
+			lvalue = DGdata[ArgData[i].id]; // tractortractor's changed uvsgetDGdata to DGData
 			return Comparision(opr,lvalue,rvalue);
 		case Q::VISITE:
 			p = Access.getElement(DGF_NONE);
@@ -1507,12 +1688,12 @@ int dgCell::analyzeACCESS(char* p)
 			opr = Access.getElement(DGF_NONE);
 			arg2 = Access.getElement(DGF_NONE);
 			rvalue = atoi(arg2);
-			return Comparision(opr,(int)realRND(100) < uvsgetDGdata(DG_EXTERNS::LUCK),rvalue);
+			return Comparision(opr,(int)realRND(100) < DGdata[DG_EXTERNS::LUCK],rvalue); // tractortractor's changed uvsgetDGdata to DGData
 		case Q::FIASCO:
 			opr = Access.getElement(DGF_NONE);
 			arg2 = Access.getElement(DGF_NONE);
 			rvalue = atoi(arg2);
-			return Comparision(opr,(int)realRND(60) >= uvsgetDGdata(DG_EXTERNS::LUCK),rvalue);
+			return Comparision(opr,(int)realRND(60) >= DGdata[DG_EXTERNS::LUCK],rvalue); // tractortractor's changed uvsgetDGdata to DGData
 		case Q::SPUMMY_DEATH:
 			opr = Access.getElement(DGF_NONE);
 			arg2 = Access.getElement(DGF_NONE);
@@ -2116,7 +2297,7 @@ void dgRoom::startSession(void)
 	solidQ = (bios == 1);
 //#ifndef DIAGEN_TEST
 	aciEscaveDead = uvsCurrentWorldUnableBefore;
-	aciEscaveEmpty = (*roomName == 'V' && !uvsgetDGdata(DG_EXTERNS::HERE_BOORAWCHICK));
+	aciEscaveEmpty = (*roomName == 'V' && !DGdata[DG_EXTERNS::HERE_BOORAWCHICK]); // tractortractor's changed uvsgetDGdata to DGData
 //#endif
 	if(checkStatus) backup();
 }
@@ -2351,8 +2532,8 @@ dgMolecule* dgRoom::seekM(const char* _name)
 	XBuffer buf;
 	buf < _name < "/" < roomName;
 	ErrH.Abort("Molecule not found",XERR_USER,-1,buf.GetBuf());
-#else		
-//	ErrH.Abort("Molecule not found",XERR_USER,-1,_name);
+#else
+	ErrH.Abort("Molecule not found",XERR_USER,-1,_name);
 #endif
 	return NULL;
 }
@@ -2365,7 +2546,7 @@ void dgRoom::test(void)
 	if(i != DG_EXTERNS::MAX) ErrH.Abort("MAX comparing failed!");
 
 #ifdef STARTUP_TESTING
-	std::cout << "*** " << cp1251_to_utf8(roomName) << " ***\n";
+	std::cout << "*** " << cp1251_to_utf8(roomName).c_str() << " ***\n"; // tractortractor's added c_str
 	dgMolecule* m;
 	owner -> currentR = this;
 	for(i = 0;i < gridSX*gridSY;i++)
@@ -2419,9 +2600,9 @@ void DiagenDispatcher::init(void)
 {
 	std::cout<<"DiagenDispatcher::init "<<getDGname("room",".lst")<<std::endl;
 	FBox = new FileBox;
-#ifndef DIAGEN_TEST
+//#ifndef DIAGEN_TEST // tractortractor's commented
 	FBox -> load();
-#endif	
+//#endif // tractortractor's commented
 	dgFile* pf = new dgFile(getDGname("room",".lst"));
 	
 	char* p = NULL;
@@ -2460,8 +2641,9 @@ void DiagenDispatcher::init(void)
 
 #ifdef DIAGEN_TEST
 	FBox -> save();
+	DGDataUpdatableAll(true); // tractortractor's added
 #endif
-	
+
 }
 
 char* DiagenDispatcher::findQfirst(void)
@@ -2490,6 +2672,7 @@ char* DiagenDispatcher::findQnext(void)
 void DiagenDispatcher::startSession(const char* rname)
 {
 	if(currentR) endSession();
+	updateDGData(); // tractortractor's added
 
 	dgAbortStatus = 0;
 	endSessionLog = 0;
@@ -2499,7 +2682,7 @@ void DiagenDispatcher::startSession(const char* rname)
 		std::cout << "\nError: room not found...\n\n";
 		return;
 		}
-	std::cout << "\n" << strLine << " SESSION IN " << cp1251_to_utf8(r -> roomName) << " started" << strLine << "\n";
+	std::cout << "\n" << strLine << " SESSION IN " << cp1251_to_utf8(r -> roomName).c_str() << " started" << strLine << "\n"; // tractortractor's added c_str
 	checkSession(rname);
 	if(dgAbortStatus) std::cout << "This session will be aborted!\n";
 	std::cout << "\n";
@@ -2529,7 +2712,7 @@ void DiagenDispatcher::endSession(void)
 {
 	if(currentR){
 #ifdef DIAGEN_TEST
-		if(!checkStatus) std::cout << "\n" << strLine << " SESSION IN " << cp1251_to_utf8(currentR -> roomName) << " finished" << strLine << "\n\n";
+		if(!checkStatus) std::cout << "\n" << strLine << " SESSION IN " << cp1251_to_utf8(currentR -> roomName).c_str() << " finished" << strLine << "\n\n"; // tractortractor's added c_str()
 #endif
 		currentR -> endSession();
 		if(!checkStatus) lastR = currentR;
@@ -2612,9 +2795,9 @@ dgRoom* DiagenDispatcher::seekR(const char* _name,int onlyfirstchar)
 			if(*r -> roomName == *_name) return r;
 			r = r -> next;
 			}
-//#ifndef DIAGEN_TEST
+#ifndef DIAGEN_TEST // tractortractor's uncommented
 	ErrH.Abort("Room not found",XERR_USER,-1,_name);
-//#endif
+#endif // tractortractor's uncommented
 	return NULL;
 }
 
@@ -2624,8 +2807,11 @@ void DiagenDispatcher::getStatus(void)
 	console_clear();
 	std::cout << "\nStatus:\n";
 	if(currentR){
+		std::cout << "\tworld: " << cp1251_to_utf8(currentR -> worldNames[dgRUSSIAN]) << "\n"; // tractortractor's added
+		std::cout << "\tescave: " << cp1251_to_utf8(currentR -> escaveNames[dgRUSSIAN]) << "\n"; // tractortractor's added
 		std::cout << "\troom: " << currentR -> roomName << "\n";
-		std::cout << "\tperson: " << currentR -> counsillorNames[dgRUSSIAN] << "\n";
+//		std::cout << "\tperson: " << currentR -> counsillorNames[dgRUSSIAN] << "\n"; // tractortractor's commented
+		std::cout << "\tperson: " << cp1251_to_utf8(currentR -> counsillorNames[dgRUSSIAN]).c_str() << "\n"; // tractortractor's added
 		if(dgLevel) std::cout << "\tlevel: " << *dgLevel << "\n";
 		}
 	else
@@ -2656,7 +2842,8 @@ char* DiagenDispatcher::getAnswer(char* subj)
 	dgQuery* q = currentR -> seekQvisible(subject);
 
 #ifdef DIAGEN_TEST
-	std::cout << "Subject: " << cp866_to_cp1251(cp1251_to_utf8(subj));
+//	std::cout << "Subject: " << cp866_to_cp1251(cp1251_to_utf8(subj)); // tractortractor's commented
+	std::cout << "Subject: " << cp1251_to_utf8(cp866_to_cp1251(subj)).c_str(); // tractortractor's added
 	free(subj);
 #endif
 	if(q){
@@ -2670,7 +2857,8 @@ char* DiagenDispatcher::getAnswer(char* subj)
 
 		str = Convert(str);
 #ifdef DIAGEN_TEST
-		std::cout << str << "\n";
+//		std::cout << str << "\n"; // tractortractor's commented
+		std::cout << cp1251_to_utf8(cp866_to_cp1251(str)) << "\n"; // tractortractor's added
 #endif
 		return str;
 		}

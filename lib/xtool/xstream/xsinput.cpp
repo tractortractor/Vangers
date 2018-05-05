@@ -72,6 +72,12 @@ XStream& XStream::operator< (long double v)
 	return *this;
 }
 
-
-
-
+// tractortractor's added begin
+#if defined(_MSC_VER) && defined(_WIN64)
+XStream& XStream::operator< (std::size_t v)
+{
+	write(&v,(unsigned)sizeof(std::size_t));
+	return *this;
+}
+#endif
+// tractortractor's added end

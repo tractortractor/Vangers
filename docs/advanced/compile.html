@@ -1,0 +1,164 @@
+<h2>MSVC</h2>
+
+<h3>Dependencies:</h3>
+
+<h4>Prerequisites</h4>
+<p>Install microsoft visual studio. Make sure you can open MSVC development console. See <a href="https://docs.microsoft.com/en-gb/cpp/build/walkthrough-compiling-a-native-cpp-program-on-the-command-line#open-a-developer-command-prompt">https://docs.microsoft.com/en-gb/cpp/build/walkthrough-compiling-a-native-cpp-program-on-the-command-line#open-a-developer-command-prompt</a></p>
+<p>Install CMake. Make sure that folder with cmake executable is added to window's "PATH" variable.</p>
+<p>Install MSYS2 <a href="http://www.msys2.org/">http://www.msys2.org/</a></p>
+<p>There should be "MSVC_compilation_configurations" folder in source folder of Vangers.</p>
+
+<h4>zlib:</h4>
+	<p>Download source code from <a href="https://www.zlib.net/">https://www.zlib.net/</a></p>
+	<p>Copy "zlib_build" folder from "MSVC_compilation_configurations" to zlib source folder.</p>
+	<p>Modify "build_command.bat" and "build.cmake" files as needed:</p>
+	<ul>
+		<li>You must change "Visual Studio 14 2015 Win64" to your current generator name.</li>
+		<li>You can change "Release" to "Debug" to compile debug build instead of release one.</li>
+		<li>You can change installation path by modifying "CMAKE_INSTALL_PREFIX" entry in "build.cmake" file.</li>
+	</ul>
+	<p>Launch MSVC development console, "cd" to "zlib_build" folder.</p>
+	<p>Execute through console: "cmake_command.bat", then "build_command.bat".</p>
+
+<h4>SDL2:</h4>
+	<p>Download source code from <a href="https://www.libsdl.org/download-2.0.php">https://www.libsdl.org/download-2.0.php</a></p>
+	<p>Go to "VisualC" folder of SDL source folder. Open "SDL.sln" file with MSVC.</p>
+	<p>Right click "Solution 'SDL'" and choose "properties", click on "Configuration Manager..." and set desired options.</p>
+	<p>Right click "Solution 'SDL'" and choose "Build Solution".</p>
+	<p>Copy "SDL2.lib", "SDL2main.lib" and "SDL2test.lib" to desired folder for SDL2 library. Also copy "*.pdb" and "*.dll" files if present.</p>
+	<p>Copy "include" directory to desired folder for SDL2 library, open copied directory, create "SDL2" folder, move all files from include folder here.</p>
+
+<h4>SDL2_net:</h4>
+	<p>Download source code from <a href="https://www.libsdl.org/projects/SDL_net/">https://www.libsdl.org/projects/SDL_net/</a></p>
+	<p>Go to "VisualC" folder of SDL2_net source folder. Open "SDL_net_VS2008.sln" file with MSVC.</p>
+	<p>Right click "SDL2_net" project and choose "properties".</p>
+	<p>Select "VC++ Directories" submenu.</p>
+	<p>Add path to folder with "SDL2.h" file of your compiled SDL2 library to "Include Directories".</p>
+	<p>Add path to folder with "SDL2.lib" file of your compiled SDL2 library to "Library Directories".</p>
+	<p>Click on "Configuration Manager..." and set desired options.</p>
+	<p>Then select ok to close all properties menu and save changes.</p>
+	<p>Right click on "SDL2_net" project and select "build" option.</p>
+	<p>Copy "SDL2_net.lib" to desired folder for SDL2_net library. Also copy "SDL2_net.dll" and "SDL2_net.pdb" files if present. Other files are not needed to use this library.</p>
+	<p>Copy "SDL_net.h" to desired folder for SDL2_net library.</p>
+
+<h4>libogg:</h4>
+	<p>Download source code from <a href="https://xiph.org/downloads/">https://xiph.org/downloads/</a></p>
+	<p>Go to "win32" folder of libogg source folder. Then go to one of VC[year] folder. You should pick the one which matches your version of Visual Studio or older.</p>
+	<p>If you want to compile dynamic build open "libogg_dynamic.sln" in visual studio. Open "libogg_static.sln" otherwise.</p>
+	<p>Set up project properties as needed then build.</p>
+	<p>Copy "libogg.lib" to desired folder for libogg library. Also copy "libogg.pdb" and "libogg.dll" if present.</p>
+	<p>Copy "include" directory to desired folder for libogg library.</p>
+	<p>While compiling libav for some reason it searches for "ogg.lib" instead of "libogg.lib".</p>
+	<p>Quick workaround is to copy and rename this file.</p>
+
+<h4>libvorbis:</h4>
+	<p>Download source code from <a href="https://xiph.org/downloads/">https://xiph.org/downloads/</a></p>
+	<p>Go to "win32" folder of libvorbis source folder. Then go to one of VC[year] folder. You should pick the one which matches your version of Visual Studio or older.</p>
+
+	<p>Open "libogg.props" in any text editor.</p>
+	<p>Change "AdditionalIncludeDirectories" - add path to include folder of your libogg library and separate it from other path with ";". Example: "C:\path\to\your\libogg\include;"</p>
+	<p>Change "AdditionalLibraryDirectories" - add path to library folder of your libogg library and separate it from other path with ";". Example: "C:\path\to\your\libogg\lib;"</p>
+	<p>If you want to compile dynamic build open "libvorbis_dynamic.sln" in visual studio. Open "libvorbis_static.sln" otherwise.</p>
+
+	<p>Set up solution properties as needed then build.</p>
+	<p>For some reason "vorbisdec" and "vorbisenc" are compiled as executables by default even though they are used as libraries by libav.</p>
+	<p>Quick workaround is to change target build to static library.</p>
+	<p>For both "vorbisdec" and "vorbisenc"</p>
+	<ol>
+		<li>Go to properties.</li>
+		<li>Select "General".</li>
+		<li>Change "Target Extension" to ".lib".</li>
+		<li>Change "Configuration Type" to "Static Library (.lib)"</li>
+		<li>Select "Librarian->general". Reopen properties window if can't be found.</li>
+		<li>Change "Output file" value, so file extension is ".lib" instead of ".exe".</li>
+	</ol>
+
+	<p>Copy "libvorbis.lib", "libvorbisfile.lib", "vorbisdec.lib" and "vorbisenc.lib" to desired folder for libvorbis library. Also copy ".dll" and ".pdb" files if present.</p>
+	<p>Copy "include" directory to desired folder for libvorbis library.</p>
+
+	<p>While compiling libav for some reason it searches for "vorbis.lib" and "vorbisfile.lib" instead of "libvorbis.lib" and "libvorbisfile.lib".</p>
+	<p>Quick workaround is to copy and rename both files.</p>
+
+<h4>libav:</h4>
+	<p>To compile Vangers you need libav library which is fork of ffmpeg. ffmpeg cannot be used since deprecated "avcodec_decode_video" function is used. ffmpeg uses "avcodec_decode_video2" at least since march 2012. There are probably other problems. See <a href="https://github.com/mpenkov/ffmpeg-tutorial#deprecated-functions-and-symbols">https://github.com/mpenkov/ffmpeg-tutorial#deprecated-functions-and-symbols</a></p>
+
+	<p>Download source code from <a href="https://libav.org/">https://libav.org/</a></p>
+	<p>Open MSVC development console, execute "msys_shell.bat" here which can be found in MSYS2 installation directory. MSYS2 console will appear.</p>
+
+	<p>Do the following in MSYS2 console:</p>
+
+	<ul>
+		<li>Install YASM "pacman -S yasm"</li>
+		<li>Install diffutils "pacman -S diffutils"</li>
+		<li>
+			<p>Add path to directory with MSVC cl compiler and other important executables to PATH variable.</p>
+			<p>Example: export PATH="/c/path to/directory with/cl:$PATH".</p>
+			<p>IMPORTANT: if path to directory with cl have spaces, it must be escaped with quotes. There must be no ":" after drive letter.</p>
+		</li>
+
+		<li>
+			<p>Modify LIB and INCLUDE environment variables to include the Windows-style paths to directories with zlib, libogg and libvorbis libraries.</p>
+			<p>Examples:</p>
+			<p>"export INCLUDE="C:\\libvorbis\\include;C:\\libogg\\include;C:\\zlib\\include;$INCLUDE""</p>
+			<p>"export LIB="C:\\libvorbis\\lib;C:\\libogg\\lib;C:\\zlib\\lib;$LIB""</p>
+		</li>
+
+		<li>Change directory to libav source directory "cd /c/path/to/libav/source"</li>
+
+		<li>
+			<p>Configure build:</p>
+			<ol>
+				<li>Type "./configure".</li>
+				<li>Add --toolchain=msvc.</li>
+				<li>Specify where to install with --prefix</li>
+				<li>Add --enable-shared option if you want to compile dynamic libraries, static is default.</li>
+				<li>Add --enable-libvorbis.</li>
+				<li>Add --enable-zlib.</li>
+				<li>Execute this command</li>
+			</ol>
+			<p>Example: "./configure --toolchain=msvc --prefix=/c/path/where/to/install/libav --enable-shared --enable-libvorbis --enable-zlib"</p>
+		</li>
+		<li>Execute "make" to compile.</li>
+		<li>Execute "make install" to move compiled files to location specified in prefix.</li>
+
+		<li>If compilation fails because "unistd.h" cannot be found then go to "zlib installation folder/include" open "zconf.h" find "include &ltunistd.h&gt" line and comment it by adding "//" at the beginning of the line. Then run "make" again.</li>
+	</ul>
+
+<h4>Boost:</h4>
+	<p>Required only when compiling with ENTRIES_CONTROL and/or VANGERS_DEBUG macros defined.</p>
+	<p>Download boost source from here <a href="https://www.boost.org/users/download/">https://www.boost.org/users/download/</a></p>
+	<p>There should be "bootstrap.bat" file in source. Execute it through MSVC development console.</p>
+
+	<p>Configure build.</p>
+	<ol>
+		<li>Type ".\b2 install".</li>
+		<li>Add "--prefix=C:\where\to\install" with installation path instead of "where/to/install".</li>
+		<li>Add "toolset=msvc".</li>
+		<li>Add "variant=release" or "variant=debug" to compile release or debug build respectively.</li>
+		<li>Add "link=shared" or "link=static" to compile shared or static build respectively.</li>
+		<li>Add "address-model=32" or "address-model=64" to compile 32 or 64 bit build respectively.</li>
+	</ol>
+		<p>Example: .\b2 install --prefix=C:\boost toolset=msvc variant=Release link=shared address-model=32</p>
+
+<h4>clunk:</h4>
+	<p>Source code for version of clunk which is compatible with Vangers restoration project can be found here: <a href="https://github.com/tractortractor/clunk">https://github.com/tractortractor/clunk</a>.</p>
+	<p>Copy "clunk_build" folder from "MSVC_compilation_configurations" to clunk source folder.</p>
+	<p>Modify "build_command.bat" and "build.cmake" files as needed:</p>
+	<ul>
+		<li>You can change "Visual Studio 14 2015 Win64" to your current generator name.</li>
+		<li>You can change "Release" to "Debug" to compile debug build instead of release one.</li>
+		<li>You can change installation path by modifying "CMAKE_INSTALL_PREFIX" entry in "build.cmake" file.</li>
+		<li>You must change "SDL2_INCLUDE_DIR" entry so it points to include folder of SDL2 library.</li>
+		<li>You must change "SDL2_LIBRARY" entry so it points to "SDL2.lib" or "SDL2d.lib" file of SDL2 library.</li>
+		<li>You must change "SDL2MAIN_LIBRARY" entry so it points to "SDL2main.lib" or "SDL2maind.lib" file of SDL2 library.</li>
+	</ul>
+	<p>Launch MSVC development console, "cd" to "clunk_build" folder.</p>
+	<p>Execute through console: "cmake_command.bat", then "build_command.bat".</p>
+
+<h3>Vangers:</h3>
+	<p>If you are going to compile with VANGERS_DEBUG macro defined you should obtain "getRSS.c" file from <a href="http://nadeausoftware.com/articles/2012/07/c_c_tip_how_get_process_resident_set_size_physical_memory_use#Downloads">http://nadeausoftware.com/articles/2012/07/c_c_tip_how_get_process_resident_set_size_physical_memory_use#Downloads</a>.</p>
+	<p>Copy "vangers_build" folder from "MSVC_compilation_configurations" to Vangers source folder.</p>
+	<p>Modify "build_command.bat" and "build.cmake" files as needed. You must change all library path entries so they will point to your freshly compiled libraries.</p>
+	<p>Launch MSVC development console, "cd" to "vangers_build" folder.</p>
+	<p>Execute through console: "cmake_command.bat", then "build_command.bat".</p>
+	<p>You have to copy "vangers.exe", folders in "data_folder" of Vangers source and all ".dll" dependencies to game data folder.</p>

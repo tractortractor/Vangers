@@ -76,7 +76,7 @@ const int TNT_DETONATION_RADIUS = 50;
 
 char* TntCloneName;
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 XStream fDanger;
 #endif
 
@@ -276,7 +276,7 @@ void StaticOpen(void)
 	EnterCenterData = new EnterCenter[NumEnterCenter];
 	for(i = 0;i < NumEnterCenter;i++) EnterCenterData[i].Open(in);
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 	fDanger.open("danger.log",XS_OUT);
 #endif
 
@@ -362,7 +362,7 @@ void StaticClose(void)
 	
 	for(i = 0;i < NumEnterCenter;i++) EnterCenterData[i].Close();
 	delete[] EnterCenterData;
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 	fDanger.close();
 #endif
 };
@@ -1751,7 +1751,7 @@ void DangerDataType::Quant(void)
 
 	switch(Type){
 		case DangerTypeList::FASTSAND:
-//#ifdef _DEBUG
+//#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 //			fDanger < "\nFastSand : " <= Enable < ";" <= R_curr.x < "," <= R_curr.y < "," <= R_curr.z;
 //#endif
 			if(Enable){
@@ -1780,7 +1780,7 @@ void DangerDataType::Quant(void)
 			};
 			break;
 		case DangerTypeList::WHIRLPOOL:
-//#ifdef _DEBUG
+//#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 //			fDanger < "\nWhirlpool : " <= Enable < ";" <= R_curr.x < "," <= R_curr.y < "," <= R_curr.z;
 //#endif
 
@@ -1813,7 +1813,7 @@ void DangerDataType::Quant(void)
 			break;
 		case DangerTypeList::SWAMP:
 
-//#ifdef _DEBUG
+//#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 //			fDanger < "\nSwamp : " <= Enable < ";" <= R_curr.x < "," <= R_curr.y < "," <= R_curr.z;
 //#endif
 			if(Enable){
@@ -1859,7 +1859,7 @@ void DangerDataType::Quant(void)
 			break;
 		case DangerTypeList::HOLE:
 
-//#ifdef _DEBUG
+//#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 //			fDanger < "\nHole : " <= Enable < ";" <= R_curr.x < "," <= R_curr.y < "," <= R_curr.z;
 //#endif
 
@@ -2054,7 +2054,10 @@ void EnterCenter::Resort(void)
 {
 	int i,t;
 	EnterEngine* b[10];
+//	std::cout << "EnterCenter::Resort" << '\n';// tractortractor's test
+//	t = 0; // tractortractor's test
 	t = RND(NumEnter);
+//	std::cout << "NumEnter: " << t << '\n'; // tractortractor's test
 	for(i = 0;i < NumEnter;i++) b[i] = ListData[(t + i) % NumEnter];
 	for(i = 0;i < NumEnter;i++) Data[i] = b[i];
 };
@@ -2073,6 +2076,7 @@ SensorDataType* EnterCenter::GetCenter(void)
 		ErrH.Abort("Bad get Center");
 	NumEnter--;
 	if(NumEnter == 0) (*Lock) = 1;
+//	std::cout << "GetCenter; NumEnter: " << NumEnter << '\n'; // tractortractor's test
 //	Data[NumEnter]->Active();
 	return Data[NumEnter]->ActionLink;
 };
@@ -2082,6 +2086,7 @@ void EnterCenter::PutCenter(EnterEngine* p)
 	if(NumEnter == 0) (*Lock) = 0;
 	else if(NumEnter >= MaxEnter)
 		ErrH.Abort("Bad put Center");
+//	std::cout << "PutCenter; NumEnter: " << NumEnter << '\n';// tractortractor's test
 	Data[NumEnter] = p;
 	NumEnter++;
 };

@@ -20,6 +20,8 @@
 #include "i_mem.h"
 #include "ikeys.h"
 
+#include <string> // tractortractor's added
+
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 
 // MP Game Parameters...
@@ -140,27 +142,27 @@ extern int EffectInUsePriory,EffectInUse;
 
 extern XBuffer* iResBuf;
 
-extern char* iSTR_MP_Kills;
-extern char* iSTR_MP_Deaths;
-extern char* iSTR_MP_DeathTimeMin;
-extern char* iSTR_MP_DeathTimeMax;
-extern char* iSTR_MP_Kills_rate;
-extern char* iSTR_MP_Deaths_rate;
-extern char* iSTR_MP_Ware01_Delivery;
-extern char* iSTR_MP_Ware02_Delivery;
-extern char* iSTR_MP_Min_delivery_time;
-extern char* iSTR_MP_Max_delivery_time;
-extern char* iSTR_MP_StolenWares;
-extern char* iSTR_MP_Wares_lost;
-extern char* iSTR_MP_Total_time;
-extern char* iSTR_MP_Min_checkpoint_time;
-extern char* iSTR_MP_Max_checkpoint_time;
-extern char* iSTR_MP_1st_part_delivery;
-extern char* iSTR_MP_2nd_part_delivery;
-extern char* iSTR_MP_Mechos_frame;
-extern char* iSTR_MP_Mechos_assembled_in;
-extern char* iSTR_NONE;
-extern char* iSTR_Checkpoints_Number;
+extern const char* iSTR_MP_Kills; // tractortractor's added const
+extern const char* iSTR_MP_Deaths; // tractortractor's added const
+extern const char* iSTR_MP_DeathTimeMin; // tractortractor's added const
+extern const char* iSTR_MP_DeathTimeMax; // tractortractor's added const
+extern const char* iSTR_MP_Kills_rate; // tractortractor's added const
+extern const char* iSTR_MP_Deaths_rate; // tractortractor's added const
+extern const char* iSTR_MP_Ware01_Delivery; // tractortractor's added const
+extern const char* iSTR_MP_Ware02_Delivery; // tractortractor's added const
+extern const char* iSTR_MP_Min_delivery_time; // tractortractor's added const
+extern const char* iSTR_MP_Max_delivery_time; // tractortractor's added const
+extern const char* iSTR_MP_StolenWares; // tractortractor's added const
+extern const char* iSTR_MP_Wares_lost; // tractortractor's added const
+extern const char* iSTR_MP_Total_time; // tractortractor's added const
+extern const char* iSTR_MP_Min_checkpoint_time; // tractortractor's added const
+extern const char* iSTR_MP_Max_checkpoint_time; // tractortractor's added const
+extern const char* iSTR_MP_1st_part_delivery; // tractortractor's added const
+extern const char* iSTR_MP_2nd_part_delivery; // tractortractor's added const
+extern const char* iSTR_MP_Mechos_frame; // tractortractor's added const
+extern const char* iSTR_MP_Mechos_assembled_in; // tractortractor's added const
+extern const char* iSTR_NONE; // tractortractor's added const
+extern const char* iSTR_Checkpoints_Number; // tractortractor's added const
 
 
 // English version...
@@ -265,6 +267,34 @@ const char* iJoystickStickSwitch2[9] =
        "JoyUpRight"
 };
 
+// tractortractor's added begin
+// Local version...
+const char* iJoystickStickAxis1[3] =
+{
+       "ось X",
+       "ось Y",
+       "ось Z"
+};
+
+// English version...
+const char* iJoystickStickAxis2[3] =
+{
+       "axis X",
+       "axis Y",
+       "axis Z"
+};
+
+std::string iJoystickStickAxisUnknown1 = "ось #";
+std::string iJoystickStickAxisUnknown2 = "axis #";
+
+std::string iJoystickStickAxisInverted1 = "инвертированная ";
+std::string iJoystickStickAxisInverted2 = "inverted ";
+
+std::string iJoystickStickAxis;
+
+extern int JoystickStickSwitchButton;
+extern int CurrentStickSwitchCode;
+// tractortractor's added end
 
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 
@@ -655,7 +685,19 @@ void iPrepareOptions(void)
 		iScrOpt[i] = NULL;
 
 	iScrOpt[iJOYSTICK_TYPE] = new iScreenOption(iTRIGGER,0,"Joystick screen","JoyTypeID");
-	
+// tractortractor's added begin
+	iScrOpt[iJOYSTICK_TRACTION_AXIS_NUM] = new iScreenOption(iSTRING,0,"Joystick screen2","JoyTractionAxisNum");
+	iScrOpt[iJOYSTICK_TRACTION_AXIS_INVERTED] = new iScreenOption(iTRIGGER,0,NULL,"JoyTractionAxisInverted");
+	iScrOpt[iJOYSTICK_TRACTION_AXIS_INVERTED]->objPtr = new iTriggerObject();
+	iScrOpt[iJOYSTICK_TRACTION_AXIS_SENSITIVITY_CUR] = new iScreenOption(iSCROLLER,0,"Joystick screen2","JoyTractionAxisSensitivity");
+	iScrOpt[iJOYSTICK_TRACTION_AXIS_SENSITIVITY_MAX] = new iScreenOption(iSCROLLER,1,"Joystick screen2","JoyTractionAxisSensitivity");
+	iScrOpt[iJOYSTICK_RUDDER_AXIS_NUM] = new iScreenOption(iSTRING,0,"Joystick screen2","JoyRudderAxisNum");
+	iScrOpt[iJOYSTICK_RUDDER_AXIS_INVERTED] = new iScreenOption(iTRIGGER,0,NULL,"JoyRudderAxisInverted");
+	iScrOpt[iJOYSTICK_RUDDER_AXIS_INVERTED]->objPtr = new iTriggerObject();
+	iScrOpt[iJOYSTICK_RUDDER_AXIS_SENSITIVITY_CUR] = new iScreenOption(iSCROLLER,0,"Joystick screen2","JoyRudderAxisSensitivity");
+	iScrOpt[iJOYSTICK_RUDDER_AXIS_SENSITIVITY_MAX] = new iScreenOption(iSCROLLER,1,"Joystick screen2","JoyRudderAxisSensitivity");
+// tractortractor's added end
+
 	iScrOpt[iSOUND_ON] = new iScreenOption(iTRIGGER,0,"Sound screen","SoundTrig");
 	iScrOpt[iSOUND_VOLUME_CUR] = new iScreenOption(iSCROLLER,0,"Sound screen","SndVolumeScroller");
 	iScrOpt[iSOUND_VOLUME_MAX] = new iScreenOption(iSCROLLER,1,"Sound screen","SndVolumeScroller");
@@ -2347,7 +2389,7 @@ void iPreparePlayerResults(int id)
 }
 
 const char* STR_NONE1 = "NONE";
-const char STR_NONE2[] = {0x8D, 0x85, 0x92}; //cp866 - ╨Э╨Х╨в
+const char STR_NONE2[] = {static_cast<char>(0x8D), static_cast<char>(0x85), static_cast<char>(0x92)}; //cp866 - ╨Э╨Х╨в // tractortractor's added static_cast<char>
 
 const char* STR_JOYSTICK_KEY_NAME[] = {
 	"jbutton_1",
@@ -2415,17 +2457,39 @@ const char* iGetKeyNameText(int vkey,int lang)
 			return STR_NONE1;
 		}
 	}
+// tractortractor's added begin
+	if(vkey == JoystickStickSwitchButton)
+		return NULL;
+// tractortractor's added end
+/* // tractortractor's commented begin
 	if (vkey & SDLK_JOYSTICK_BUTTON_MASK) {
 		if ((vkey ^ SDLK_JOYSTICK_BUTTON_MASK) < 20)
 			return STR_JOYSTICK_KEY_NAME[vkey ^ SDLK_JOYSTICK_BUTTON_MASK];
 		else
 			return "jbutton_unknow";
+*/ // tractortractor's commented end
+// tractortractor's added begin
+	if (vkey & VK_BUTTON) {
+		if(vkey >= VK_BUTTON_1 && vkey <= VK_BUTTON_32){
+			return ((lang) ? iJoystickButtons2[vkey - VK_BUTTON_1] : iJoystickButtons1[vkey - VK_BUTTON_1]);
+		}
+		else
+			return "jbutton_unknown";
+// tractortractor's added end
 	} else if (vkey & SDLK_GAMECONTROLLER_BUTTON_MASK) {
 		return SDL_GameControllerGetStringForButton( (SDL_GameControllerButton)(vkey ^ SDLK_GAMECONTROLLER_BUTTON_MASK));
 	} else if (vkey & SDLK_JOYSTICK_HAT_MASK) {
 		return get_joystick_hat_name( (vkey ^ SDLK_JOYSTICK_HAT_MASK) % 10 );
 	} else if (vkey & SDLK_SCANCODE_MASK) {
 		return SDL_GetKeyName(vkey);
+// tractortractor's moved from iGetJoyBtnNameText begin
+	} else if(vkey & VK_STICK_SWITCH) {
+		if(vkey >= VK_STICK_SWITCH_1 && vkey <= VK_STICK_SWITCH_9){
+			return ((lang) ? iJoystickStickSwitch2[vkey - VK_STICK_SWITCH_1] : iJoystickStickSwitch2[vkey - VK_STICK_SWITCH_1]);
+		}
+		else
+			return NULL; //WARNING NEED VIEW!!! 
+// tractortractor's moved from iGetJoyBtnNameText end
 	} else {
 		return SDL_GetKeyName(SDL_GetKeyFromScancode((SDL_Scancode)vkey));
 	}
@@ -2452,6 +2516,24 @@ const char* iGetJoyBtnNameText(int vkey,int lang)
 	}
 	return NULL; //WARNING NEED VIEW!!!
 }
+
+// tractortractor's TODO
+// tractortractor's added begin
+const char* iGetJoyAxisNameText(int axis_num, int axis_inverted, int lang)
+{
+	iJoystickStickAxis = "";
+	if(axis_inverted)
+		iJoystickStickAxis += (lang) ? iJoystickStickAxisInverted1 : iJoystickStickAxisInverted2;
+	if(axis_num == -1)
+		return NULL;
+	if(axis_num < 3)
+		iJoystickStickAxis += (lang) ? iJoystickStickAxis1[axis_num] : iJoystickStickAxis2[axis_num];
+	else{
+		iJoystickStickAxis += ((lang) ? iJoystickStickAxisUnknown1 : iJoystickStickAxisUnknown2) + std::to_string(axis_num);
+	}
+	return iJoystickStickAxis.c_str();
+}
+// tractortractor's added end
 
 void iPrepareHallOfFame(void)
 {

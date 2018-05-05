@@ -268,8 +268,8 @@ struct NetRndType
 #ifndef CLOCK
 #define CLOCK() 	(clock()*18/1000)
 #endif
-#define GLOBAL_CLOCK()	(round(clock()*(256./1000)) - global_clock_tau)
-#define LOCAL_CLOCK()	(round(clock()*(256./1000)))
+#define GLOBAL_CLOCK()	(static_cast<int>(round(clock()*(256./1000))) - global_clock_tau) // tractortractor's added static_cast<int>
+#define LOCAL_CLOCK()	(static_cast<int>(round(clock()*(256./1000)))) // tractortractor's added static_cast<int>
 #define age_of_current_game() (((int)GLOBAL_CLOCK() - (int)game_birth_time_offset) >> 8) 
 
 #define START_TIMER(interval)	unsigned int _end_time_ = clock() + interval;

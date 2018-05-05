@@ -20,6 +20,13 @@
 #define XS_DEFRADIX	10
 #define XS_DEFDIGITS	8
 
+//#include <cstdio> // tractortractor's added
+#if defined(_MSC_VER) && _MSC_VER < 1900 // tractortractor's added
+#define XSTREAM_SIZE_T_C_PRINTF_FORMAT "%Iu" // tractortractor's added
+#else // tractortractor's added
+#define XSTREAM_SIZE_T_C_PRINTF_FORMAT "%zu" // tractortractor's added
+#endif // tractortractor's added
+
 struct XStream
 {
 	typedef std::fstream* XSHANDLE;
@@ -79,6 +86,11 @@ struct XStream
 	XStream& operator< (float);
 	XStream& operator< (double);
 	XStream& operator< (long double);
+// tractortractor's added begin
+#if defined(_MSC_VER) && defined(_WIN64)
+	XStream& operator< (std::size_t);
+#endif
+// tractortractor's added end
 
 	XStream& operator> (char*);
 	XStream& operator> (char&);
@@ -92,6 +104,11 @@ struct XStream
 	XStream& operator> (float&);
 	XStream& operator> (double&);
 	XStream& operator> (long double&);
+// tractortractor's added begin
+#if defined(_MSC_VER) && defined(_WIN64)
+	XStream& operator> (std::size_t&);
+#endif
+// tractortractor's added end
 
 	XStream& operator<= (char);
 	XStream& operator<= (unsigned char);
@@ -104,6 +121,11 @@ struct XStream
 	XStream& operator<= (float);
 	XStream& operator<= (double);
 	XStream& operator<= (long double);
+// tractortractor's added begin
+#if defined(_MSC_VER) && defined(_WIN64)
+	XStream& operator<= (std::size_t);
+#endif
+// tractortractor's added end
 
 	XStream& operator>= (char&);
 	XStream& operator>= (unsigned char&);
@@ -116,6 +138,11 @@ struct XStream
 	XStream& operator>= (float&);
 	XStream& operator>= (double&);
 	XStream& operator>= (long double&);
+// tractortractor's added begin
+#if defined(_MSC_VER) && defined(_WIN64)
+	XStream& operator>= (std::size_t&);
+#endif
+// tractortractor's added end
 
 	int operator! (){ if(handler != XSHANDLE(-1)) return 1; else return 0; }
 	operator void* (){ if(handler != XSHANDLE(-1)) return 0; else return this; }

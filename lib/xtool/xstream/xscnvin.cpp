@@ -80,3 +80,14 @@ XStream& XStream::operator<= (long double var)
 	write(_ConvertBuffer,len);
 	return *this;
 }
+
+// tractortractor's added begin
+#if defined(_MSC_VER) && defined(_WIN64)
+XStream& XStream::operator<= (std::size_t v)
+{
+	int len = std::snprintf(_ConvertBuffer, _CONV_BUFFER_LEN, XSTREAM_SIZE_T_C_PRINTF_FORMAT, v);
+	write(_ConvertBuffer,len);
+	return *this;
+}
+#endif
+// tractortractor's added end

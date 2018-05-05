@@ -13,10 +13,11 @@
 
 #undef random
 #define random(a) BogusRND(a)
+//#define random(a) (std::cout << __FILE__ << "; " << __LINE__ << "; BogusRND" << std::endl , BogusRND(a)) // tractortractor's test
 
 const int PART_H_SIZE = H_SIZE>>PARTICLE_SHIFT;
 
-unsigned BogusRNDVAL = 83838383;
+unsigned int BogusRNDVAL = 83838383; // tractortractor's added "int"
 
 void ParticleProcess::quant1(){
 	ListExhausted = 0;

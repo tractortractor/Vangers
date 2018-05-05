@@ -1,0 +1,906 @@
+<h2>All</h2>
+
+<h3>Joystick is now supported</h3>
+
+<p>There are 2 things which are controlled by joystick: traction and rudder.</p>
+
+<h4>On first joystick setup screen you can choose joystick mode:</h4>
+<ol>
+    <li>NONE - Joystick does not affect traction or rudder. Alternative actions are still active though.</li>
+    <li>GamePad - Any change of axis position causes maximum change of control value. Basically the same as "Joystick" with max sensitivity.</li>
+    <li>Joystick - Rudder or traction control values changes proportionally to current axes states. Sensitivity settings affects this mode only.</li>
+    <li>Steering Wheel - It's supposed to be the same as "Joystick" but without traction axis. Since it's just complete downgrade I decided to not restore this mode but instead leave old broken control code. It's quite fun to try for couple of minutes.</li>
+</ol>
+
+<p>Now there is a second screen in joystick options where you can set which axis controls traction and which axis controls rudder.</p>
+<p>To set an axis, click on axis name and move desired axis further than 15/16 of max state. Direction of axis movement determines whether it's inverted.</p>
+<p>You can also set sensitivity here.</p>
+
+<p>On first screen of joystick controls you can set key which activates alternative joystick actions.</p>
+<p>As long as key is assigned to this activation it cannot be assigned anywhere else.</p>
+<p>When this key is pressed positions of assigned axes does not affect traction or rudder but other actions may be triggered. Let's say joystick enters alternative mode in this case.</p>
+<p>To assign action on joystick movement in alternative mode go to "customize controls" screen, select control for some action, press and hold "alternative joystick action" button, move one of assigned axes.</p>
+
+<h3>Mini-map</h3>
+<ul>
+	<li>Added fishes, farmers, hordes and bullets on mini-map.</li>
+	<li>Added ability to see facing direction for all vangers, fishes and farmers on mini-map.</li>
+</ul>
+
+<h3>Boot Sector artifact tweaks</h3>
+<p>In original there is need to constantly drop rubbox while changing mechoses and there is no easy way to use Boot Sector on Glorx without being ruBeecated.</p>
+<p>To deal with this annoyance rubbox is now transferred to new mechos while teleporting to it with Boot Sector.</p>
+
+<h3>Other:</h3>
+<ul>
+	<li>"ctrl"/"shift" + "t" - Messes up time. Makes it too slow/fast.</li>
+	<li>"ctrl" + "f" - Show fps and player's coordinates.</li>
+</ul>
+
+<br/>
+<br/>
+<br/>
+
+<h2>Tested but not included by default</h2>
+
+<h3>VANGERS_DEBUG</h3>
+<p>Previously _DEBUG macro.</p>
+<h4>Defines:</h4>
+<ul>
+	<li>_FOUT_</li>
+	<li>ALL_ITEM_IN_SHOP</li>
+	<li>TABU_REPORT</li>
+	<li>STAND_REPORT</li>
+	<li>TOTAL_CASH</li>
+	<li>CHANGE_CYCLE_ON_NETWORK</li>
+	<li>ENTRIES_CONTROL</li>
+	<li>MSG_OUT</li>
+</ul>
+<p>Ability to see larvae/dollies on mini-map while Dominance is more than 0. You need more than 50 in original.</p>
+<p>Originally, ability to see items on mini-map. Now it's always here in all cases.</p>
+<p>While camera is still, there is different rendering for landscape.</p>
+<p>Key to the next inhabited world is gained as soon as key giving line is available. Key giving line is blocked by first greeting at Podish and by ruBeecation at VigBoo.</p>
+<p>Number of bytes of RAM allocated for this game is saved in "memstats.dmp".</p>
+<p>While pressing F12, code which is expanding from DBGCHECK macro is executed. DBGCHECK expands into nothing in this build.</p>
+
+<h3>_FOUT_</h3>
+<p>Defined if VANGERS_DEBUG is defined.</p>
+<p>Saves some network and 3d object statistics in "*.lst" file.</p>
+
+<h3>ALL_ITEM_IN_SHOP</h3>
+<p>Defined if VANGERS_DEBUG is defined.</p>
+<p>All items which would eventually appear in shops are added to escave shops right from the start.</p>
+<p>Takes effect only while starting new game.</p>
+
+<h3>TABU_REPORT</h3>
+<p>Defined if VANGERS_DEBUG is defined.</p>
+<p>Saves data about tabutask events in "tabu_event" file.</p>
+
+
+
+<h3>STAND_REPORT</h3>
+<p>Defined if VANGERS_DEBUG is defined</p>
+<p>Saves specific data about game world in "stand.dmp" file at certain moments.</p>
+
+<ul>
+	<li>When teleporting to another world logs current in-game time, name of destination world and number of visits.</li>
+
+	<li>When cycle is changing logs current in-game time, name of the world and name of new cycle.</li>
+
+	<li>When all dollies are delivered logs current in-game time, name of escave and name of cycle.</li>
+	<li>When catching dolly logs current in-game time, dolly's ID and current world.</li>
+	<li>When dolly escapes logs current in-game time, dolly's ID and current world.</li>
+
+	<li>
+		<h4>When gamer is entering escave logs:</h4>
+		<ul>
+			<li>Current in-game time.</li>
+			<li>Current escave name and number of gamer's visits.</li>
+			<li>Current Luck and Dominance.</li>
+			<li>Whether passenger is delivered to required destination.</li>
+			<li>Number of goods delivered.</li>
+			<li>Cirt's variables.</li>
+			<li>That thief is at the same world if it is.</li>
+			<li>Dolly's cycle ID if delivered.</li>
+			<li>Return of VigBoo's counselor if delivered.</li>
+			<li>That game is loaded if it is.</li>
+		</ul>
+	</li>
+
+	<li>
+		<h4>When gamer is exiting escave logs:</h4>
+		<ul>
+			<li>Current in-game time.</li>
+			<li>Name of escave.</li>
+		</ul>
+	</li>
+
+	<li>When AI steals counselor's item logs name of escave.</li>
+
+	<li>Logs when gamer loses the race because of cycle change.</li>
+
+	<li>Logs when gamer is gathering cirt. If There is available dolly also logs ID of dolly and ID of dolly's bunch(bios).</li>
+
+	<li>When new race starts logs current in-game time and name of the race starting escave.</li>
+	<li>When AI vanger joins race logs current time and type of AI.</li>
+	<li>When race finishes logs current in-game time and number of participants.</li>
+	<li>When player or AI finishes race logs current in-game time, escave name, vanger's leaderboard position. For player also logs number of participants.</li>
+
+	<li>When harvest starts logs current in-game time and name of the world where harvesting is taking place.</li>
+	<li>When harvest finishes logs current in-game time and number of participants. If player were participating also logs player's leaderboard position.</li>
+	<li>When player or AI finishes harvest logs current in-game time, escave name and number of items collected.</li>
+</ul>
+
+<h3>TOTAL_CASH</h3>
+<p>Defined if VANGERS_DEBUG is defined.</p>
+<p>Number of credits is set to 799 999 each time escave is entered. This happens before all other changes, so after ruBeecation number of credits is 600. Does not apply to Spobs.</p>
+
+<h3>CHANGE_CYCLE_ON_NETWORK</h3>
+<p>Defined if VANGERS_DEBUG is defined.</p>
+<p>Never used in this build.</p>
+
+<h3>ENTRIES_CONTROL and MSG_OUT</h3>
+<p>Defined if VANGERS_DEBUG is defined</p>
+<p>"*.prm" values debug menu allows you to modify and save "*.prm" variables while playing.</p>
+
+<h4>Controls:</h4>
+<ul>
+	<li>"f" - Opens "*.prm" values debug menu.</li>
+	<li>"Page Down" - Select next variable at selected line.</li>
+	<li>"Page Up" - Select previous variable at selected line.</li>
+	<li>"ctrl" + "Page Down" - Select next line.</li>
+	<li>"ctrl" + "Page Up" - Select previous line.</li>
+	<li>"numpad -" - Decrease value of selected variable.</li>
+	<li>"numpad +" - Increase value of selected variable.</li>
+	<li>"shift" + "numpad -" - Decrease value of selected variable, small single step.</li>
+	<li>"shift" + "numpad +" - Increase value of selected variable, small single step.</li>
+	<li>"ctrl" + "numpad -" - Hide last non-hidden variable  line.</li>
+	<li>"ctrl" + "numpad +" - Show next variable line after last non-hidden.</li>
+	<br/>
+	<li>"s" - Save all variables for current entity and global ones.</li>
+	<li>"ctrl" + "s" - Save selected entity variable for all entities. Does nothing if global one is selected.</li>
+</ul>
+
+
+
+
+
+<h3>SICHER_DEBUG</h3>
+<p>Not defined anywhere.</p>
+<p>Defines NO_BORDER_FIELD.</p>
+<p>Probably "SICHER" is nickname of game developer Alexander "Sicher" Kotliar.</p>
+<p>Flying, digging and swimming requires no special items.</p>
+<h4>All controls are default:</h4>
+<ul>
+	<li>"Up" - Move forward.</li>
+	<li>"Down" - Move backward.</li>
+	<li>"Shift" - Acceleration.</li>
+	<li>"x" - Handbrake.</li>
+	<li>"Left" - Turn wheels left.</li>
+	<li>"Right" - Turn wheels right.</li>
+	<li>"End" - Turn over left.</li>
+	<li>"Page up" - Turn over right.</li>
+	<li>"Insert" or "a" - Activate KiD.</li>
+	<li>"Page down" or "z" - Turn device UP</li>
+	<li>"Home" - Turn device DOWN.</li>
+</ul>
+<br/>
+<p>There are 3 special switches. Once fish/skyfarmer switch is on there is no way to turn it off since almost all controls are blocked. Only relaunching the game will unblock game controls.</p>
+<p>fish/skyfarmer test switch makes player's mechos and everything close to it, behave like fish/skyfarmer. No other special behavior. Player's vanger is just swimming/flying at one direction.</p>
+<p>In this build "stop" switch does nothing.</p>
+<h4>Controls:</h4>
+<ul>
+	<li>"g" - Activate fish test switch.</li>
+	<li>"h" - Activate skyfarmer test switch.</li>
+	<li>"b" - Activate stop switch.</li>
+</ul>
+
+<h3>NO_BORDER_FIELD</h3>
+<p>Defined if SICHER_DEBUG is defined.</p>
+<p>Removes borders at main worlds.</p>
+
+
+
+
+
+<h3>UNIT_DEBUG_VIEW</h3>
+<p>Not defined anywhere.</p>
+<p>AI paths are seen.</p>
+<p>Ray shows facing direction of controlled vanger.</p>
+<p>There are also bunch of disabled tests. Only one interesting feature is restored.</p>
+<h4>Controls:</h4>
+<ul>
+	<li>"Fire weapon 1" - print next hint message.</li>
+</ul>
+
+
+
+<h3>TEST_TRACK</h3>
+<p>Not defined anywhere.</p>
+<p>Disables spawn of AI vangers.</p>
+<p>Enables loads of obscure code with no visible effect. This code is dealing with in-game 3d objects.</p>
+
+
+
+<h3>UNIT_DEBUG_VIEW + TEST_TRACK</h3>
+<p>Same as 2 above but:</p>
+<p>Facing ray of UNIT_DEBUG_VIEW is disabled.</p>
+<p>AI paths indications of UNIT_DEBUG_VIEW are handled differently. Although changes are not visible.</p>
+
+
+
+<h3>iMOVE_MOUSE_OBJECTS</h3>
+<p>Not defined anywhere.</p>
+<p>When hovering mouse over button it becomes selected.</p>
+<p>Coordinates of selected button are printed at right-bottom of the screen.</p>
+<p>Selected button can be moved around.</p>
+<p>Moving outside of the screen crashes the game if moved by y coordinate.</p>
+
+<h4>Controls are changed from the original to deal with conflicting buttons:</h4>
+<ul>
+	<li>"numpad 4" - Previously "Left Arrow". Subtract 1 from x coordinate. Move left by 1.</li>
+	<li>"numpad 8" - Previously "Up Arrow". Subtract 1 from y coordinate. Move up by 1.</li>
+	<li>"numpad 6" - Previously "Right Arrow". Add 1 to x coordinate. Move right by 1.</li>
+	<li>"numpad 2" - Previously "Down Arrow". Add 1 to y coordinate. Move down by 1.</li>
+	<br/>
+	<li>"Home" - Subtract 10 from x coordinate. Move left by 10.</li>
+	<li>"Page Down" - Subtract 10 from y coordinate. Move up by 10.</li>
+	<li>"End" - Add 10 to x coordinate. Move right by 10.</li>
+	<li>"Page Up" - Add 10 to y coordinate. Move down by 10.</li>
+	<br/>
+	<li>"s" - Write c/c++ macro definitions of current buttons' positions to "screen.txt".</li>
+	<br/>
+	<li>"tab" - Move screen back and forth so there are no observable changes.</li>
+	<br/>
+	<li>Added features:</li>
+	<br/>
+	<li>"[" - Move screen left.</li>
+	<li>"]" - Move screen right.</li>
+	<p>Will cause crash if used too much or moved to left while being on first screen.</p>
+</ul>
+
+
+
+<h3>_ACI_LOGFILE_</h3>
+<p>Not defined anywhere.</p>
+<p>Saves lists of items in shop each time escave is visited in "actint/temp/actint.log" file. Crashes if fails to output to this file.</p>
+
+<h3>_ACI_SKIP_MAINMENU_</h3>
+<p>Not defined anywhere.</p>
+<p>Skips main menu initialization and starts new game instantly. Going back to menu also skips it and starts new game.</p>
+<p>Settings which are set from in-game menu are not remembered while starting the game this way.</p>
+
+<h3>_ACI_STARTUP_LOAD_GAME_</h3>
+<p>Not defined anywhere.</p>
+<p>Changes behavior of _ACI_SKIP_MAINMENU_. Loads game instead of starting new one.</p>
+<p>Loads game from first slot which is at the top in save/load menus.</p>
+
+<h3>_ACI_SKIP_SHOP_</h3>
+<p>Not defined anywhere.</p>
+<p>When starting new game or loading escave initialization is skipped and player's vanger goes to world instantly. While going back to escave it's initialised like in base game.</p>
+
+<h3>_ACI_NO_SHOP_ANIMATION_</h3>
+<p>Not defined anywhere.</p>
+<p>Disables animations at counselor's screen.</p>
+<p>First line of dialog won't show up automatically.</p>
+<p>Player can't be exiled.</p>
+
+<h3>_ACI_ESCAVE_DEBUG_</h3>
+<p>Not defined anywhere.</p>
+<p>The main feature here is setting speech mode of next counselor line.</p>
+<p>Speech modes affects sound, animation and whether player is exiled.</p>
+<p>Does not affect ability to visit shop.</p>
+<h4>Controls:</h4>
+<ul>
+	<li>"1" - change next speech mode to normal (0).</li>
+	<li>"2" - good (1).</li>
+	<li>"3" - bad (2).</li>
+	<li>"4" - exile (3).</li>
+	<br/>
+	<li>"numpad +" - add 10 000 credits.</li>
+</ul>
+
+<h3>_ACI_MAP_TESTING_</h3>
+<p>Not defined anywhere.</p>
+<p>Replaces normal functionality of the mini-map with debug one. Places different objects on mini-map at certain fixed interval.</p>
+<h4>Controls:</h4>
+<ul>
+	<li>"Backspace" - change object. 3 modes: dots, squares, red squares.</li>
+</ul>
+
+<h3>_ACI_SHOW_BUGS_ON_MAP_</h3>
+<p>Not defined anywhere.</p>
+<p>Works only if _ACI_MAP_TESTING_ is NOT defined.</p>
+<p>Shows beebs on mini-map as green pixels. Previously orange color was used.</p>
+
+<h3>_ACI_CHECK_PHRASES_</h3>
+<p>Not defined anywhere.</p>
+<p>Defines 2 variables which are never used.</p>
+
+<h3>_ACI_BOUND_TEST_</h3>
+<p>Not defined anywhere.</p>
+<p>Adds squares in inventory menu which are indicating borders of graphic elements.</p>
+
+
+
+<h3>DIAGEN_TEST</h3>
+<p>Loads dialog related variables from "data.lst" if present. Makes all variables non-updatable. See "DATA_UPDATABLE" below.</p>
+<p>Prints dialog name, dialog mood (speech mode) and dialog itself in the console.</p>
+<p>Creates "Check.LOG" text file where all unused lines are listed.</p>
+<p>Creates "diagen_new.text" with all in-game text loaded. This file is almost identical to currently used "diagen.text/diagen_eng.text".</p>
+<p>Originally with this test mode data was loaded from "room.lst" file. Since I was not able to figure out how to obtain this file, this feature is now removed from this build. Text data is now loaded from "diagen.text/diagen_eng.text" file.</p>
+<h4>Controls:</h4>
+<ul>
+	<li>"5" - Next dialog line is printed in the console and skipped in game.</li>
+	<li>"6" - Same as previous but done 24 times.</li>
+	<li>"7" - Get list of available questions.</li>
+	<li>"8" - All available questions are asked and answered in the console.</li>
+	<li>"9" - Game process stops and waits for console input (std::cin). Input is saved but not used.</li>
+	<li>"0" - Use last received console input.</li>
+</ul>
+<h4>Console commands:</h4>
+<ul>
+	<li>"GO &ltescave name&gt" - Dialog-wise treat current escave as specified for this visit. Names match is case-sensitive. Possible escave names are: Podish, Incubator, VigBoo, Lampasso, Ogorod, ZeePa, B-Zone, Spobs, Threall. "GO Ogorod", for example.</li>
+	<li>"FINISH" - Stop current dialog sequence.</li>
+	<li>"STATUS" - Prints world name, escave name, room name, counselor name and level. Range of values for the level is 0-2. Higher level - more respect for player.</li>
+	<li>"ASK &ltentry&gt" - Ask available question. "ASK Agent", for example. See "7" above.</li>
+	<li>"ESTATUS &ltlevel&gt" - Change eleepods' level to specified variable. It's the same level that is printed while invoking STATUS command. "ESTATUS 0", for example.</li>
+	<li>"BSTATUS &ltlevel&gt" - Same as ESTATUS but for beeboorats.</li>
+	<li>"ZSTATUS &ltlevel&gt" - Same as ESTATUS but for zeexs.</li>
+	<li>"SSTATUS &ltlevel&gt" - Added feature. Same as ESTATUS but for spectators.</li>
+	<li>"SAVE" - Save dialog related data in "diagen_saveff.txt" file. Should be viewed with hex editor since values are in raw bytes.</li>
+	<li>"LOAD" - Load dialog related data from "diagen_loadff.txt" file.</li>
+</ul>
+<br/>
+<p>Next console commands are dealing with dialog variables.</p>
+<p>Originally 2 variable arrays were used by dialog system. First contained global variables and second contained dialog variables. Dialog functions directly queried global variables while those console commands modified dialog variables. Dialog variables were never used, so next commands were completely useless.</p>
+<p>In this version dialog variables are used by dialog functions. Each time dialog starts or updates through console commands, dialog variables are updated from global variables. There is also filter array which is used to prevent manually set dialog variables from being updated.</p>
+<ul>
+	<li>"DATA &ltdialog data index&gt &ltnew value&gt" - Set dialog data found by index to specified new value, make this value non-updatable, then perform "DATALIST" action. Both input values must be integers. See "DATALIST".</li>
+	<li>"DATALIST" - Save variables list in "data.lst" file. You can modify those variables with "DATA" and "DATALIST0" commands. visitCounter and comingCounter are not part of data list, so they are not modifiable with mentioned commands. Use "VISIT" instead.</li>
+	<li>"DATALIST0" - Set all variables in data list to 0 and make them non-updatable then perform "DATALIST" action.</li>
+	<li>"DATALIST_READABLE" - Added feature. Save variables in readable form in "readable_data.lst". ID, name and updatability are specified for each variable. Cannot be used as "data.lst" to load variables in game.</li>
+	<li>"DATALIST0_READABLE" - Added feature. Same as "DATALIST0" but saving in readable form in "readable_data.lst" file. Completely useless in practice.</li>
+	<li>"DATA_UPDATABLE &ltdialog data index&gt &ltupdatable&gt" - Added feature. Change updatability of specified variable. Value of updatable dialog variable will be always overwritten by global variable.</li>
+	<li>"DATA_UPDATABLE_ALL &ltupdatable&gt" - Added feature. Change updatability of all variables.</li>
+	<li>
+		<p>"MAP" - Prints dialogs map in console.</p>
+		<ul>
+			<p>Legend:</p>
+			<li>space - EMPTY - Unoccupied space.</li>
+			<li>"D" - DORMANT - Currently uninvolved.</li>
+			<li>"U" - USED - Already used.</li>
+			<li>"W" - WAITING - Active, waiting to be checked.</li>
+			<li>"O" - OPENED - Active with access.</li>
+			<li>"E" - EXPLODED - Involved.</li>
+			<li>skipped while mapped - HALFLIFE - Waiting for end (repeatable = 1).</li>
+		</ul>
+	</li>
+	<li>"VISIT &ltescave ID&gt &ltvisitCounter&gt &ltcomingCounter&gt" - Change visitCounter and comingCounter of specified escave to specified values. Escave ID is first symbol of name, case-sensitive. See "GO" above for full list of names. visitCounter and comingCounter values are never actually used.</li>
+</ul>
+<br/>
+<h4>Notes:</h4>
+<ul>
+	<li>
+		<p>Eleepods' ranks:</p>
+		<ul>
+			<li>0 - Not enough Eleection wins. Counselors tends to give vague answers.</li>
+			<li>1 - Eleection reward 1. Leepky explains how P-Beam works. Some answers are changed to more informative ones.</li>
+			<li>2 - Eleection reward 2. Leepky gives key to Glorx.</li>
+		</ul>
+	</li>
+	<li>
+		<p>Beeboorats' ranks:</p>
+		<ul>
+			<li>0 - Slave.</li>
+			<li>1 - Commissar.</li>
+			<li>2 - Agent.</li>
+		</ul>
+	</li>
+	<li>
+		<p>Zeexens' ranks:</p>
+		<ul>
+			<li>0 - Stranger, ready to become ProtoZeek.</li>
+			<li>1 - Known vanger.</li>
+			<li>2 - Just arrived ProtoZeek.</li>
+		</ul>
+	</li>
+	<li>
+		<p>Parapheen is giving different missions depending on spectators' level:</p>
+		<ul>
+			<li>0 - Get unique mechos.</li>
+			<li>1 - Visit Threall.</li>
+			<li>2 - Repopulate the chain.</li>
+		</ul>
+	</li>
+	<li>Scanning of inventory items is broken while talking at Threall's yellow circle. Only Mechanic Messiah is spotted properly. Caused by different handling of inventory in escave and outside.</li>
+	<li>Threall's level displayed in status is actually level of last visited bunch.</li>
+</ul>
+
+
+
+<h3>_IN_FILE_</h3>
+<p>Not defined anywhere.</p>
+<p>Saves info about active tabutask in "out" file each time text of active tabutask is viewed.</p>
+<p>Saves tabutask's global ID, name of escave and tabutask's escave ID.</p>
+
+
+
+<h3>QUICK_LOAD</h3>
+<p>Not defined anywhere.</p>
+<p>Undefines ISCREEN, SHOW_IMAGES and SHOW_LOGOS.</p>
+<p>What happens because of those undefines: game skips main menu and shop on launch, does not draw mouse cursor properly and constantly crashes. Most options are messed up.</p>
+
+<h3>ITEM_LOG</h3>
+<p>Info about carried items is saved while entering and leaving escave.</p>
+<p>Once game is exited this info is written to "item.log" file.</p>
+
+<p>Go2World - items you have while going outside of escave.</p>
+<p>Go2Universe - items you have while entering escave.</p>
+
+<p>After each separator all items are listed twice.</p>
+<h4>When going out of escave:</h4>
+<ul>
+	<li>Firstly there is a list with "uvsParam1" and "uvsParam2" properties.</li>
+	<li>Secondly there is a list with "ActIntType", "ActIntData0" and "ActIntData1" properties.</li>
+</ul>
+<p>While entering escave this order is reversed.</p>
+
+<p>See "item_types.xls" to compare uvsType with item name and description.</p>
+
+
+
+<h3>SAVE_AI_STATUS</h3>
+<p>Info about AI vanger's 3d behavior calculation is saved each quant(game world is processed each quant) as long as this AI vanger is treated as visible 3d object.</p>
+<p>Once game is exited this info is written to "ai_log.log" file.</p>
+
+
+
+<h3>XSTREAM_DEBUG</h3>
+<p>Not defined anywhere.</p>
+<p>Info about each file opening with XStream is sent to std::cerr stream.</p>
+
+
+
+<h3>TESTDIC</h3>
+<p>Not defined anywhere.</p>
+<p>Executable does dictionary tests, sends result to std::cout and quits. Game is disabled.</p>
+
+
+
+<h3>MEMORY_STATISTICS</h3>
+<p>Not defined anywhere.</p>
+<p>Reimplements c++ memory handling operators.</p>
+<p>Defines function which tries to spot memory leaks and saves info about them in "MEMORY.DMP" file. Never used.</p>
+
+<h3>_ACTINT_MEMSTAT_</h3>
+<p>Not defined anywhere.</p>
+<p>Won't work properly without MEMORY_STATISTICS defined.</p>
+<p>Tries to spot memory leaks in "actint" functions and saves results in "actint/temp/memstat.log" file. Crashes if fails to output to this file.</p>
+
+
+
+<h3>_BINARY_SCRIPT_</h3>
+<p>Not defined anywhere in source. Defined by default in cmake files.</p>
+<p>"Use binary script for interface" - original cmake description.</p>
+<p>With this macro game loads scripts from binary "*.scb" files instead of non-binary "*.src" ones.</p>
+<p>Those "*.src" files are stored in source code in "data" folder.</p>
+
+<h3>_SAVE_BINARY_SCRIPT_</h3>
+<p>Defined if _BINARY_SCRIPT_ is NOT defined.</p>
+<p>Works only if _BINARY_SCRIPT_ is NOT defined.</p>
+<p>Each time menu is loaded it is saved in binary "*.scb" file.</p>
+
+<h3>_SAVE_PACKED_SCRIPT_</h3>
+<p>Not defined anywhere.</p>
+<p>Works only if _BINARY_SCRIPT_ is NOT defined.</p>
+<p>Compresses binary script after saving.</p>
+
+<h3>_iSCRIPT_DEBUG_</h3>
+<p>Not defined anywhere.</p>
+<p>Works only if _BINARY_SCRIPT_ is Not defined.</p>
+<p>Saves data about scripts loading in "iscreen\setup.dat" file. Rewrites this file each time new menu is loaded.</p>
+
+<h3>ESCAPE_EXIT</h3>
+<p>Not defined anywhere.</p>
+<p>Disconnects from multiplayer game if player hits "escape" button.</p>
+
+<h3>FIRE_TEST</h3>
+<p>Not defined anywhere.</p>
+<p>Different 3d effects.</p>
+
+
+
+<h3>_DEMO_</h3>
+<p>Not defined anywhere.</p>
+<p>Music is turned off.</p>
+<p>Most mechoses are locked for purchase.</p>
+<p>Color of player's vehicle is determined by vehicle type.</p>
+<p>Console command argument which is money cheat changed. In original "/bEEbos!" argument adds 500000 credits to starting credits. With _DEMO_ defined "/beebos$" adds 100000.</p>
+<p>While starting new game or loading sets current cycle as first one for eleepods.</p>
+<p>There is always only 1 item generated in crypts.</p>
+<p>Crustest cannon ammo (Boolton pack) won't appear in shops and crypts.</p>
+
+
+
+<h3>AUTOMATIC_CHANGE_WORLD</h3>
+<p>Not defined anywhere.</p>
+<p>Each time player's 3d object is created, changes it's current world to Necross.</p>
+<p>This means that player is getting teleported to Necross right after leaving escave.</p>
+
+
+
+<h3>_NO_CDAUDIO_</h3>
+<p>Not defined anywhere.</p>
+<p>Turns off music during gameplay. Menus are not affected.</p>
+
+
+
+<h3>zRECORDER_ENABLED</h3>
+<p>Not defined anywhere.</p>
+<br/>
+<p>IMPORTANT! Backup saves and options before playing replays. Save file will be overwritten during playing of replay if replay creator saved the game during recording. Other settings may be changed in similar way. If your build is compiled with ENTRIES_CONTROL and MSG_OUT macros then replay can also change "*.prm" files. Saves are stored in "savegame" folder. Options are stored in "game.dat" and "controls.dat" files.</p>
+<br/>
+<p>Records player's action if command line argument "w" or "W" is specified. File where to write must be specified right after this argument. Example: "/wfile_where_to_save", "/Wother_file_where_to_save".</p>
+<p>Loads player's action if command line argument "p" or "P" is specified. File where to read from must be specified right after this argument. Example: "/pfile_where_to_read", "/Pother_file_where_to_read". Any control action which is not mouse moving, releasing keyboard button or releasing mouse button will stop playback.</p>
+<br/>
+<p>Replays should be played with same build of vangers which were used for recording.</p>
+<p>It is unknown if replays are cross-platform, so it's a good idea to specify your OS while posting them.</p>
+<p>Options which are ok to modify while recording: all camera options, autorun, deformable landscape. Modification of other options may mess up recording/playing.</p>
+<br/>
+<p>RNG seeds, controls and some options are stored in replay file.</p>
+<p>Each controls event takes 8 bytes to record. For example event is created each time button is pressed or released.</p>
+<p>While recording with joystick, replay size will be several times bigger, since any stick move creates new event.</p>
+<p>While "GamePad" mode is on the game will record joystick movement events only when axis changes direction.</p>
+<p>Mouse movements are not recorded so game interface does not react to them while recording.</p>
+<p>While recording it's possible to steal counselor's items through walls. This was made to deal with absence of mouse movements while recording and to make replays more interesting to watch.</p>
+
+
+
+<h3>_XRECORDER_LOG_</h3>
+<p>Not defined anywhere.</p>
+<p>Logs recorder state.</p>
+<h4>Files:</h4>
+<ul>
+	<li>"xrec_wr.log" - normally.</li>
+	<li>"xrec_pl.log" - while playing prerecorded actions.</li>
+</ul>
+
+
+
+<h3>_RTO_LOG_</h3>
+<p>Not defined anywhere.</p>
+<p>Logs data about runtime objects changes.</p>
+<h4>Files:</h4>
+<ul>
+	<li>"xt_rto_w.log" - normally.</li>
+	<li>"xt_rto_p.log" - while playing prerecorded actions.</li>
+</ul>
+
+
+
+<h3>AML_DEBUG</h3>
+<p>Not defined anywhere.</p>
+<p>Logs interface events.</p>
+<h4>Files:</h4>
+<ul>
+	<li>"iml_wr.log" - normally.</li>
+	<li>"iml_pl.log" - while playing prerecorded actions.</li>
+</ul>
+
+
+
+<h3>TERRAIN16</h3>
+<p>Not defined anywhere.</p>
+<p>Will compile only if ACTINT is defined.</p>
+<p>World's "*.ini" files must contain "Terrain Max" parameter with value "16" in "Rendering Parameters" section.</p>
+<p>World's "level.lst" files must contain 16 DestroyTerrain entries instead of 8.</p>
+<p>Messes up types of terrains on worlds.</p>
+<p>Probably, makes the game use 16 types of terrains instead of 8.</p>
+
+<h3>XGR_SUPPRESS_HICOLOR</h3>
+<p>Not defined anywhere.</p>
+<p>Suppresses highcolor interface drawing. Since nothing actually triggers highcolor mode, this macro is useless.</p>
+
+
+
+<h3>_LARGE_MODEL_</h3>
+<p>Not defined anywhere.</p>
+<p>Changes predefined variables for zip compressor functions.</p>
+
+<h3>_STATIC_TABLES_</h3>
+<p>Not defined anywhere.</p>
+<p>Use precomputed value tables for some 3d calculations.</p>
+
+<h3>XSTRDUP</h3>
+<p>Not defined anywhere.</p>
+<p>Use own "strdup" implementation for "xstrdup" function instead of standard one. Supposed to be defined if standard "strdup" function is not available.</p>
+
+<h3>_MT_</h3>
+<p>Not defined anywhere.</p>
+<p>Changes 3d objects' scaling.</p>
+<p>Redefines "random(num)" function-like macro in "src/3d/3d_math.h".</p>
+
+<h3>_GENERATE_MATRIX_SHAPES_</h3>
+<p>Not defined anywhere.</p>
+<p>Generates "*.bmp", "*.pal" and "*.shp" files in "actint/temp" folder each time world is visited. Crashes if can't output here. Then if _GENERATE_EXIT_ is defined exits the game.</p>
+
+<h3>_GENERATE_iMATRIX_SHAPES_</h3>
+<p>Not defined anywhere.</p>
+<p>Same as _GENERATE_MATRIX_SHAPES_ but somewhat different. If both are defined as well as _GENERATE_EXIT_ then game exits before executing _GENERATE_iMATRIX_SHAPES_ code. If _GENERATE_EXIT_ is not defined code of both macros is executed.</p>
+
+<h3>_GENERATE_ITEM_DATA_</h3>
+<p>Not defined anywhere.</p>
+<p>Creates windows batch files "i_items.bat" and "items.bat" in "actint/temp" folder each time world is visited.</p>
+<p>Apparently those batch files assumes that there is "tga" folder with "tga" file for each item.</p>
+<p>If executed "i_items.bat" calls "r.bat" for each "tga" file specifying file name, ScreenSizeX and ScreenSizeY of this item. Then calls "g.bat".</p>
+<p>"items.bat" does the same thing but calls "r1.bat" instead of "r.bat" and "g1.bat" instead of "g.bat".</p>
+<p>If _GENERATE_EXIT_ is defined game exits right after file generation.</p>
+<h4>Controls:</h4>
+<ul>
+	<li>"I" - create batch files.</li>
+</ul>
+
+<h3>_GENERATE_EXIT_</h3>
+<p>Not defined anywhere.</p>
+<p>Previously defined in "src/actint/ascr_fnc.cpp".</p>
+<p>Modifies behavior of _GENERATE_MATRIX_SHAPES_, _GENERATE_iMATRIX_SHAPES_ and _GENERATE_ITEM_DATA_ macros.</p>
+
+
+
+<h3>SAVE_TNT_DATA</h3>
+<p>Not defined anywhere.</p>
+<p>Each time world is visited tries to read specific data from "thechain/*world name*/out.vl" and save it to "thechain/*world name*/tnttable.vlc".</p>
+
+<h3>_FACET_FLOOR_</h3>
+<p>Not defined anywhere.</p>
+<p>Modifies "generate_floor" function which is used only when _GENERATE_MATRIX_SHAPES_ or _GENERATE_iMATRIX_SHAPES_ are defined.</p>
+<p>Probably changes output of code of those macros.</p>
+
+<h3>SAVE_EXPLOSION</h3>
+<p>Not defined anywhere.</p>
+<p>Saves all explosions in "Expl*.bmp" files in game directory. "*" is number of explosion.</p>
+
+<h3>GLOBAL_TIMER</h3>
+<p>Not defined anywhere.</p>
+<h4>Uses:</h4>
+<ul>
+	<li>"tgame.lst" file instead of "game.lst".</li>
+	<li>"tlevel.lst" file instead of "level.lst".</li>
+	<li>"tlocation.lst" file instead of "location.lst".</li>
+</ul>
+<p>There are no such files so the game will crash.</p>
+
+
+
+<br/>
+<br/>
+<br/>
+
+
+
+<h2>Defined by default and probably part of the main game:</h2>
+
+
+
+<h3>_ROAD_</h3>
+<p>Defined in "src/global.h".</p>
+<p>Defines COMPACT_3D.</p>
+<p>Loads of important code.</p>
+
+<h3>COMPACT_3D</h3>
+<p>Defined in "src/3d/3dgraph.h" if _ROAD_ is defined.</p>
+
+
+
+<h3>LOWLEVEL_OUTPUT</h3>
+<p>Defined in "src/iscreen/ivmap.cpp".</p>
+<p>Rendering.</p>
+
+<h3>ML_COMPRESS_ON</h3>
+<p>Defined in "src/actint.h" file.</p>
+
+<h3>SCREENSHOT</h3>
+<p>Defined in "src/road.cpp" file.</p>
+<p>Enables making screenshots by pressing F11.</p>
+
+<h3>_ACI_CHECK_DIALOGS_</h3>
+<p>Defined in "src/actint.h" file.</p>
+<p>Defines variable which is never used.</p>
+
+<h3>_ACI_PACK_SAVES_</h3>
+<p>Defined in "src/actint.h" file.</p>
+<p>Saves are compressed while saving and decompressed while loading.</p>
+
+<h3>_ACI_CHECK_DIALOGS_</h3>
+<p>Defined in "src/actint.h" file.</p>
+
+<h3>_ACI_BML_FONTS_</h3>
+<p>Defined in "src/actint.h" file.</p>
+
+
+
+<h3>ISCREEN</h3>
+<p>Defined in "src/road.cpp" file.</p>
+
+<h3>SHOW_IMAGES</h3>
+<p>Defined in "src/road.cpp" file.</p>
+
+<h3>SHOW_LOGOS</h3>
+<p>Defined in "src/road.cpp" file.</p>
+
+
+
+<h3>EVENTS_LOG</h3>
+<p>Defined in "src/network.cpp" file.</p>
+<p>Logs network events. Not used in singleplayer.</p>
+
+<h3>EXTERNAL_USE</h3>
+<p>Defined in "src/common.h" file.</p>
+
+<h3>DYN_ALLOC</h3>
+<p>Defined in "lib/utils/xzip/inzip.cpp"</p>
+
+<h3>STARTUP_TESTING</h3>
+<p>Defined in "src/uvs/diagen.cpp".</p>
+
+<h3>SAVE_SINGE_LANGUAGE</h3>
+<p>Defined in "src/uvs/diagen.cpp".</p>
+
+<h3>SINGLE_LANGUAGE</h3>
+<p>Defined in "src/uvs/diagen.cpp".</p>
+
+<h3>NEW_TNT</h3>
+<p>Defined in "src/units/sensor.h".</p>
+
+<h3>LOCATION_ENGINE_MESSAGE</h3>
+<p>Defined in "src/units/sensor.cpp".</p>
+
+<h3>ACTINT</h3>
+<p>Defined in cmake script "CMakeLists.txt".</p>
+<p>Rendering.</p>
+
+
+
+<h3>SIMPLE_PARTICLE_ON</h3>
+<p>Defined in "src/units/hobj.h".</p>
+
+<h3>PARTICLE_ON</h3>
+<p>Defined in "src/units/hobj.h".</p>
+
+<h3>STACK_EMPTY_IGNORE</h3>
+<p>Defined in "src/units/hobj.h".</p>
+
+<h3>MOVELAND_ON</h3>
+<p>Defined in "src/units/hobj.h".</p>
+
+<h3>DEVICE_ON</h3>
+<p>Defined in "src/units/hobj.h".</p>
+
+
+
+<h3>_DAST_</h3>
+<p>Defined in "src/dast/poly3d.cpp".</p>
+<p>Defined in "src/dast/poly3d.h" if not defined. Some headers are included if defined.</p>
+
+<h3>TINY_MODE</h3>
+<p>Defined in "src/uvs/screen.cpp" if _ROAD_ is defined.</p>
+
+
+<br/>
+<br/>
+<br/>
+
+
+<h2>Unsupported in this build:</h2>
+
+<h3>_SURMAP_</h3>
+<p>Not defined anywhere.</p>
+<p>Supposed to render things differently. Won't compile.</p>
+
+<h3>SESSION</h3>
+<p>Defined if _SURMAP_ is defined.</p>
+<p>Deals with terrain maps. Won't compile.</p>
+
+<h3>FILEMAPPING</h3>
+<p>Not defined anywhere.</p>
+<p>Calls "win32_FileMirror" function which is never defined.</p>
+<p>Deals with terrain maps.</p>
+
+<h3>__HIGHC__</h3>
+<p>Not defined anywhere.</p>
+<p>Supposed to render things differently. Won't compile.</p>
+
+<h3>LOW_LEVEL_LINE</h3>
+<p>Not defined anywhere.</p>
+<p>Supposed to render things differently. While game is rendering calls function which is never defined. Won't compile.</p>
+
+<h3>_TEST_</h3>
+<p>Not defined anywhere.</p>
+<p>Supposed to define different version of "make_dast" member function of "dastPoly3D" struct in "src/dast/poly3d.cpp".</p>
+<p>All defines of this function are commented, so this macro does nothing.</p>
+
+<h3>_VTEST_</h3>
+<p>Not defined anywhere.</p>
+<p>Works only if TURN_TEST is not defined.</p>
+<p>Supposed to somehow change rendering while camera slopes. Won't compile.</p>
+
+<h3>TURN_TEST</h3>
+<p>Not defined anywhere.</p>
+<p>Disables TURN_TEST.</p>
+<p>Supposed to somehow change rendering while camera slopes. Won't compile.</p>
+
+<h3>__ZORTECHC__</h3>
+<p>Not defined anywhere.</p>
+<p>Supposed to somehow change rendering while camera slopes. Uses undefined variable. Won't compile.</p>
+
+<h3>_XT_TEST_LIST_</h3>
+<p>Not defined anywhere.</p>
+<p>Defines function which tests size of "xtList".</p>
+<p>If number of objects inside "xtList" is not equal to numElements then test function aborts the game.</p>
+<p>Test function is never actually used.</p>
+
+<h3>_FULLSCREEN_MODE_</h3>
+<p>Not defined anywhere.</p>
+<p>Crashes the game when trying to start new game or load.</p>
+<p>Skipping escave screen with _ACI_SKIP_SHOP_ macro avoids those crashes. Even if any escave is entered later.</p>
+<p>Not thoroughly researched.</p>
+
+<h3>SAVE_ABILITY</h3>
+<p>Not defined anywhere.</p>
+<p>Ability to save landscape changes. Most likely broken.</p>
+<p>Untested.</p>
+
+<h3>_NetRally_</h3>
+<p>Not defined anywhere.</p>
+<p>Loads alternative header file. This header file is absent in this build.</p>
+<p>Untested.</p>
+
+<h3>ZMOD_BETA</h3>
+<p>Not defined anywhere.</p>
+<p>Does nothing in this build.</p>
+
+<h3>_ZMOD_DEBUG_</h3>
+<p>Not defined anywhere.</p>
+<p>Defines functions which are saving logs in "zMod.log" file. Those functions are never used.</p>
+
+<h3>BMP2SCR_TURN_ENABLE</h3>
+<p>Not defined anywhere.</p>
+<p>Used in commented code in "bmp2scr.cpp" file.</p>
+
+<h3>OVERLAP_CHECK</h3>
+<p>Not defined anywhere.</p>
+<p>Used in commented code in "bmp2scr.cpp" file.</p>
+
+<h3>ASM_OPTIMIZE</h3>
+<p>Not defined anywhere.</p>
+<p>Used in commented code in "bmp2scr.cpp" file.</p>
+
+<h3>BETA_TESTING</h3>
+<p>Not defined anywhere.</p>
+<p>Tries to call 2 DRM functions on game start. One of those functions is not called if _DEMO_ is defined.</p>
+<p>Both functions are not defined anywhere.</p>
+
+<h3>CDCHECK</h3>
+<p>Not defined anywhere.</p>
+<p>Tries to call DRM function on start which is called if BETA_TESTING is defined.</p>
+<p>Also tries to do some CD checks with functions which were never defined.</p>
+
+<h3>_STEAM_API_</h3>
+<p>Not defined anywhere.</p>
+<p>Enables Steam DRM.</p>
+
+<h3>_XMATH_NO_IOSTREAM</h3>
+<p>Not defined anywhere.</p>
+<p>Disables I/O streams in "lib/xtool/xmath/xmath.h".</p>
+<p>Won't compile.</p>
+
+<h3>_GENERATE_IND_SHAPE_</h3>
+<p>Not defined anywhere.</p>
+<p>Declares "smooth_shape_quant" function in "src/actint/ascr_fnc.cpp" file.</p>
+<p>Does nothing in this build.</p>
+
+<h3>_NT</h3>
+<p>Not defined anywhere.</p>
+<p>Defines WIN32_EXTRA_LEAN and WIN32_LEAN_AND_MEAN macros. Includes "windows.h" header in "KDWIN" namespace.</p>
+<p>Defines EXTQUIT_VERIFY macro with body which uses never defined function.</p>

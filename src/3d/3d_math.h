@@ -34,6 +34,7 @@ void _srand(unsigned int seed);
 
 #ifndef random
 #define random(num) ((int)(((long)_rand()*(num)) >> 15))
+//#define random(num) (std::cout << __FILE__ << "; " << __LINE__ << "; _rand()" << std::endl, (int)(((long)_rand()*(num)) >> 15)) // tractortractor's test
 #endif
 
 #undef max

@@ -137,6 +137,25 @@ extern int network_log;
 
 uvsDolly* actCurrentViewDolly = NULL;
 StuffObject* actCurrentViewStuff = NULL;
+// tractortractor's added begin
+FishWarrior* actCurrentViewFish = NULL;
+HordeSource* actCurrentViewHordeSource = NULL;
+HordeObject* actCurrentViewHorde = NULL;
+SkyFarmerObject* actCurrentViewFarmer = NULL;
+BulletObject* actCurrentViewBullet = NULL;
+#ifdef _ACI_SHOW_BUGS_ON_MAP_
+InsectUnit* actCurrentViewInsect = NULL;
+#endif
+void getObjectPosition_helper_getNextValidVanger(VangerUnit *&vangerObject);
+void getObjectPosition_helper_getNextValidDolly(uvsDolly *&dollyObject);
+void getObjectPosition_helper_getNextValidStuff(StuffObject *&stuffObject);
+void getObjectPosition_helper_getNextValidFish(FishWarrior *&fishObject);
+void getObjectPosition_helper_getNextValidHordeSource(HordeSource *&hordeSourceObject);
+void getObjectPosition_helper_getNextValidHorde(HordeObject *&hordeObject);
+void getObjectPosition_helper_getNextValidFarmer(SkyFarmerObject *&farmerObject);
+void getObjectPosition_helper_getNextValidBullet(BulletObject *&bulletObject);
+void getObjectPosition_helper_getNextValidInsect(InsectUnit *&insectObject);
+// tractortractor's added end
 
 aciPromptData aiMessageBuffer;
 
@@ -788,6 +807,16 @@ void GeneralSystemOpen(void)
 		actCurrentViewObject = NULL;
 		actCurrentViewDolly = NULL;
 		actCurrentViewStuff = NULL;
+// tractortractor's added begin
+		actCurrentViewFish = NULL;
+		actCurrentViewHordeSource = NULL;
+		actCurrentViewHorde = NULL;
+		actCurrentViewFarmer = NULL;
+		actCurrentViewBullet = NULL;
+#ifdef _ACI_SHOW_BUGS_ON_MAP_
+		actCurrentViewInsect = NULL;
+#endif
+// tractortractor's added end
 
 		if(NetworkON) NetworkWorldOpen();
 	}	
@@ -1186,7 +1215,7 @@ void GameObjectDispatcher::Quant(void)
 	if(TurnAngle == 0 && DepthShow == 0) AdvancedView = 0;
 	else AdvancedView = 1;
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 //	DBGCHECK;
 #endif	
 
@@ -1223,7 +1252,7 @@ void GameObjectDispatcher::Quant(void)
 		time = GLOBAL_CLOCK();
 	};	
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 //	DBGCHECK;
 #endif
 
@@ -1243,17 +1272,17 @@ void GameObjectDispatcher::Quant(void)
 
 	MapD.Quant();
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 //	DBGCHECK;
 #endif
 	ActD.Quant(); 	
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 //	DBGCHECK;
 #endif
 	ItemD.Quant();
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 //	DBGCHECK;
 #endif
 	InsectD.Quant();
@@ -1270,14 +1299,14 @@ void GameObjectDispatcher::Quant(void)
 //znfo ai quant
 	aiMessageQueue.Quant();
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 //	DBGCHECK;
 #endif
 
 	ViewTail = NULL;
 	Sort();	
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 //	DBGCHECK;
 #endif
 };
@@ -1288,7 +1317,7 @@ extern int YSIDE;
 extern int TotalDrawFlag;
 
 void GameObjectDispatcher::DrawQuant(void) {
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 	if(!TotalDrawFlag) return;
 #endif
 
@@ -1328,8 +1357,9 @@ void putMapPixel(int px,int py,int col)
 	*(XGR_GetVideoLine(0) + yy*XGR_MAXX + xx) = col;
 };
 
-/*void line_trace(const Vector& c1,const Vector& c2)
-{
+//void line_trace(const Vector& c1,const Vector& c2)
+void line_trace(Vector& c1, Vector& c2) // tractortractor's added
+{ // tractortractor's uncommented begin
 	Vector dc;
 	Vector k;
 	dc.x = getDistX(c2.x,c1.x);
@@ -1419,7 +1449,7 @@ void putMapPixel(int px,int py,int col)
 			};
 		};
 	};
-};*/
+}; // tractortractor's uncommented end
 
 int MapLineTrace(Vector& c1,Vector& c2)
 {
@@ -2846,102 +2876,102 @@ void BaseObject::GetVisible(void)
 		Visibility = UNVISIBLE;
 };
 
-char getObjectPosition(int& x,int& y)
+// tractortractor's added begin
+void getObjectPosition_helper_getNextValidVanger(VangerUnit *&vangerObject)
+{
+	do{
+		vangerObject = (VangerUnit*)(vangerObject)->NextTypeList;
+	}while(vangerObject && (vangerObject->Status & SOBJ_WAIT_CONFIRMATION));
+}
+
+void getObjectPosition_helper_getNextValidDolly(uvsDolly *&dollyObject)
+{
+	do{
+		dollyObject = (uvsDolly*)(dollyObject->next);
+	}while(dollyObject && (dollyObject->Pworld->gIndex != CurrentWorld || dollyObject->status));
+}
+
+void getObjectPosition_helper_getNextValidStuff(StuffObject *&stuffObject)
+{
+	do{
+		stuffObject = (StuffObject*)(stuffObject)->NextTypeList;
+	}while(stuffObject && (stuffObject->Status & SOBJ_WAIT_CONFIRMATION));
+}
+
+void getObjectPosition_helper_getNextValidFish(FishWarrior *&fishObject)
+{
+	do{
+		fishObject = (FishWarrior*)(fishObject)->NextTypeList;
+	}while(fishObject && (fishObject->Status & SOBJ_WAIT_CONFIRMATION));
+}
+
+void getObjectPosition_helper_getNextValidHordeSource(HordeSource *&hordeSourceObject)
+{
+	do{
+		hordeSourceObject = (HordeSource*)(hordeSourceObject)->NextTypeList;
+	}while(hordeSourceObject && (hordeSourceObject->Status & SOBJ_WAIT_CONFIRMATION));
+}
+
+void getObjectPosition_helper_getNextValidHorde(HordeObject *&hordeObject)
+{
+	do{
+		hordeObject = (HordeObject*)(hordeObject)->NextTypeList;
+	}while(hordeObject && (hordeObject->Status & SOBJ_WAIT_CONFIRMATION));
+}
+
+void getObjectPosition_helper_getNextValidFarmer(SkyFarmerObject *&farmerObject)
+{
+	do{
+		farmerObject = (SkyFarmerObject*)(farmerObject)->NextTypeList;
+	}while(farmerObject && (farmerObject->Status & SOBJ_WAIT_CONFIRMATION));
+}
+
+void getObjectPosition_helper_getNextValidBullet(BulletObject *&bulletObject)
+{
+	do{
+		bulletObject = (BulletObject*)(bulletObject)->NextTypeList;
+	}while(bulletObject && (bulletObject->Status & SOBJ_WAIT_CONFIRMATION));
+}
+
+void getObjectPosition_helper_getNextValidInsect(InsectUnit *&insectObject)
+{
+	do{
+		insectObject = (InsectUnit*)(insectObject)->NextTypeList;
+	}while(insectObject && (insectObject->Status & SOBJ_WAIT_CONFIRMATION));
+}
+// tractortractor's added end
+
+// tractortractor's rewritten begin
+char getObjectPosition(int& x,int& y,DBM*& matrix,int& facing_vector,bool& facing_direct,int& side_vector,bool& side_left)
 {
 	char c;
-	
-		if(!actCurrentViewObject){
-#ifdef _DEBUG
-			if(aiCutDominance >= 0){
-#else
-//#ifdef ZMOD_BETA
-//			if (1) {
-//#else
-			if (!NetworkON && aiCutDominance >= 50) {
-				//znfo - dolly visibility
-//#endif //ZMOD_BETA
-#endif
-				if(!actCurrentViewDolly){
-#ifdef _DEBUG
-					if(!actCurrentViewStuff){
-						actCurrentViewStuff = (StuffObject*)(ItemD.Tail);
 
-						actCurrentViewObject = (VangerUnit*)(ActD.Tail);
-						if(actCurrentViewObject && (actCurrentViewObject->Status & SOBJ_WAIT_CONFIRMATION)){
-							do{
-								actCurrentViewObject = (VangerUnit*)(actCurrentViewObject)->NextTypeList;					
-							}while(actCurrentViewObject && (actCurrentViewObject->Status & SOBJ_WAIT_CONFIRMATION));
-						};
+	// tractortractor's
+	// At first redraw pointers are not set.
+	// So this function sets pointers and returns -1 to stop redrawing.
+	// At second and later redraws pointers are set to first items in list.
+	// With each execution of this function info about 1 pointer is returned
+	// and pointer is set to next item in the list.
+	// When there are no valid objects left in the list, same actions are
+	// perfomed with pointer of next list.
+	// When there are no valid pointers left
+	// function sets pointers to first items of lists and returns -1 to stop redrawing.
 
-						actCurrentViewDolly = (uvsDolly*)(DollyTail);
-						if(actCurrentViewDolly && (actCurrentViewDolly->Pworld->gIndex != CurrentWorld || actCurrentViewDolly->status)){
-							do{
-								actCurrentViewDolly = (uvsDolly*)(actCurrentViewDolly->next);
-							}while(actCurrentViewDolly && (actCurrentViewDolly->Pworld->gIndex != CurrentWorld || actCurrentViewDolly->status));
-						};
-						return -1;
-					};
-					x = actCurrentViewStuff->R_curr.x;
-					y = actCurrentViewStuff->R_curr.y;
-					actCurrentViewStuff = (StuffObject*)(actCurrentViewStuff->NextTypeList);
-					return 3;		   
-#endif
-
-					actCurrentViewObject = (VangerUnit*)(ActD.Tail);
-					if(actCurrentViewObject && (actCurrentViewObject->Status & SOBJ_WAIT_CONFIRMATION)){
-						do{
-							actCurrentViewObject = (VangerUnit*)(actCurrentViewObject)->NextTypeList;					
-						}while(actCurrentViewObject && (actCurrentViewObject->Status & SOBJ_WAIT_CONFIRMATION));
-					};
-
-					actCurrentViewDolly = (uvsDolly*)(DollyTail);
-					if(actCurrentViewDolly && (actCurrentViewDolly->Pworld->gIndex != CurrentWorld || actCurrentViewDolly->status)){
-						do{
-							actCurrentViewDolly = (uvsDolly*)(actCurrentViewDolly->next);
-						}while(actCurrentViewDolly && (actCurrentViewDolly->Pworld->gIndex != CurrentWorld || actCurrentViewDolly->status));
-					};
-					return -1;
-				};
-
-				x = actCurrentViewDolly->pos_x;
-				y = actCurrentViewDolly->pos_y;
-				switch(actCurrentViewDolly->biosNindex){
-					case 0:
-						c = 8;
-						break;
-					case 1:
-						c = 9;
-						break;
-					case 2:
-						c = 10;
-						break;
-				};
-
-				do{
-					actCurrentViewDolly = (uvsDolly*)(actCurrentViewDolly->next);
-				}while(actCurrentViewDolly && (actCurrentViewDolly->Pworld->gIndex != CurrentWorld || actCurrentViewDolly->status));
-
-				return c;
-			}else{
-				actCurrentViewObject = (VangerUnit*)(ActD.Tail);
-				if(actCurrentViewObject && (actCurrentViewObject->Status & SOBJ_WAIT_CONFIRMATION)){
-					do{
-						actCurrentViewObject = (VangerUnit*)(actCurrentViewObject)->NextTypeList;					
-					}while(actCurrentViewObject && (actCurrentViewObject->Status & SOBJ_WAIT_CONFIRMATION));
-				};
-				return -1;
-			};
-		};
-
+	// tractortractor's returning data about current vanger and getting next available.
+	if(actCurrentViewObject){
+//		VangerUnit* test_pointer = actCurrentViewObject;
+//		std::cout << "actCurrentViewObject pointer: " << reinterpret_cast<void*>(test_pointer) << '\n';
 		x = actCurrentViewObject->R_curr.x;
 		y = actCurrentViewObject->R_curr.y;
+		matrix = &actCurrentViewObject->RotMat;
+		facing_vector = 0;
+		side_vector = 1;
+		facing_direct = true;
+		side_left = true;
 		switch(actCurrentViewObject->ID){
 			case ID_VANGER:
 				if(actCurrentViewObject->VangerRaceStatus != VANGER_RACE_NONE/* && aciRacingFlag*/){
-//					actCurrentViewObject = (VangerUnit*)(actCurrentViewObject->NextTypeList);
-					do{
-						actCurrentViewObject = (VangerUnit*)(actCurrentViewObject)->NextTypeList;					
-					}while(actCurrentViewObject && (actCurrentViewObject->Status & SOBJ_WAIT_CONFIRMATION));
+					getObjectPosition_helper_getNextValidVanger(actCurrentViewObject);
 					return 3;
 				};				
 
@@ -2959,28 +2989,187 @@ char getObjectPosition(int& x,int& y)
 						c = 7;
 						break;
 				};
-				
-				do{
-					actCurrentViewObject = (VangerUnit*)(actCurrentViewObject)->NextTypeList;					
-				}while(actCurrentViewObject && (actCurrentViewObject->Status & SOBJ_WAIT_CONFIRMATION));
-
-//				actCurrentViewObject = (VangerUnit*)(actCurrentViewObject)->NextTypeList;
-				return c;			
-		};	
-
-/*	else{
-		if(!actCurrentViewObject){
-			actCurrentViewObject = PhantomD.Tail;
-			return -1;
+				getObjectPosition_helper_getNextValidVanger(actCurrentViewObject);
+				return c;
 		};
-		x = actCurrentViewObject->R_curr.x;
-		y = actCurrentViewObject->R_curr.y;
-		actCurrentViewObject = actCurrentViewObject->NextTypeList;
-		return 1;			
-	};*/
+	}
 
+	// tractortractor's returning data about current dolly and getting next available.
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
+	if(aiCutDominance >= 0){
+#else
+//#ifdef ZMOD_BETA
+//			if (1) {
+//#else
+	if (!NetworkON && aiCutDominance >= 50) {
+					//znfo - dolly visibility
+//#endif //ZMOD_BETA
+#endif
+		if(actCurrentViewDolly){
+//			uvsDolly* test_pointer = actCurrentViewDolly;
+//			std::cout << "actCurrentViewDolly pointer: " << reinterpret_cast<void*>(test_pointer) << '\n';
+			x = actCurrentViewDolly->pos_x;
+			y = actCurrentViewDolly->pos_y;
+			switch(actCurrentViewDolly->biosNindex){
+				case 0:
+					c = 8;
+					break;
+				case 1:
+					c = 9;
+					break;
+				case 2:
+					c = 10;
+					break;
+			};
+			getObjectPosition_helper_getNextValidDolly(actCurrentViewDolly);
+			return c;
+		}
+	}
+
+	// tractortractor's returning data about current item and getting next available.
+// #ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG and commented
+	if(actCurrentViewStuff){
+//		StuffObject* test_pointer = actCurrentViewStuff;
+//		std::cout << "actCurrentViewStuff pointer: " << reinterpret_cast<void*>(test_pointer) << '\n';
+		x = actCurrentViewStuff->R_curr.x;
+		y = actCurrentViewStuff->R_curr.y;
+		getObjectPosition_helper_getNextValidStuff(actCurrentViewStuff);
+		return 11;
+	}
+// #endif // tractortractor's commented
+
+	if(actCurrentViewFish){
+		x = actCurrentViewFish->R_curr.x;
+		y = actCurrentViewFish->R_curr.y;
+		matrix = &actCurrentViewFish->RotMat;
+		facing_vector = 0;
+		side_vector = 1;
+		facing_direct = true;
+		side_left = true;
+		switch(actCurrentViewFish->ID){
+			case ID_FISH:
+			getObjectPosition_helper_getNextValidFish(actCurrentViewFish);
+			return 12;
+		}
+	}
+
+	if(actCurrentViewHordeSource){
+		x = actCurrentViewHordeSource->R_curr.x;
+		y = actCurrentViewHordeSource->R_curr.y;
+		switch(actCurrentViewHordeSource->ID){
+			case ID_HORDE_SOURCE:
+			getObjectPosition_helper_getNextValidHordeSource(actCurrentViewHordeSource);
+			return 13;
+		}
+	}
+
+	if(actCurrentViewHorde){
+		x = actCurrentViewHorde->R_curr.x;
+		y = actCurrentViewHorde->R_curr.y;
+		switch(actCurrentViewHorde->ID){
+			case ID_HORDE:
+			getObjectPosition_helper_getNextValidHorde(actCurrentViewHorde);
+			return 14;
+		}
+	}
+
+	if(actCurrentViewFarmer){
+		x = actCurrentViewFarmer->R_curr.x;
+		y = actCurrentViewFarmer->R_curr.y;
+		matrix = &actCurrentViewFarmer->A_l2g;
+		facing_vector = 1;
+		side_vector = 0;
+		facing_direct = true;
+		side_left = false;
+		switch(actCurrentViewFarmer->ID){
+			case ID_SKYFARMER:
+			getObjectPosition_helper_getNextValidFarmer(actCurrentViewFarmer);
+			return 15;
+		}
+	}
+
+	if(actCurrentViewBullet){
+		x = actCurrentViewBullet->R_curr.x;
+		y = actCurrentViewBullet->R_curr.y;
+		switch(actCurrentViewBullet->ID){
+			case ID_BULLET:
+			getObjectPosition_helper_getNextValidBullet(actCurrentViewBullet);
+			return 16;
+		}
+	}
+
+	// tractortractor's returning data about current beeb and getting next available.
+// tractortractor's added begin
+#ifdef _ACI_SHOW_BUGS_ON_MAP_
+	if(actCurrentViewInsect){
+//		InsectUnit* test_pointer = actCurrentViewInsect;
+//		std::cout << "actCurrentViewInsect pointer: " << reinterpret_cast<void*>(test_pointer) << '\n';
+		x = actCurrentViewInsect->R_curr.x;
+		y = actCurrentViewInsect->R_curr.y;
+//		matrix = &actCurrentViewInsect->;
+		switch(actCurrentViewInsect->ID){
+			case ID_INSECT:
+			getObjectPosition_helper_getNextValidInsect(actCurrentViewInsect);
+			return 2;
+		}
+	}
+#endif
+// tractortractor's added end
+
+	// tractortractor's
+	// If none of previous code returned then all data is already retrieved for this redraw.
+	// Stopping redrawing by returning -1 and setting pointers to first items of lists for next redrawing.
+
+	// tractortractor's retrieveing first valid vanger
+	actCurrentViewObject = (VangerUnit*)(ActD.Tail);
+	if(actCurrentViewObject && (actCurrentViewObject->Status & SOBJ_WAIT_CONFIRMATION)){
+		getObjectPosition_helper_getNextValidVanger(actCurrentViewObject);
+	};
+	// tractortractor's retrieveing first valid dolly
+	actCurrentViewDolly = (uvsDolly*)(DollyTail);
+	if(actCurrentViewDolly && (actCurrentViewDolly->Pworld->gIndex != CurrentWorld || actCurrentViewDolly->status)){
+		getObjectPosition_helper_getNextValidDolly(actCurrentViewDolly);
+	}
+	// tractortractor's retrieveing first valid item
+//#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG and commented
+	actCurrentViewStuff = (StuffObject*)(ItemD.Tail);
+	if(actCurrentViewStuff && (actCurrentViewStuff->Status & SOBJ_WAIT_CONFIRMATION)){
+		getObjectPosition_helper_getNextValidStuff(actCurrentViewStuff);
+	}
+//#endif // tractortractor's commented
+
+	actCurrentViewFish = (FishWarrior*)(FishD.Tail);
+	if(actCurrentViewFish && (actCurrentViewFish->Status & SOBJ_WAIT_CONFIRMATION)){
+		getObjectPosition_helper_getNextValidFish(actCurrentViewFish);
+	}
+	actCurrentViewHordeSource = (HordeSource*)(HordeSourceD.Tail);
+	if(actCurrentViewHordeSource && (actCurrentViewHordeSource->Status & SOBJ_WAIT_CONFIRMATION)){
+		getObjectPosition_helper_getNextValidHordeSource(actCurrentViewHordeSource);
+	}
+	actCurrentViewHorde = (HordeObject*)(HordeD.Tail);
+	if(actCurrentViewHorde && (actCurrentViewHorde->Status & SOBJ_WAIT_CONFIRMATION)){
+		getObjectPosition_helper_getNextValidHorde(actCurrentViewHorde);
+	}
+	actCurrentViewFarmer = (SkyFarmerObject*)(FarmerD.Tail);
+	if(actCurrentViewFarmer && (actCurrentViewFarmer->Status & SOBJ_WAIT_CONFIRMATION)){
+		getObjectPosition_helper_getNextValidFarmer(actCurrentViewFarmer);
+	}
+	actCurrentViewBullet = (BulletObject*)(BulletD.Tail);
+	if(actCurrentViewBullet && (actCurrentViewBullet->Status & SOBJ_WAIT_CONFIRMATION)){
+		getObjectPosition_helper_getNextValidBullet(actCurrentViewBullet);
+	}
+
+	// tractortractor's retrieveing first valid beeb
+#ifdef _ACI_SHOW_BUGS_ON_MAP_
+	actCurrentViewInsect = (InsectUnit*)(InsectD.Tail);
+	if(actCurrentViewInsect && (actCurrentViewInsect->Status & SOBJ_WAIT_CONFIRMATION)){
+		getObjectPosition_helper_getNextValidInsect(actCurrentViewInsect);
+	}
+#endif
+//	std::cout << "\n\n-1 returned!\n\n";
 	return -1;
 };
+// tractortractor's rewritten end
 
 void ScreenLineTrace(Vector& v0,Vector& v1,uchar* ColorTable,uchar flag)
 {
@@ -3648,7 +3837,7 @@ void UnitList::NetEvent(int type,int id)
 {
 };
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 extern XStream fout;
 #endif
 
@@ -3688,7 +3877,7 @@ void GameObjectDispatcher::NetEvent(void)
 					NetSlotEvent(type,id);
 					break;
 				default:
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 				
 					fout.SetRadix(16);
 					fout < "Ignore:  Type:" <= type;
@@ -4480,8 +4669,8 @@ int CheckThreallMessiah(void)
 	return 0;
 };
 
-extern char* iVideoPath;
-extern char* iVideoPathDefault;
+extern const char* iVideoPath; // tractortractor's added const
+extern const char* iVideoPathDefault; // tractortractor's added const
 
 void PassageImageType::Open(char* name)
 {

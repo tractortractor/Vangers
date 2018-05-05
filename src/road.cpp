@@ -90,7 +90,7 @@
 #define MAX_ZOOM	384
 #define MIN_ZOOM	128
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 XStream fmemory("memstats.dmp", XS_OUT);
 #endif
 
@@ -127,6 +127,18 @@ extern int EffectInUsePriory,EffectInUse;
 
 extern bool XGR_FULL_SCREEN;
 void iPreInitFirst();
+
+// tractortractor's added begin
+extern Uint8 *controlsKeyboardState;
+
+#ifdef _ACI_MAP_TESTING_
+extern int aci_map_testing_mode;
+#endif
+
+extern RandomGenerator xm_random_generator;
+extern unsigned int effectRNDVAL;
+extern unsigned int BogusRNDVAL;
+// tractortractor's added end
 
 /* --------------------------- PROTOTYPE SECTION --------------------------- */
 void ShowImageMousePress(int fl, int x, int y);
@@ -268,8 +280,8 @@ const char* roadFNTname = "road.fnt";
 //zmod
 const char* zchatFNTname = "zfont.fnt";
 
-unsigned RNDVAL = 83;
-unsigned realRNDVAL = 83;
+unsigned int RNDVAL = 83; // tractortractor's added "int"
+//unsigned realRNDVAL = 83; // tractortractor's commented
 int Geo = 0;
 int Redraw = 1;
 int Pause = 0;
@@ -405,14 +417,15 @@ int xtInitApplication(void)
 #endif
 
 	//stalkerg:NEED SEE!!!
-	//ComlineAnalyze(__argc,__argv);
+//	ComlineAnalyze(__argc,__argv);
+	ComlineAnalyze(vangers_argc,vangers_argv); // tractortractor's added
 
 //	ErrH.SetRestore(restore); #not implement
 //	ErrH.SetFlags(XERR_CTRLBRK);
 
 
-	RNDVAL = 83;
-	realRNDVAL = SDL_GetTicks();
+//	RNDVAL = 83; // tractortractor's commented
+//	realRNDVAL = SDL_GetTicks(); // tractortractor's commented
 
 	costab();
 
@@ -536,7 +549,7 @@ int xtInitApplication(void)
 	}
 
 	//XSocketInit();
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 	if(host_name && avaible_servers.talk_to_server(0,host_port,host_name))
 		NetInit(avaible_servers.first());
 #endif
@@ -601,10 +614,23 @@ int xtInitApplication(void)
 	xtRegisterRuntimeObject(siObj);
 	//xtRegisterRuntimeObject(saObj);
 
-	if(RecorderMode)
+	if(RecorderMode){
+		// random seeds are set here
 		XRec.Open(RecorderName,RecorderMode);
+	}
 	else
-		RNDVAL = SDL_GetTicks();
+	{
+//		RNDVAL = SDL_GetTicks(); // tractortractor's commented
+// tractortractor's added begin
+		// TODO implement better seeding.
+		RNDVAL = time(NULL);
+		srand( time(NULL) );
+		_srand( time(NULL) );
+		xm_random_generator.set( time(NULL) );
+		effectRNDVAL = time(NULL);
+		BogusRNDVAL = time(NULL);
+// tractortractor's added end
+	}
 
 	_MEM_STATISTIC_("AFTER FIRST INIT -> ");
 
@@ -939,7 +965,7 @@ void LoadingRTO2::Init(int id)
 	LoadingMessage(1);
 #endif
 
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 	StandScreenPrepare();
 #endif
 _MEM_STATISTIC_("\nBEFORE VMAP  -> ");
@@ -1106,7 +1132,7 @@ int GameQuantRTO::Quant(void)
 		frame++;
 		if(++fps_frame == FPS_PERIOD) {
 			sprintf(fps_string,"%.1f",(double)FPS_PERIOD/(SDL_GetTicks() - (int)fps_start)*1000);
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 			network_analysis(network_analysis_buffer,0);
 #else
 			if(curGMap -> prmFlag & PRM_FPS && NetworkON)
@@ -1269,7 +1295,7 @@ void xtDoneApplication(void)
 void restore(void)
 {
 	KDWIN::destroy_server();
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 	network_analysis(network_analysis_buffer,1);
 	fout < network_analysis_buffer.address();
 #endif
@@ -1425,6 +1451,10 @@ void ComlineAnalyze(int argc,char** argv)
 //						speed_correction_enabled = 1;
 						break;
 
+// tractortractor's added begin
+					case 'B':
+					case 'b':
+// tractortractor's added end
 #ifdef _DEMO_
 						if(argv[i][j + 2] == 'e' && argv[i][j + 3] == 'e' && argv[i][j + 4] == 'b' && argv[i][j + 5] == 'o' && argv[i][j + 6] == 's' && argv[i][j + 7] == '$') beebos = 100000;
 #else
@@ -1452,7 +1482,7 @@ void ComlineAnalyze(int argc,char** argv)
 						videoMode = 2;
 						break;
 /* */
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 					case 'q':
 						host_port = atoi(argv[i] + (j + 2));
 						break;
@@ -1473,7 +1503,8 @@ void ComlineAnalyze(int argc,char** argv)
 						break;
 					case 'S':
 					case 's':
-						if(!stricmp(argv[i] + 1,"SKIPINTRO"))
+//						if(!stricmp(argv[i] + 1,"SKIPINTRO")) // tractortractor's commented
+						if(!strcasecmp(argv[i] + 1,"SKIPINTRO")) // tractortractor's added
 							SkipIntro = 1;
 						else
 							NumHumanModel = atoi(argv[i] + j + 2) + 1;
@@ -1569,6 +1600,7 @@ void creat_poster() {
 
 void KeyCenter(int key)
 {
+
 	extern int entry_scan_code;
 	SDL_Keymod mod;
 
@@ -1599,7 +1631,7 @@ void KeyCenter(int key)
 			curGMap -> change(3,2);
 			break;
 #endif
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 		case SDL_SCANCODE_F12:
 			DBGCHECK
 			break;
@@ -1612,18 +1644,34 @@ void KeyCenter(int key)
 			shotFlush();
 			break;
 #endif
-		case 'T':
-			mod = SDL_GetModState();
-			if ((mod&KMOD_SHIFT)||(mod&KMOD_CTRL)) {
+// tractortractor's commented begin
+//		case 'T':
+//			mod = SDL_GetModState();
+//			if ((mod&KMOD_SHIFT)||(mod&KMOD_CTRL)) {
+// tractortractor's commented end
+// tractortractor's added begin
+		case SDL_SCANCODE_T:
+			if(controlsKeyboardState[SDL_SCANCODE_LCTRL]
+				|| controlsKeyboardState[SDL_SCANCODE_LSHIFT]
+				|| controlsKeyboardState[SDL_SCANCODE_RCTRL]
+				|| controlsKeyboardState[SDL_SCANCODE_RSHIFT]) {
+// tractortractor's added end
 				GameTimerON_OFF();
 			}
 			break;
-		case 'F':
-			mod = SDL_GetModState();
-			if (mod&KMOD_CTRL) {
+// tractortractor's commented begin
+//		case 'F':
+//			mod = SDL_GetModState();
+//			if (mod&KMOD_CTRL) {
+// tractortractor's commented end
+// tractortractor's added begin
+		case SDL_SCANCODE_F:
+			if(controlsKeyboardState[SDL_SCANCODE_LCTRL]
+				|| controlsKeyboardState[SDL_SCANCODE_RCTRL]) {
+// tractortractor's added end
 				curGMap -> prmFlag ^= PRM_FPS;
 			}
-#ifdef _DEBUG
+#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 			else
 				message_mode++;
 #endif
@@ -1648,7 +1696,19 @@ void KeyCenter(int key)
 			}
 			break;
 		}
-	
+// tractortractor's added begin
+#ifdef DIAGEN_TEST
+	diagenKeyboardControl(key);
+#endif
+#ifdef _ACI_MAP_TESTING_
+	if(key == SDL_SCANCODE_BACKSPACE){
+		if(aci_map_testing_mode >= 3)
+			aci_map_testing_mode = 1;
+		else
+			++aci_map_testing_mode;
+	}
+#endif
+// tractortractor's added end
 	if (iKeyPressed(iKEY_ZOOM_IN)) {
 		if(!Pause){
 			if((camera_zmin -= 8) < curGMap -> xsize*MIN_ZOOM >> 8)
@@ -2493,7 +2553,8 @@ int memSize[MEMPTR_MAX];
 int memId[MEMPTR_MAX];
 int memNcnt,memDcnt;
 
-void* operator new(unsigned int sz)
+//void* operator new(unsigned int sz) // tractortractor's commented
+void* operator new(std::size_t sz)  // tractortractor's added
 {
 	if(!sz) return NULL;
 	void* p = malloc(sz);

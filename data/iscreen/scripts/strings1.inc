@@ -220,6 +220,12 @@
 #define iSTR_JoystickJoystick		$iSTR_JoystickJoystick1
 #define iSTR_JoystickSteeringWheel	$iSTR_JoystickSteeringWheel1
 #define iSTR_JoystickAlternFnc		$iSTR_JoystickAlternFnc1
+// tractortractor's added begin
+#define iSTR_JoystickTractionAxis			$iSTR_JoystickTractionAxis1
+#define iSTR_JoystickTractionSensitivity	$iSTR_JoystickTractionSensitivity1
+#define iSTR_JoystickRudderAxis				$iSTR_JoystickRudderAxis1
+#define iSTR_JoystickRudderSensitivity		$iSTR_JoystickRudderSensitivity1
+// tractortractor's added end
 #define iSTR_JoystickBUTTON1		$iSTR_JoystickBUTTON11
 #define iSTR_JoystickBUTTON2		$iSTR_JoystickBUTTON21
 #define iSTR_JoystickBUTTON3		$iSTR_JoystickBUTTON31
