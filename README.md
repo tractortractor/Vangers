@@ -28,6 +28,7 @@ What's new
 Here are demonstration videos
 
 youtube English: https://www.youtube.com/watch?v=01i_6K_rfXY
+
 youtube Russian: https://www.youtube.com/watch?v=WguuGht7oYI
 
 Also see ["work_done.html"](./docs/advanced/work_done.html) and ["debug_observations.html"](./docs/advanced/debug_observations.html) in "docs".
