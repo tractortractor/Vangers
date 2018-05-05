@@ -1,7 +1,7 @@
 Vangers restoration project
 =======
 
-This project is made to restore and enhance functionality of Vangers github release: https://github.com/KranX/Vangers
+This project was made to restore and enhance functionality of Vangers github release: https://github.com/KranX/Vangers
 
 All source code except "data" folder is based on 7 April 2016 release.
 
@@ -26,6 +26,7 @@ What's new
 =======
 
 Here are demonstration videos
+
 youtube English: https://www.youtube.com/watch?v=01i_6K_rfXY
 youtube Russian: https://www.youtube.com/watch?v=WguuGht7oYI
 
