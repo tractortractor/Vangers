@@ -31,7 +31,7 @@ youtube English: https://www.youtube.com/watch?v=01i_6K_rfXY
 
 youtube Russian: https://www.youtube.com/watch?v=WguuGht7oYI
 
-Also see [work_done_en.html](./docs/user/work_done_en.html) and [debug_observations.html](./docs/advanced/debug_observations.html) in "docs".
+Also see [work_done_en.html](./docs/user/en/work_done_en.html) and [debug_observations.html](./docs/advanced/debug_observations.html) in "docs".
 
 
 
