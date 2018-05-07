@@ -1101,7 +1101,8 @@ int set_3D_adjust(int mode,int xx,int yy,int zz,int D)
 		if(!p0)
 			continue;
 		for(x = -D;x < D;x += 2){
-			p = (unsigned char *)((unsigned long int)p0 + ((x + xx) & clip_mask_x));
+//			p = (unsigned char *)((unsigned long int)p0 + ((x + xx) & clip_mask_x)); // tractortractor's commented
+			p = p0 + ((x + xx) & clip_mask_x); // tractortractor's added
 			if(!(*(p + H_SIZE) & DOUBLE_LEVEL)){
 				z_sum += *p;
 				z_sum += *(p + 1);
