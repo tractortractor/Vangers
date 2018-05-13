@@ -4,7 +4,7 @@
 
 <h4>Prerequisites</h4>
 <p>Install microsoft visual studio. Make sure you can open MSVC development console. See <a href="https://docs.microsoft.com/en-gb/cpp/build/walkthrough-compiling-a-native-cpp-program-on-the-command-line#open-a-developer-command-prompt">https://docs.microsoft.com/en-gb/cpp/build/walkthrough-compiling-a-native-cpp-program-on-the-command-line#open-a-developer-command-prompt</a></p>
-<p>Install CMake. Make sure that folder with cmake executable is added to window's "PATH" variable.</p>
+<p>Install CMake. Make sure that folder with cmake executable is added to window's "PATH" variable <a href="https://cmake.org/download/">https://cmake.org/download/</a></p>
 <p>Install MSYS2 <a href="http://www.msys2.org/">http://www.msys2.org/</a></p>
 <p>There should be "MSVC_compilation_configurations" folder in source folder of Vangers.</p>
 
@@ -145,7 +145,7 @@
 	<p>Copy "clunk_build" folder from "MSVC_compilation_configurations" to clunk source folder.</p>
 	<p>Modify "build_command.bat" and "build.cmake" files as needed:</p>
 	<ul>
-		<li>You can change "Visual Studio 14 2015 Win64" to your current generator name.</li>
+		<li>You must change "Visual Studio 14 2015 Win64" to your current generator name.</li>
 		<li>You can change "Release" to "Debug" to compile debug build instead of release one.</li>
 		<li>You can change installation path by modifying "CMAKE_INSTALL_PREFIX" entry in "build.cmake" file.</li>
 		<li>You must change "SDL2_INCLUDE_DIR" entry so it points to include folder of SDL2 library.</li>
