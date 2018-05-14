@@ -115,4 +115,7 @@ IF(VANGERS_DEBUG)
 		getRSS
 	)
 ENDIF(VANGERS_DEBUG)
+
+# Added for correct rpath handling
+INSTALL(TARGETS vangers RUNTIME DESTINATION ./)
 # tractortractor's added end

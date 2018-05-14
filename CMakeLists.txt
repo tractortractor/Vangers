@@ -1,4 +1,9 @@
 # root
+# tractortractor's added begin
+# Executable will search for libraries in it's current directory.
+set(CMAKE_INSTALL_RPATH "$ORIGIN")
+# tractortractor's added end
+
 PROJECT(vangers)
 
 #CMAKE_MINIMUM_REQUIRED(VERSION 2.8.0) # tractortractor's commented
@@ -471,7 +476,7 @@ ENDIF(ENTRIES_CONTROL OR VANGERS_DEBUG)
 IF (NOT MSVC) # tractortractor's added
 	ADD_DEFINITIONS(-Wall -Wextra )
 	#ADD_DEFINITIONS(-Weffc++) #Extra debug
-	ADD_DEFINITIONS(-g)
+#	ADD_DEFINITIONS(-g) # tractortractor's commented
 	ADD_DEFINITIONS(-O2)
 	IF (NOT MINGW)
 		ADD_DEFINITIONS(-ftree-vectorize)

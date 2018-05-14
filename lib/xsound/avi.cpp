@@ -86,7 +86,7 @@ int AVIFile::open(char* aviname,int initFlags,int channel)
 	}
 
 	// Allocate video frame
-	pFrame=avcodec_alloc_frame();
+	pFrame=av_frame_alloc(); // tractortractor's avcodec_alloc_frame->av_frame_alloc
 
 	width = pCodecCtx->width;
 	height = pCodecCtx->height;

@@ -14413,7 +14413,8 @@ void SaveAiStaus(char* p,VangerUnit* v,int time)
 {
 	if(v->Visibility == VISIBLE){
 		AiStatusLog < "\nFrame " <= frame < ",Armor " <= (v->Armor >> 16);
-		AiStatusLog < "\n:" <= (unsigned int)(v);
+//		AiStatusLog < "\n:" <= (unsigned int)(v); // tractortractor's commented
+		AiStatusLog < "\n:" <= (std::size_t)(v); // tractortractor's added
 		AiStatusLog < "\n" < p < "\n";
 		AiStatusLog < "\nAttack " <=  v->aiResolveFactor[AI_FACTOR_ATTACK];
 		AiStatusLog < "\nRun " <=  v->aiResolveFactor[AI_FACTOR_RUN];

@@ -21,8 +21,13 @@ extern MemoryHeap load_heap;
 
 #ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
 #define _FOUT_
+// extern XStream fout; // tractortractor's commented
+#endif
+// tractortractor's added begin
+#ifdef _FOUT_
 extern XStream fout;
 #endif
+// tractortractor's added end
 extern XBuffer msg_buf;
 
 
