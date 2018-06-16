@@ -1,14 +1,24 @@
 # root
 # tractortractor's added begin
 # Executable will search for libraries in it's current directory.
-set(CMAKE_INSTALL_RPATH "$ORIGIN")
+if(APPLE)
+	set(CMAKE_INSTALL_RPATH "@executable_path/")
+else(APPLE)
+	set(CMAKE_INSTALL_RPATH "$ORIGIN")
+endif(APPLE)
 # tractortractor's added end
 
 PROJECT(vangers)
 
 #CMAKE_MINIMUM_REQUIRED(VERSION 2.8.0) # tractortractor's commented
-CMAKE_MINIMUM_REQUIRED(VERSION 3.1.0) # tractortractor's added
-set (CMAKE_CXX_STANDARD 11) # tractortractor's added
+# tractortractor's added begin
+CMAKE_MINIMUM_REQUIRED(VERSION 3.1.0)
+IF(APPLE AND CMAKE_OSX_DEPLOYMENT_TARGET VERSION_LESS 10.9)
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+	SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
+ENDIF(APPLE AND CMAKE_OSX_DEPLOYMENT_TARGET VERSION_LESS 10.9)
+set (CMAKE_CXX_STANDARD 11)
+# tractortractor's added end
 
 # modules
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
