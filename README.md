@@ -40,6 +40,6 @@ How to play
 
 1. Download "data", "libraries" and "executables" from latest release.
 2. Extract and move all contents of those folders to "data" folder of Vangers. Replace if files already exists.
-3. Launch one of executables.
+3. Launch one of executables. Use "Terminal.app" to launch on Mac OS X.
 
 For more info see [how_to_play_en.html](./docs/user/en/how_to_play_en.html) or [how_to_play_ru.html](./docs/user/ru/how_to_play_ru.html) in "docs".
