@@ -11,7 +11,7 @@
 <h4>zlib:</h4>
 	<p>Download source code from <a href="https://www.zlib.net/">https://www.zlib.net/</a></p>
 	<p>Copy "zlib_build" folder from "MSVC_compilation_configurations" to zlib source folder.</p>
-	<p>Modify "build_command.bat" and "build.cmake" files as needed:</p>
+	<p>Modify "cmake_command.bat", "build_command.bat" and "build.cmake" files as needed:</p>
 	<ul>
 		<li>You must change "Visual Studio 14 2015 Win64" to your current generator name.</li>
 		<li>You can change "Release" to "Debug" to compile debug build instead of release one.</li>
@@ -76,7 +76,7 @@
 	<p>Copy "libvorbis.lib", "libvorbisfile.lib", "vorbisdec.lib" and "vorbisenc.lib" to desired folder for libvorbis library. Also copy ".dll" and ".pdb" files if present.</p>
 	<p>Copy "include" directory to desired folder for libvorbis library.</p>
 
-	<p>While compiling libav for some reason it searches for "vorbis.lib" and "vorbisfile.lib" instead of "libvorbis.lib" and "libvorbisfile.lib".</p>
+	<p>While compiling libav build script searches for "vorbis.lib" and "vorbisfile.lib" instead of "libvorbis.lib" and "libvorbisfile.lib".</p>
 	<p>Quick workaround is to copy and rename both files.</p>
 
 <h4>libav:</h4>
@@ -114,6 +114,7 @@
 				<li>Add --enable-shared option if you want to compile dynamic libraries, static is default.</li>
 				<li>Add --enable-libvorbis.</li>
 				<li>Add --enable-zlib.</li>
+				<li>Add --disable-debug if you want to compile without debug symbols.</li>
 				<li>Execute this command</li>
 			</ol>
 			<p>Example: "./configure --toolchain=msvc --prefix=/c/path/where/to/install/libav --enable-shared --enable-libvorbis --enable-zlib"</p>
@@ -138,12 +139,12 @@
 		<li>Add "link=shared" or "link=static" to compile shared or static build respectively.</li>
 		<li>Add "address-model=32" or "address-model=64" to compile 32 or 64 bit build respectively.</li>
 	</ol>
-		<p>Example: .\b2 install --prefix=C:\boost toolset=msvc variant=Release link=shared address-model=32</p>
+		<p>Example: .\b2 install --prefix=C:\boost toolset=msvc variant=release link=shared address-model=32</p>
 
 <h4>clunk:</h4>
 	<p>Source code for version of clunk which is compatible with Vangers restoration project can be found here: <a href="https://github.com/tractortractor/clunk">https://github.com/tractortractor/clunk</a>.</p>
 	<p>Copy "clunk_build" folder from "MSVC_compilation_configurations" to clunk source folder.</p>
-	<p>Modify "build_command.bat" and "build.cmake" files as needed:</p>
+	<p>Modify "cmake_command.bat", "build_command.bat" and "build.cmake" files as needed:</p>
 	<ul>
 		<li>You must change "Visual Studio 14 2015 Win64" to your current generator name.</li>
 		<li>You can change "Release" to "Debug" to compile debug build instead of release one.</li>
@@ -156,9 +157,8 @@
 	<p>Execute through console: "cmake_command.bat", then "build_command.bat".</p>
 
 <h3>Vangers:</h3>
-	<p>If you are going to compile with VANGERS_DEBUG macro defined you should obtain "getRSS.c" file from <a href="http://nadeausoftware.com/articles/2012/07/c_c_tip_how_get_process_resident_set_size_physical_memory_use#Downloads">http://nadeausoftware.com/articles/2012/07/c_c_tip_how_get_process_resident_set_size_physical_memory_use#Downloads</a>.</p>
 	<p>Copy "vangers_build" folder from "MSVC_compilation_configurations" to Vangers source folder.</p>
-	<p>Modify "build_command.bat" and "build.cmake" files as needed. You must change all library path entries so they will point to your freshly compiled libraries.</p>
+	<p>Modify "cmake_command.bat", "build_command.bat" and "build.cmake" files as needed. You must change all library path entries so they will point to your freshly compiled libraries.</p>
 	<p>Launch MSVC development console, "cd" to "vangers_build" folder.</p>
 	<p>Execute through console: "cmake_command.bat", then "build_command.bat".</p>
 	<p>You have to copy "vangers.exe", folders in "data_folder" of Vangers source and all ".dll" dependencies to game data folder.</p>
