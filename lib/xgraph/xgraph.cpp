@@ -308,9 +308,13 @@ void XGR_Screen::set_fullscreen(bool fullscreen) {
 			SDL_SetWindowPosition(sdlWindow, 0, 0);
 		}
 		XGR_FULL_SCREEN = fullscreen;
+// tractortractor's commented begin
+/*
 #ifdef __APPLE__
 		CGDisplayHideCursor(kCGDirectMainDisplay);
 #endif
+*/
+// tractortractor's commented end
 	} 
 }
 
