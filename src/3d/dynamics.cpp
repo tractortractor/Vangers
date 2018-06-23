@@ -2513,7 +2513,7 @@ void Object::steer(int dir)
 					rudder = rudder_joystick_max;
 				}
 			else if((rudder += delta) > rudder_joystick_max){
-				rudder = delta;
+				rudder = rudder_joystick_max;
 				}
 			}
 		else{
