@@ -1,0 +1,3 @@
+Thanks to:
+Arthur "nibb13" Makhonko - basic test of v0.1.X on Windows 10
+and other anonymous helpers.
