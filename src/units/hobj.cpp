@@ -143,6 +143,7 @@ HordeSource* actCurrentViewHordeSource = NULL;
 HordeObject* actCurrentViewHorde = NULL;
 SkyFarmerObject* actCurrentViewFarmer = NULL;
 BulletObject* actCurrentViewBullet = NULL;
+JumpBallObject* actCurrentViewJumpBall = NULL;
 #ifdef _ACI_SHOW_BUGS_ON_MAP_
 InsectUnit* actCurrentViewInsect = NULL;
 #endif
@@ -154,6 +155,7 @@ void getObjectPosition_helper_getNextValidHordeSource(HordeSource *&hordeSourceO
 void getObjectPosition_helper_getNextValidHorde(HordeObject *&hordeObject);
 void getObjectPosition_helper_getNextValidFarmer(SkyFarmerObject *&farmerObject);
 void getObjectPosition_helper_getNextValidBullet(BulletObject *&bulletObject);
+void getObjectPosition_helper_getNextValidJumpBall(JumpBallObject *&jumpBallObject);
 void getObjectPosition_helper_getNextValidInsect(InsectUnit *&insectObject);
 // tractortractor's added end
 
@@ -813,6 +815,7 @@ void GeneralSystemOpen(void)
 		actCurrentViewHorde = NULL;
 		actCurrentViewFarmer = NULL;
 		actCurrentViewBullet = NULL;
+		actCurrentViewJumpBall = NULL;
 #ifdef _ACI_SHOW_BUGS_ON_MAP_
 		actCurrentViewInsect = NULL;
 #endif
@@ -2933,6 +2936,13 @@ void getObjectPosition_helper_getNextValidBullet(BulletObject *&bulletObject)
 	}while(bulletObject && (bulletObject->Status & SOBJ_WAIT_CONFIRMATION));
 }
 
+void getObjectPosition_helper_getNextValidJumpBall(JumpBallObject *&jumpBallObject)
+{
+	do{
+		jumpBallObject = (JumpBallObject*)(jumpBallObject)->NextTypeList;
+	}while(jumpBallObject && (jumpBallObject->Status & SOBJ_WAIT_CONFIRMATION));
+}
+
 void getObjectPosition_helper_getNextValidInsect(InsectUnit *&insectObject)
 {
 	do{
@@ -3098,6 +3108,17 @@ char getObjectPosition(int& x,int& y,DBM*& matrix,int& facing_vector,bool& facin
 		}
 	}
 
+	if(actCurrentViewJumpBall){
+		x = actCurrentViewJumpBall->R_curr.x;
+		y = actCurrentViewJumpBall->R_curr.y;
+		switch(actCurrentViewJumpBall->ID){
+			case ID_JUMPBALL:
+			getObjectPosition_helper_getNextValidJumpBall(actCurrentViewJumpBall);
+			return 16;
+		}
+	}
+
+
 	// tractortractor's returning data about current beeb and getting next available.
 // tractortractor's added begin
 #ifdef _ACI_SHOW_BUGS_ON_MAP_
@@ -3157,6 +3178,10 @@ char getObjectPosition(int& x,int& y,DBM*& matrix,int& facing_vector,bool& facin
 	actCurrentViewBullet = (BulletObject*)(BulletD.Tail);
 	if(actCurrentViewBullet && (actCurrentViewBullet->Status & SOBJ_WAIT_CONFIRMATION)){
 		getObjectPosition_helper_getNextValidBullet(actCurrentViewBullet);
+	}
+	actCurrentViewJumpBall = (JumpBallObject*)(JumpD.Tail);
+	if(actCurrentViewJumpBall && (actCurrentViewJumpBall->Status & SOBJ_WAIT_CONFIRMATION)){
+		getObjectPosition_helper_getNextValidJumpBall(actCurrentViewJumpBall);
 	}
 
 	// tractortractor's retrieveing first valid beeb
