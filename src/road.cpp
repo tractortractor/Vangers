@@ -1671,7 +1671,8 @@ void KeyCenter(int key)
 // tractortractor's added end
 				curGMap -> prmFlag ^= PRM_FPS;
 			}
-#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG
+//#ifdef VANGERS_DEBUG // tractortractor's _DEBUG -> VANGERS_DEBUG and commented
+#if defined(ENTRIES_CONTROL) || defined(MSG_OUT) || defined(VANGERS_DEBUG)
 			else
 				message_mode++;
 #endif
